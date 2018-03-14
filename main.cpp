@@ -183,9 +183,10 @@ int main(int argc, char **argv){
 
   fill_in_table(root->children, 0);
 
-  int InitColor = 1
-
-  Color_initialize(0 , InitColor)
+  for (int i = 0; i < num_states; i++)
+  {
+    state_colors[i] = 1;
+  }
   
   subnfa_num=0;
   for (int i=0;i<num_states;i++) {
