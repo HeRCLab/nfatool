@@ -182,6 +182,11 @@ int main(int argc, char **argv){
   for (int i=0;i<num_states;i++) visited[i]=0;
 
   fill_in_table(root->children, 0);
+
+  for (int i = 0; i < num_states; i++)
+  {
+    state_colors[i] = 1;
+  }
   
   subnfa_num=0;
   for (int i=0;i<num_states;i++) {
