@@ -1,7 +1,7 @@
 #include "nfatool.h"
 
 /*
- * globals
+ * global variabless
  */
 unsigned char **next_state_table;
 
