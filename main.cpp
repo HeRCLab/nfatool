@@ -140,7 +140,7 @@ int main(int argc, char **argv){
         return 1;
     }
 
-    while ((c=getopt(argc,argv,"i:m:f:"))!=-1)
+    while ((c=getopt(argc,argv,"i:m:f:p:"))!=-1)
       switch (c) {
         case 'i':
           strcpy(filename,optarg);
