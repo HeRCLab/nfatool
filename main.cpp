@@ -31,7 +31,8 @@ int  state_map2[STATEMAP_SIZE];
 
 xmlNode **node_table;
 
-int max_fanout=0,max_stes=0;
+int max_fanout=0;
+int max_stes=0;
 
 vector<int> visited2;
 
@@ -47,7 +48,7 @@ int num_states=0,
     num_reports = 0, /*< counter for report-on-match */
     Change_of_start = 0, /*< counter for state-transition-element that holds a start state */
     max_fan_in = 0,
-    current_color = 0,
+    current_color = 1,
     cycle_count =0,
     start_color,
     color_count[MAX_COLORS];
@@ -64,57 +65,9 @@ int *visitedcycle;
 int *visitedColorTrav;
 
 vector<int> *state_colors;
-
-//---------------------------------------------------------------------
-int main_rasha(void) {
-  int *components,
-      *assigned,
-      i;
-
-  num_states=6;
-  max_edges=3;
-
-  components=(int *)malloc(sizeof(int)*num_states);
-  for (i=0;i<num_states;i++) components[i]=-1;
-
-  assigned=(int *)malloc(sizeof(int)*num_states);
-  for (i=0;i<num_states;i++) assigned[i]=0;
-
-  edge_table = (int **)malloc((sizeof(int *))*num_states);
-  for (i=0;i<num_states;i++) {
-    edge_table[i]=(int *)malloc(sizeof (int)*max_edges);
-    for (int j=0;j<max_edges;j++) edge_table[i][j]=-1;
-  }
-  
-  // Store Graph 1->2->3->4->5  cycles: 1->1, 1->2->3->4->5->1, 1->2->3->4->5->3
-  edge_table[0][0] = 1;
-  edge_table[0][1] = 4;
-  edge_table[0][2] = -1;
-  edge_table[1][0] = 2;
-  edge_table[1][1] = -1;
-  edge_table[2][0] = 3;
-  edge_table[2][1] = -1;
-  edge_table[3][0] = 2;
-  edge_table[3][1] = -1;
-  edge_table[4][0] = 5;
-  edge_table[4][1] = -1;
-  edge_table[5][0] = 4;
-  edge_table[5][1] = 0;
-  edge_table[5][2] = -1;
-
-  reverse_edge_table();
-  dfs(0);
-  for(int i=visited2.size()-1 ; i>=0; i--) {
-    assign(visited2[i],visited2[i],components);
-
-  }
-
-    for(int j=0; j<visited2.size(); j++) {
-      printf("node %d assigned to component %d\n",j,components[j]);
-    }
-
-  return 0;
-}
+vector<int> *sccs;
+map <int,vector<int>> component_list;
+int *components;
 
 int main(int argc, char **argv){
     char filename[1024];
@@ -125,20 +78,9 @@ int main(int argc, char **argv){
     xmlDoc *document2;
     xmlDoc *Doc2;
 
-    int basket;
-    int file_spec=0;
-    int temp = 0;
-    int val = 0;
-    int fanin = 0;
-
     char str[1024];
 
-    srand(10202);
-
-    if (argc < 2){
-        fprintf(stderr, "Usage: %s filename.xml [options]\n", argv[0]);
-        return 1;
-    }
+    int file_spec=0;
 
     while ((c=getopt(argc,argv,"i:m:f:p:"))!=-1)
       switch (c) {
@@ -165,52 +107,57 @@ int main(int argc, char **argv){
         }
 
     if (!file_spec) {
-      fprintf(stderr, "ERROR:  -i parameter is required\n");
+      fprintf(stderr, "ERROR:  -i parameter is required (needed to specify input file\n");
       return 0;
     }
 
+/*
+ * parse ANML file
+ */
     document = xmlReadFile(filename, NULL, 0);
     root = xmlDocGetRootElement(document);
     rootGlobal = root;
 
-//    for(int i= 0 ; i < (1<<24); i++) state_map[i] = -1;
-
+/*
+ * find number of STEs in the ANML file
+ */
     num_states=count_states(root);
 
+/*
+ * allocate memory for graph data structures
+ */
   allocate_memory();
 
-  for (int i=0;i<num_states;i++) visited[i]=0;
-
+/*
+ * traverse ANML and transfer graph into tables
+ */
   fill_in_table(root->children, 0);
 
-  for (int i = 0; i < num_states; i++)
-  {
-    state_colors[i] = 1;
-  }
-  
-  subnfa_num=0;
-  for (int i=0;i<num_states;i++) {
-	if (start_state[i]) {
-		for (int j=0;j<num_states;j++) visited[j]=0;
-		subnfa_size=0;
-		traverse_graph(i);
-		printf ("sub nfa %d, size = %d\n",subnfa_num,subnfa_size);
-		subnfa_num++;
-		subnfa_total_size += subnfa_size;
-	}
-  }
-  printf ("state duplications = %d, should be %d - %d\n",duplicate_states,subnfa_total_size,num_states);
-  
+/*
+ * calculate transpose graph
+ */
   reverse_edge_table();
   
+/*
+ * save the original state of the graph, since we'll be changing it significantly
+ */
   for (int i=0;i<num_states;i++) for (int j=0;j<max_edges;j++) orig_edge_table[i][j]=edge_table[i][j];
 
+/*
+ * partition graph into sub-NFAs, if the user specified a maximum number of STEs per graph
+ */
+  if (max_stes) becchi_partition();
+
+/*
+ * map logical STEs to physical STEs, if the user specified a maximum hardware fan-out
+ */
   int violations;
   int i=0;
   if (max_fanout) while (violations=validate_interconnection()) {
     if (!(i%1)) printf ("*********************scan complete, violations = %d\n",violations);
     i++;
   };
+
 
   return 0;
 }

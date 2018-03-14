@@ -48,7 +48,9 @@ void traverse_partition(int ste)
    }
 }
 
-void split_colorv2(int ste, int color)
+void 
+
+void split_colorv2(int color_from, int color_to)
 { 
 
   int k;
@@ -154,25 +156,35 @@ void replace_colorv2(int str, int old_color, int new_color)
 
 void becchi_partition () 
 {
+  int max_color,max_color_size;
 
-  //cycle_detection(0);
+  // find strongly-connected components, results stored in globals component_list and components
+  find_sccs();
 
-  int color_size_exceeded;
-
-  for (int i = 0; i<num_states; i++) 
-  {                                                            
-    if (start_state[i] == 1) 
-    {
-      start_color = i;
-
-      for (int j = i; i < num_states; j++)
-      {
-        traverse_partition(j);  
-      }
-    }
+  // initial:  all STEs have one color (no replication)
+  for (int i = 0; i < num_states; i++)
+  {
+    state_colors[i] = 0;
   }
+
+  // create virtual root node
   
-  color_size_exceeded=0;
+  
+
+  // for (int i = 0; i<num_states; i++) 
+  // {                                                            
+  //   if (start_state[i] == 1) 
+  //   {
+  //     start_color = i;
+
+  //     for (int j = i; i < num_states; j++)
+  //     {
+  //       traverse_partition(j);  
+  //     }
+  //   }
+  // }
+  
+  // color_size_exceeded=0;
 
   /*
    *  The nested for loop below will set a flag for each ste that is found 
@@ -197,25 +209,29 @@ void becchi_partition ()
   //   }
   // }
   
-  for (int i=0; i<MAX_COLORS; i++) {
-    if (color_count[i] > MAX_PART_SIZE) {
-      color_size_exceeded = 1;
-    }
+  // for (int i=0; i<MAX_COLORS; i++) {
+  //   if (color_count[i] > MAX_PART_SIZE) {
+  //     color_size_exceeded = 1;
+  //   }
+  // }
+
+find_max_color_size(max_color_size,max_color);
+
+while (max_color_size > max_stes) { 
+  split_colorv2(max_color,current_color);
+  color_count[max_color]=0;
+  find_max_color_size(max_color_size,max_color);
   }
+}
 
-  while (color_size_exceeded) { 
-    color_size_exceeded=0;
-    for (int i=0;i<MAX_COLORS;i++) if (color_count[i]>MAX_PART_SIZE) {
-      color_size_exceeded=1;
-      for (int j = 0;j<num_states;j++) {
-        if (start_state[j]) 
-        {
-          split_colorv2(j,current_color);
-        }
-      }
-      color_count[i]=0;
-    }
+void max_color_size (int &max_color_size,int &max_color) {
+  int i,max_color_size=1,max_color=-1;
+  int color_size[MAX_COLORS];
 
-
-  } while (color_size_exceeded);
+  for (i=0;i<MAX_COLORS;i++) color_size[i]=0;
+  for (i=0;i<num_states;i++) color_size[state_colors[i]]++;
+  for (i=0;i<MAX_COLORS;i++) if (color_size[i]>max_color_size) {
+    max_color_size=color_size[i];
+    max_color=i;
+  }
 }

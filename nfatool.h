@@ -92,5 +92,9 @@ extern int *visitedcycle;
 extern int *visitedColorTrav;
 
 extern vector<int> *state_colors;
+extern vector<int> *sccs;
+extern map <int,vector<int>> component_list;
+
+extern int *components;
 
 #endif

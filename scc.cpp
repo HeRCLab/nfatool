@@ -1,5 +1,30 @@
 #include "nfatool.h"
 
+void find_sccs () {
+  int *assigned,
+      i,component_num;
+
+  assigned=(int *)malloc(sizeof(int)*num_states);
+  for (i=0;i<num_states;i++) assigned[i]=0;
+
+  dfs(0);
+  
+  for(int i=visited2.size()-1 ; i>=0; i--) {
+    assign(visited2[i],visited2[i],components);
+  }
+
+  for(int j=0; j<visited2.size(); j++) {
+      printf("node %d assigned to component %d\n",j,components[j]);
+  }
+
+  map <int,vector<int>> component_list;
+  for (i=0;i<num_states;i++) {
+    component_list[components[i]].push_back(i);
+  }
+
+  free(assigned);
+}
+
 void dfs(int current_node) {
     int flag,visited_node,in_loop=0;
 
