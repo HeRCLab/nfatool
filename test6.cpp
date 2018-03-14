@@ -19,44 +19,56 @@ int count_cycle =1;
  	v2: move visiting nodes from v1 to v2 (maybe cycle) and still are being explored
  	v3: move nodes from v2 to v3 , has no cycle to final set
 */
+    
+int reverse_edge_table () {
+  int change,i,j,k,
+    fanin = 0;
 
-bool dfs(int current_node, std::vector<int> &v1, std::vector<int> &v2, std::vector<int> &v3) {
+  int rev_edge_count[num_states];
+  for (i=0;i<num_states;i++) rev_edge_count[i]=0;
+
+  for (int i = 0; i < num_states; i++) {
+    fanin=0;
+      for(int j = 0; j < max_edges; j++){
+        if(edge_table[i][j] == -1){
+          break;
+        }else {
+          rev_edge_count[edge_table[i][j]]++;
+          if (rev_edge_count[edge_table[i][j]] > max_fan_in) max_fan_in = rev_edge_count[edge_table[i][j]];
+        }
+    }
+  }
+
+void dfs(int current_node) {
         int flag,visited_node,in_loop=0;
 
-    for (int i=0;i<visited.size();i++) if (current_node == visited[i]) return false;
-    visited.push_back(current_node);
+    for (int i=0;i<visited.size();i++) if (current_node == visited[i]) return;
+    visited.insert(visited.begin(),current_node);
 
-    v2.push_back(current_node);
-    //Test the nodes in v1 and v2 after movement 
+    
 
-        for(int k=0; k<v2.size(); k++)
-                std::cout << "visited nodes " << v2[k] << endl;
 
      // ------------------------------------------------------------------			
      // Start going through all the edges of the current_node
         for(int j=0; j<max_edges; j++){
                 //std::cout << "edge_table of current node" << current_node << " " << edge_table[current_node][j] << endl;
 		
-		if (edge_table[current_node][j]!=0) {
-        // Test if the edge in the final set, means no cycle found  
-		// test the looop ??? ?
-			visited_node=0;
-                	for(int k=0; k<v2.size(); k++)
-                        	if(edge_table[current_node][j] == v2[k]) {
-                        		std::cout << "confirmed cycle node " << edge_table[current_node][j] << endl;
-					v3.insert(v3.begin(),edge_table[current_node][j]);
-					visited_node=1;
-					in_loop=1;
-                        		break;
-				}
-                
-			if (!visited_node) dfs(edge_table[current_node][j], v1, v2, v3);
-		}
+    		if (edge_table[current_node][j]!=0) {
+            // Test if the edge in the final set, means no cycle found  
+    		// test the looop ??? ?
+    			visited_node=0;
+                for(int k=0; k<visited.size(); k++)
+                    if(edge_table[current_node][j] == visited[k]) {
+                        visited_node=1;
+                        break;
+    				}
+                    
+    			if (!visited_node) dfs(edge_table[current_node][j]);
+    		}
 	}
 	
-	if (in_loop) v3.push_back(current_node);
 
-	return false;
+	return;
 }
 
 //---------------------------------------------------------------------
@@ -120,17 +132,14 @@ int main(void) {
         edge_table[5][1] = 5;
 */
    // Initial start by path nodes
-        for (int i = 1; i <= max_states; i++) {
-                dfs(i,start,maycycle,nocycle);
+        
+                dfs(1);
 
 
 
-        for(int i=0; i<nocycle.size(); i++)
-                std::cout << "L: " << maycycle[i] << endl;
+        for(int i=0; i<visited.size(); i++)
+                std::cout << "L: " << visited[i] << endl;
 
-		maycycle.clear();
-		nocycle.clear();
-	}
 
 return 0;
 }
