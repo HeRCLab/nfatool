@@ -7,5 +7,6 @@ int reverse_movement_map (int n);
 void check_graphs ();
 int dump_edges ();
 int validate_interconnection();
+void crital_path(int node)
 
 #endif

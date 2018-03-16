@@ -267,3 +267,28 @@ int validate_interconnection() {
   check_graphs();
   return violations;
 }
+
+void crital_path(int node)
+{
+  if (visited[node] == 1)
+  {
+    return;
+  }
+
+  max_path++;
+
+  for (int i = 0; i < max_edges; i++)
+  { 
+    if(report_table[node] == 1)
+    {
+      visited[node] = 1;
+
+      if (path_length > Path_compare)
+      {
+        path_compare = max_path;
+        max_path = 1;
+      }
+    }
+    crital_path(edge_table[node][i]);
+  }
+}

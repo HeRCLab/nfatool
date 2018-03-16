@@ -51,6 +51,8 @@ int num_states=0,
     current_color = 1,
     cycle_count =0,
     start_color,
+    max_path =1,
+    path_compare = 0,
     color_count[MAX_COLORS];
 
 xmlNode *rootGlobal, /*< root node of the .ANML file */
@@ -132,6 +134,15 @@ int main(int argc, char **argv){
  * traverse ANML and transfer graph into tables
  */
   fill_in_table(root->children, 0);
+
+/*
+ * finds the critical path of tree
+ */
+  for (int i = 0; i < num_states; i++)
+  {
+    visited[i] = 0;
+  }
+  critical_path(0);
 
 /*
  * calculate transpose graph
