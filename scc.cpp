@@ -13,11 +13,14 @@ void find_sccs () {
     assign(visited2[i],visited2[i],components);
   }
 
+  printf(" Visited_size = %d\n", visited2.size()); 
+
   for(int j=0; j<visited2.size(); j++) {
+     
       printf("node %d assigned to component %d\n",j,components[j]);
   }
 
-  map <int,vector<int>> component_list;
+  map <int,vector<int> > component_list;
   for (i=0;i<num_states;i++) {
     component_list[components[i]].push_back(i);
   }
@@ -30,9 +33,6 @@ void dfs(int current_node) {
 
     for (int i=0;i<visited2.size();i++) if (current_node == visited2[i]) return;
     visited2.insert(visited2.begin(),current_node);
-
-    
-
 
      // ------------------------------------------------------------------      
      // Start going through all the edges of the current_node

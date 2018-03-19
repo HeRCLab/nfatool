@@ -51,6 +51,8 @@ int num_states=0,
     current_color = 1,
     cycle_count =0,
     start_color,
+    max_path =1,
+    path_compare = 0,
     color_count[MAX_COLORS];
 
 xmlNode *rootGlobal, /*< root node of the .ANML file */
@@ -66,7 +68,7 @@ int *visitedColorTrav;
 
 vector<int> *state_colors;
 vector<int> *sccs;
-map <int,vector<int>> component_list;
+map <int,vector<int> > component_list;
 int *components;
 
 int main(int argc, char **argv){
@@ -115,13 +117,18 @@ int main(int argc, char **argv){
  * parse ANML file
  */
     document = xmlReadFile(filename, NULL, 0);
+    if (!document) {
+      fprintf(stderr,"Error: could not open ANML file\n");
+      return 0;
+    }
     root = xmlDocGetRootElement(document);
-    rootGlobal = root;
+    rootGlobal = root; 
 
 /*
  * find number of STEs in the ANML file
  */
     num_states=count_states(root);
+    printf ("number of states = %d\n",num_states);
 
 /*
  * allocate memory for graph data structures
@@ -134,29 +141,42 @@ int main(int argc, char **argv){
   fill_in_table(root->children, 0);
 
 /*
+ * finds the critical path of tree
+ */
+  for (int i = 0; i < num_states; i++)
+  {
+    visited[i] = 0;
+  }
+
+//  critical_path(0);
+
+/*
  * calculate transpose graph
  */
   reverse_edge_table();
+
+  find_sccs();
+  find_critical_path(); 
   
 /*
  * save the original state of the graph, since we'll be changing it significantly
  */
-  for (int i=0;i<num_states;i++) for (int j=0;j<max_edges;j++) orig_edge_table[i][j]=edge_table[i][j];
+//  for (int i=0;i<num_states;i++) for (int j=0;j<max_edges;j++) orig_edge_table[i][j]=edge_table[i][j];
 
 /*
  * partition graph into sub-NFAs, if the user specified a maximum number of STEs per graph
  */
-  if (max_stes) becchi_partition();
+ // if (max_stes) becchi_partition();
 
 /*
  * map logical STEs to physical STEs, if the user specified a maximum hardware fan-out
  */
-  int violations;
-  int i=0;
-  if (max_fanout) while (violations=validate_interconnection()) {
-    if (!(i%1)) printf ("*********************scan complete, violations = %d\n",violations);
-    i++;
-  };
+ // int violations;
+ // int i=0;
+ // if (max_fanout) while (violations=validate_interconnection()) {
+  //  if (!(i%1)) printf ("*********************scan complete, violations = %d\n",violations);
+   // i++;
+//  };
 
 
   return 0;
