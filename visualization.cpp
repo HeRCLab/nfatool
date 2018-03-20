@@ -1,7 +1,8 @@
 #include "nfatool.h"
 
-void dump_dot_file (char *filename, xmlNode *aNode) {
+void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset) {
   FILE *myFile;
+  int found,found2;
 
   char str[1024];
 
@@ -16,9 +17,11 @@ void dump_dot_file (char *filename, xmlNode *aNode) {
   fprintf (myFile,"digraph {\n\trankdir=LR;\n");
 
   int i =0;
-  for(aNode = aNode; aNode; aNode = aNode->next){
+  for(aNode = aNode->children; aNode; aNode = aNode->next){
     if (aNode->type==XML_ELEMENT_NODE && !strcmp((const char *)aNode->name,"state-transition-element")){
-        fprintf (myFile,"\t%d [label=\"%s:%s\" peripherals=%d];\n",i,aNode->properties->children->content,
+        found = 0;
+        for (int j=0;j<subset.size();j++) if (subset[j]==i) found=1;
+        if (found) fprintf (myFile,"\t%d [label=\"%s:%s\" peripherals=%d];\n",i,aNode->properties->children->content,
         aNode->properties->next->children->content,
         start_state[i]+report_table[i]+1);
         i++;
@@ -26,7 +29,13 @@ void dump_dot_file (char *filename, xmlNode *aNode) {
   }
   for (int i=0;i<num_states;i++) {
     for (int j=0;(j<max_edges) && (edge_table[i][j]!=-1);j++) {
-        fprintf (myFile,"%d -> %d;\n",i,edge_table[i][j]);
+        found=0;
+        found2=0;
+        for (int k=0;k<subset.size();k++) {
+          if (subset[k]==i) found=1;
+          if (subset[k]==edge_table[i][j]) found2=1;
+        }
+        if (found && found2) fprintf (myFile,"%d -> %d;\n",i,edge_table[i][j]);
     }
   }
   fprintf(myFile,"}\n");

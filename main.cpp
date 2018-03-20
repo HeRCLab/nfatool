@@ -153,11 +153,26 @@ int main(int argc, char **argv){
 /*
  * calculate transpose graph
  */
+
   reverse_edge_table();
 
+ /* 
+  * Find the strongly cycles components 
+ */ 
+
   find_sccs();
+ 
+  /* 
+   * Find the critical path , longest path in the tree 
+  */ 
   find_critical_path(); 
   
+
+
+
+
+
+
 /*
  * save the original state of the graph, since we'll be changing it significantly
  */

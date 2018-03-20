@@ -15,9 +15,7 @@ void find_critical_path () {
 
         for (i=0;i<num_states;i++) {
                 if (start_state[i]) {
-                        path.push_back(i);
-                        dfs_critical(i,depth,deepest,deepest_path,path);
-                        path.pop_back();
+                        dfs_critical(i,depth,deepest,deepest_path,path);\
                 }
         }
 
@@ -49,7 +47,7 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
         }
         
 	path.pop_back();
-        depth--;
+    depth--;
 }
 
 
