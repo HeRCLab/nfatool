@@ -1,17 +1,14 @@
 #include "nfatool.h"
 
 void find_sccs () {
-  int *assigned,
-      i,k,component_num,
+  int i,k,component_num,
       largest_component_size=0,largest_component;
 
-  assigned=(int *)malloc(sizeof(int)*num_states);
-  for (i=0;i<num_states;i++) assigned[i]=0;
+  for (i=0;i<num_states;i++) visited[i]=0;
 
-  for (i=0;i<num_states;i++) if (start_state[i]) dfs(i);
-  //dfs(0);
+  dfs(0,1);
 
-  for(int i=visited2.size()-1 ; i>=0; i--) {
+  for(int i=0;i<visited2.size();i++) {
     assign(visited2[i],visited2[i],components);
   }
 
@@ -34,39 +31,50 @@ void find_sccs () {
 
   printf ("largest component is %d (size=%d), members: ",largest_component,largest_component_size);
   for (k=0;k<largest_component_size;k++) printf("%d (%s) ",component_list[largest_component][k],
-    node_table[component_list[largest_component][k]]->properties->children->content);
+   node_table[component_list[largest_component][k]]->properties->children->content);
   printf ("\n");
 
   dump_dot_file((char *)"largest_scc",rootGlobal,component_list[largest_component]);
-
-  free(assigned);
 }
 
-void dfs(int current_node) {
-    int flag,visited_node,in_loop=0;
+void dfs(int current_node,int start) {
+    int flag,visited_node,in_loop=0,i;
 
-    for (int i=0;i<visited2.size();i++) if (current_node == visited2[i]) return;
-    visited2.insert(visited2.begin(),current_node);
+
+    if (start) {
+        for (i=0;i<num_states;i++) if (reverse_table[i][0]==-1) {
+          //visited2.insert(visited2.begin(),i);
+          dfs(i,0);
+        }
+    } else if (!visited[current_node]) {
+    
+      visited[current_node]=1;
+
+
+    //for (int i=0;i<visited2.size();i++) if (current_node == visited2[i]) return;
 
      // ------------------------------------------------------------------      
      // Start going through all the edges of the current_node
         for(int j=0; j<max_edges; j++){
                 //std::cout << "edge_table of current node" << current_node << " " << edge_table[current_node][j] << endl;
     
-        if (edge_table[current_node][j]!=-1) {
+        if (edge_table[current_node][j]==-1) break;
             // Test if the edge in the final set, means no cycle found  
         // test the looop ??? ?
-          visited_node=0;
+          /*
+		visited_node=0;
                 for(int k=0; k<visited2.size(); k++)
                     if(edge_table[current_node][j] == visited2[k]) {
                         visited_node=1;
                         break;
-            }
-                    
-          if (!visited_node) dfs(edge_table[current_node][j]);
+            	    }
+            */        
+          //if (!visited_node) dfs(edge_table[current_node][j],0);
+		dfs(edge_table[current_node][j],0);
         }
-  }
   
+    visited2.insert(visited2.begin(),current_node);
+  }
 
   return;
 }
