@@ -16,7 +16,8 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
-
+#include <list>
+#include <deque>
 using namespace std;
 
 #include "partition.h"
