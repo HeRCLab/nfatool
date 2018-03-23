@@ -43,8 +43,10 @@ void dfs(int current_node,int start) {
     int start_states=0;
 
     if (start) {
-        for (i=0;i<num_states;i++)
+        for (i=0;i<num_states;i++) 
+
           if (start_state[i]) {
+		printf("state[%d] = %d\n", i, node_table[i]); 
           	if ((reverse_table[i][0]==-1) || (reverse_table[i][0]==i) ) {
             		//visited2.insert(visited2.begin(),i);
             		start_states++;
