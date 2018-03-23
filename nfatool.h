@@ -16,6 +16,9 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
+#include <list>
+#include <deque>
+using namespace std;
 
 #include "partition.h"
 #include "parse_anml.h"
@@ -28,8 +31,6 @@
 #define STATEMAP_SIZE   150000
 #define MAX_COLORS      100000
 #define MAX_PART_SIZE   1024
-
-using namespace std;
 
 extern unsigned char **next_state_table;
 
@@ -55,7 +56,7 @@ extern map <std::string,int> state_map;
 extern int duplicate_states;
 extern int subnfa_num;
 
-extern int  state_map2[STATEMAP_SIZE];
+extern int state_map2[STATEMAP_SIZE];
 
 extern xmlNode **node_table;
 
@@ -93,7 +94,7 @@ extern int *visitedColorTrav;
 
 extern vector<int> *state_colors;
 extern vector<int> *sccs;
-extern map <int,vector<int>> component_list;
+extern map <int,vector<int> > component_list;
 
 extern int *components;
 

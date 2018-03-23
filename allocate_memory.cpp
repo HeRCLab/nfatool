@@ -59,5 +59,5 @@ void allocate_memory() {
 
     sccs = new vector<int>[num_states];
     components=(int *)malloc(sizeof(int)*num_states);
-    for (i=0;i<num_states;i++) components[i]=-1;
+    for (int i=0;i<num_states;i++) components[i]=-1;
 }

@@ -1,55 +1,58 @@
 #include "nfatool.h"
-#include "scc.h" 
 
 #define	OVECCOUNT  30
 #define STATEMAP_SIZE 150000
 
-
 void find_critical_path () {
-        int i,depth=0,deepest=0;
-        vector<int> path,deepest_path;
-        int *visited;
+	int i,depth=0,deepest=0;
+	vector<int> path,deepest_path;
+	int *visited;
 
-        visited=(int *)malloc(sizeof(int)*num_states);
-        for (i=0;i<num_states;i++) visited[i]=0;
+	visited=(int *)malloc(sizeof(int)*num_states);
+	for (i=0;i<num_states;i++) visited[i]=0;
 
-        for (i=0;i<num_states;i++) {
-                if (start_state[i]) {
-                        dfs_critical(i,depth,deepest,deepest_path,path);\
-                }
-        }
+	for (i=0;i<num_states;i++) {
+		if (start_state[i]) {
+			path.push_back(i);
+			dfs_critical(i,depth,deepest,deepest_path,path);
+			path.pop_back();
+		}
+	}
 
-        printf ("deepest path = %d\n",deepest);
-        for (i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
-                                deepest_path[i],
-                                node_table[deepest_path[i]]->properties->children->content);
-        printf ("TERM\n");
+	printf ("deepest path = %d\n",deepest);
+	for (i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
+				deepest_path[i],
+				node_table[deepest_path[i]]->properties->children->content);
+	printf ("TERM\n");
 
-        free(visited);
+	free(visited);
 }
 
 void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,vector <int> &path) {
-        int i;
+	int i;
 
-        if (visited[ste]) return;
-        path.push_back(ste);
-        visited[ste]=1;
-        depth++;
+	if (visited[ste]) return;
+	visited[ste]=1;
 
-        if (depth > deepest) {
-                deepest = depth;
-                deepest_path = path;
-        }
+	depth++;
 
-        for (i=0;i<max_edges;i++) {
-                if (edge_table[ste][i]==-1) break;
-                dfs_critical(edge_table[ste][i],depth,deepest,deepest_path,path);
-        }
-        
-	path.pop_back();
-    depth--;
+	if (depth > deepest) {
+		deepest = depth;
+		deepest_path = path;
+	}
+
+	for (i=0;i<max_edges;i++) {
+		if (edge_table[ste][i]==-1) break;
+
+		if (i!=0) path.pop_back();
+		path.push_back(edge_table[ste][i]);
+		dfs_critical(edge_table[ste][i],depth,deepest,deepest_path,path);
+	}
+
+	path.push_back(edge_table[ste][i]);
+
+	depth--;
 }
-
 
 void traverse_partition(int ste)
 {
@@ -94,9 +97,7 @@ void traverse_partition(int ste)
       traverse_partition(edge_table[ste][i]);
 
    }
-
-} 
-
+}
 
 
 void split_colorv2(int ste, int color_from, int color_to)    /* RASHA ** adding ste as parameter in split_colorv2   **/
