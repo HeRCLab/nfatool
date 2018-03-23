@@ -71,6 +71,19 @@ vector<int> *sccs;
 map <int,vector<int> > component_list;
 int *components;
 
+/*
+    global variables to find the maximum strong components number
+ */
+
+std::vector<int> *strong_cycles;
+
+int start_of_cycle=0;
+int potential_node_in_cycle=0;
+int possible_end_of_cycle=0;
+int max_strong_node=0;
+
+boolean cycle_confirm=false;
+
 int main(int argc, char **argv){
     char filename[1024];
     char *filename2,c;
@@ -150,9 +163,7 @@ int main(int argc, char **argv){
 
   critical_path(0);
 
-
-//  critical_path(0);
-
+  pass_one();
 
 /*
  * calculate transpose graph
