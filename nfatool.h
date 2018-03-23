@@ -26,6 +26,7 @@ using namespace std;
 #include "allocate_stes.h"
 #include "scc.h"
 #include "allocate_memory.h"
+#include "strong_components_analysis.h"
 
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
@@ -64,6 +65,8 @@ extern int max_fanout,max_stes;
 
 extern vector<int> visited2;
 
+bool cycle_confirm=false;
+
 extern int num_states,
     STEinFile,
     file_state,
@@ -79,7 +82,16 @@ extern int num_states,
     current_color,
     cycle_count,
     start_color,
+    max_path,
+    path_length,
+    path_compare,
+    possinle_end_of_cycle,
+    start_of_cycle,
+    potential_node_in_cycle,
+    possible_end_of_cycle,
+    max_strong_node,
     color_count[MAX_COLORS];
+
 
 extern xmlNode *rootGlobal, /*< root node of the .ANML file */
         *start_stes[STATEMAP_SIZE];
@@ -95,6 +107,7 @@ extern int *visitedColorTrav;
 extern vector<int> *state_colors;
 extern vector<int> *sccs;
 extern map <int,vector<int> > component_list;
+extern std::vector<int> strong_cycles;
 
 extern int *components;
 

@@ -1,14 +1,22 @@
-#include "nfatool.h"
 /*
  Name: 				Lothrop Omari Richards
  
  Date: 				March 23, 2018
 
- 
+ Information:		The Purppose of these three functions are to find the largest strong connection of stes. To determine 
+ 					to value of the largest cycle, you will call "pass_one()" after the "fill_in_table" function. Everything 
+ 					within this document is required  to be used in order to run. 
+ */
 
+std::vector<int> *strong_cycles;
+
+int start_of_cycle=0;
+int potential_node_in_cycle=0;
+int possible_end_of_cycle=0;
+int max_strong_node=0;
+
+boolean cycle_confirm=false;
 /*
-	FUNCTIONS FOR STRONGLY CONNECETED COMPONENTS
-
  	pass_one:				pass one will check values stored within the edge table. if 
  							it is found that there is a back connection (as of now, i assume
  							this is how every cycle will start in the code), the function "check" will
@@ -54,12 +62,12 @@ void pass_three(int val)
 {
 	if (val == possible_end_of_cycle)
 	{
-		strong_cycles.push_back(potential_node_in_cycle);
+		strong_of_cycle.push_back(potential_node_in_cycle)
 		pass_two(potential_node_in_cycle);
 		return;
 	}
 	for (int i =  0; i <max_edges; i++){
-		pass_three(edge_table[val][i]);
+		pass_three(edge_table[val][j])
 	}
 }
 

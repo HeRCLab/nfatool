@@ -52,7 +52,7 @@ int num_states=0,
     cycle_count =0,
     start_color,
     max_path =1,
-    path_compare = 0,
+    Path_compare = 0,
     color_count[MAX_COLORS];
 
 xmlNode *rootGlobal, /*< root node of the .ANML file */
@@ -75,14 +75,10 @@ int *components;
     global variables to find the maximum strong components number
  */
 
-std::vector<int> *strong_cycles;
-
 int start_of_cycle=0;
 int potential_node_in_cycle=0;
 int possible_end_of_cycle=0;
 int max_strong_node=0;
-
-boolean cycle_confirm=false;
 
 int main(int argc, char **argv){
     char filename[1024];

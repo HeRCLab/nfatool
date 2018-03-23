@@ -255,11 +255,6 @@ int validate_interconnection() {
 		//}
         violations++;
 		
-		
-		
-
-		
-		
 		}
 	}
   }
@@ -268,7 +263,7 @@ int validate_interconnection() {
   return violations;
 }
 
-void crital_path(int node)
+void critical_path(int node)
 {
   if (visited[node] == 1)
   {
@@ -283,12 +278,12 @@ void crital_path(int node)
     {
       visited[node] = 1;
 
-      if (path_length > Path_compare)
+      if (path_length > path_compare)
       {
         path_compare = max_path;
         max_path = 1;
       }
     }
-    crital_path(edge_table[node][i]);
+    critical_path(edge_table[node][i]);
   }
 }
