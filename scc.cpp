@@ -40,14 +40,22 @@ void find_sccs () {
 void dfs(int current_node,int start) {
     int flag,visited_node,in_loop=0,i;
 
+    int start_states=0;
 
     if (start) {
-        for (i=0;i<num_states;i++) if (reverse_table[i][0]==-1) {
-          //visited2.insert(visited2.begin(),i);
-          dfs(i,0);
-        }
+        for (i=0;i<num_states;i++)
+          if (start_state[i]) {
+          	if ((reverse_table[i][0]==-1) || (reverse_table[i][0]==i) ) {
+            		//visited2.insert(visited2.begin(),i);
+            		start_states++;
+            		dfs(i,0);
+          	} else {
+			fprintf(stderr,"WARNING!  STE %d (\"%s\") is marked as start STE in ANML but is not a root node (has non-self incoming edges)!\n",i,node_table[i]->properties->children->content);
+		}
+	  }
+          printf("root nodes = %d\n",start_states);
     } else if (!visited[current_node]) {
-    
+
       visited[current_node]=1;
 
 
