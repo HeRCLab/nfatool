@@ -46,9 +46,7 @@ void traverse_partition(int ste)
       traverse_partition(edge_table[ste][i]);
 
    }
-}
-
-void 
+} 
 
 void split_colorv2(int color_from, int color_to)
 { 
