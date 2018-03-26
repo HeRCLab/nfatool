@@ -167,7 +167,7 @@ int main(int argc, char **argv){
   critical_path(0);
 
 /*
- *finds the biggest strongly connected components
+ *finds the biggest strongly connected components as an int
  */
   pass_one();
 
