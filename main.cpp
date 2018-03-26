@@ -57,11 +57,6 @@ int num_states=0,
     path_length=0,
     max_path =1,
     Path_compare = 0,
-    possible_end_of_cycle,
-    start_of_cycle,
-    potential_node_in_cycle,
-    possible_end_of_cycle,
-    max_strong_node,
     color_count[MAX_COLORS];
 
 xmlNode *rootGlobal, /*< root node of the .ANML file */
