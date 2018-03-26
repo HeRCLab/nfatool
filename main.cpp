@@ -36,6 +36,8 @@ int max_stes=0;
 
 vector<int> visited2;
 
+vector<int> strong_cycles;
+
 int num_states=0,
     STEinFile = 0,
     file_state = 0,
