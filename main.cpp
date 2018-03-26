@@ -173,7 +173,7 @@ int main(int argc, char **argv){
  *finds the biggest strongly connected components as an int
  */
   pass_one();
-  dump_dot_file("Omari_scc", root, strong_cycles);
+  dump_dot_file((char *)"Omari_scc", root, strong_cycles);
 
 /*
  * calculate transpose graph
