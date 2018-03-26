@@ -51,6 +51,8 @@ int num_states=0,
     current_color = 1,
     cycle_count =0,
     start_color,
+    path_compare=0,
+    path_length=0,
     max_path =1,
     Path_compare = 0,
     color_count[MAX_COLORS];
@@ -157,8 +159,14 @@ int main(int argc, char **argv){
     visited[i] = 0;
   }
 
+/*
+ *finds the largest critical path
+ */
   critical_path(0);
 
+/*
+ *finds the biggest strongly connected components
+ */
   pass_one();
 
 /*
