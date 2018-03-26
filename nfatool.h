@@ -65,7 +65,7 @@ extern int max_fanout,max_stes;
 
 extern vector<int> visited2;
 
-bool cycle_confirm=false;
+extern bool cycle_confirm;
 
 extern int num_states,
     STEinFile,

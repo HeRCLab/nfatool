@@ -12,6 +12,8 @@ int **FanoutTable;
 
 int *movement_map;
 
+bool cycle_confirm = false;
+
 unsigned char *report_table;
 unsigned char *start_state;
 unsigned char *symbol_set;
@@ -165,11 +167,13 @@ int main(int argc, char **argv){
  *finds the largest critical path
  */
   critical_path(0);
+  printf("critical path is: %d\n", path_compare);
 
 /*
  *finds the biggest strongly connected components as an int
  */
   pass_one();
+  dump_dot_file("Omari_scc", root, strong_cycles)
 
 /*
  * calculate transpose graph
