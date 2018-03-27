@@ -74,6 +74,8 @@ void pass_one()
 				start_of_cycle = edge_table[i][j];
 				possible_end_of_cycle = i;
 
+				check(edge_table[i][j]);
+
 				if (cycle_confirm)
 				{
 					strong_cycles.push_back(edge_table[i][j]);

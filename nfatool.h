@@ -65,7 +65,7 @@ extern int max_fanout,max_stes;
 
 extern vector<int> visited2;
 
-bool cycle_confirm=false;
+extern bool cycle_confirm;
 
 extern int num_states,
     STEinFile,
@@ -107,7 +107,7 @@ extern int *visitedColorTrav;
 extern vector<int> *state_colors;
 extern vector<int> *sccs;
 extern map <int,vector<int> > component_list;
-extern std::vector<int> strong_cycles;
+extern vector<int> strong_cycles;
 
 extern int *components;
 
