@@ -33,6 +33,8 @@ using namespace std;
 #define MAX_COLORS      100000
 #define MAX_PART_SIZE   1024
 
+#define ANML_NAME(ste_num)  node_table[ste_num]->properties->children->content
+
 extern unsigned char **next_state_table;
 
 extern int **edge_table;
@@ -66,6 +68,9 @@ extern int max_fanout,max_stes;
 extern vector<int> visited2;
 
 extern bool cycle_confirm;
+
+extern int *dfs_visited;
+extern int max_loop;
 
 extern int num_states,
     STEinFile,

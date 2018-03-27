@@ -40,6 +40,8 @@ void allocate_memory() {
   visitedColorTrav = (int *)malloc((sizeof(int))*num_states);
     for (int i = 0; i < num_states; i++) visitedColorTrav[i] = 0;
 
+  dfs_visited = (int *)malloc((sizeof(int))*num_states);
+
   for (int i = 0; i < num_states; i++)
     {
       for (int j = 0; j < max_edges; j++)

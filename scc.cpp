@@ -7,10 +7,11 @@ void find_sccs () {
   for (i=0;i<num_states;i++) visited[i]=0;
 
   dfs(0,1);
-
+/*
   for(int i=0;i<visited2.size();i++) {
     assign(visited2[i],visited2[i],components);
   }
+*/
 
   printf(" Visited_size = %d\n", (int)visited2.size()); 
 
@@ -30,36 +31,100 @@ void find_sccs () {
   }
 
   printf ("largest component is %d (size=%d), members: ",largest_component,largest_component_size);
+#ifdef DEBUG
   for (k=0;k<largest_component_size;k++) printf("%d (%s) ",component_list[largest_component][k],
    node_table[component_list[largest_component][k]]->properties->children->content);
+#endif
   printf ("\n");
 
+
   dump_dot_file((char *)"largest_scc",rootGlobal,component_list[largest_component]);
+}
+
+void reset_dfs_visited_flags() {
+  for (int i=0;i<num_states;i++) dfs_visited[i]=0;
+}
+
+void update_dfs_visited (int current_node) {
+  for (int i=0;i<num_states;i++) if (dfs_visited[i]) dfs_visited[i]++;
+  dfs_visited[current_node]=1;
+}
+
+void decrement_dfs_visited () {
+  for (int i=0;i<num_states;i++) if (dfs_visited[i]) dfs_visited[i]--;
+  //dfs_visited[current_node]=1;
+}
+
+int visited_size () {
+  int size = 0;
+  for (int i=0;i<num_states;i++) if (visited[i]) size++;
+  return size;
 }
 
 void dfs(int current_node,int start) {
     int flag,visited_node,in_loop=0,i;
 
-    int start_states=0;
+    int root_nodes=0;
 
     if (start) {
-        for (i=0;i<num_states;i++) 
+      /*
+       * ROOT NODES SECTION
+       */
+
+      /*
+       * LOOK FOR REAL ROOT NODES
+       */
+        for (i=0;i<num_states;i++) {
 
           if (start_state[i]) {
-//		printf("state[%d] = %d\n", i, node_table[i]); 
-          	if ((reverse_table[i][0]==-1) || (reverse_table[i][0]==i) && (reverse_table[i][1] == -1)) {
-            		//visited2.insert(visited2.begin(),i);
-            		start_states++;
+           	if ((reverse_table[i][0]==-1) || ((reverse_table[i][0]==i) && (reverse_table[i][1] == -1))) {
+            		root_nodes++;
+                reset_dfs_visited_flags();
             		dfs(i,0);
+                for(int i=0;i<visited2.size();i++) {
+                  assign(visited2[i],visited2[i],components);
+                }
+                visited2.clear();
+
           	} else {
-			fprintf(stderr,"WARNING!  STE %d (\"%s\") is marked as start STE in ANML but is not a root node (has non-self incoming edges)!\n",i,node_table[i]->properties->children->content);
-		}
-	  }
-          printf("root nodes = %d\n",start_states);
+#ifdef DEBUG
+			         fprintf(stderr,"WARNING!  STE %d (\"%s\") is marked as start STE in ANML but is not a root node (has non-self incoming edges)!\n",i,ANML_NAME(i));
+#endif
+		        }
+          }
+        }
+
+        printf("ANML root nodes = %d\n",root_nodes);
+
+        /*
+         * FALLBACK MODE:  SELECT IMAGINARY ROOT NODES TO ACHIEVE 100% COVERAGE
+         */
+        if (root_nodes==0) {
+          printf ("ANML file is rootless, going with plan B...\n");
+          // we didn't find any root nodes.  initiate continguency plan where we randomly select a root node
+          while (visited_size() < num_states) {
+            // pick a "root" node and proceed with DFS
+            for (i=0;i<num_states;i++) if (!visited[i]) break;
+            printf ("selecting arbitrary root STE %d\n",i);
+            reset_dfs_visited_flags();
+            dfs(i,0);
+            printf ("yield = %d/%d STEs\n",visited_size(),num_states);
+            for(int i=0;i<visited2.size();i++) {
+              assign(visited2[i],visited2[i],components);
+            }
+            visited2.clear();
+          }
+         }
+        
+        return;
+
     } else if (!visited[current_node]) {
+      /*
+       * RECURSION SECTION
+       */
 
       visited[current_node]=1;
-
+      update_dfs_visited(current_node);
 
     //for (int i=0;i<visited2.size();i++) if (current_node == visited2[i]) return;
 
@@ -84,9 +149,24 @@ void dfs(int current_node,int start) {
         }
   
     visited2.insert(visited2.begin(),current_node);
-  }
 
-  return;
+    decrement_dfs_visited();
+    return;
+  } else { // visited == 1
+    /*
+     * LOOP ANALYSIS SECTION
+     * /
+
+    // loop potentially detected!  bail out, but first gather some info on the loop
+    if (dfs_visited[current_node]) {
+      // loop confirmed, find loop size!
+      /*printf ("loop found (\"%s\" to \"%s\", length = %d\n",ANML_NAME(current_node),
+                                                            ANML_NAME(current_node),
+                                                            dfs_visited[current_node]+1);*/
+      if ((dfs_visited[current_node]) > max_loop) max_loop=dfs_visited[current_node];
+      decrement_dfs_visited();
+      return;
+  }
 }
 
 void assign(int u,int root,int *components) {

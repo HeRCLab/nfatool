@@ -77,6 +77,9 @@ vector<int> *sccs;
 map <int,vector<int> > component_list;
 int *components;
 
+int *dfs_visited;
+int max_loop=0;
+
 /*
     global variables to find the maximum strong components number
  */
@@ -166,14 +169,14 @@ int main(int argc, char **argv){
 /*
  *finds the largest critical path
  */
-  critical_path(0);
-  printf("critical path is: %d\n", path_compare);
+  //critical_path(0);
+  //printf("critical path is: %d\n", path_compare);
 
 /*
  *finds the biggest strongly connected components as an int
  */
-  pass_one();
-  dump_dot_file((char *)"Omari_scc", root, strong_cycles);
+//  pass_one();
+//  dump_dot_file((char *)"Omari_scc", root, strong_cycles);
 
 /*
  * calculate transpose graph
@@ -186,6 +189,7 @@ int main(int argc, char **argv){
  */ 
 
   find_sccs();
+  printf ("max loop size = %d\n",max_loop);
  
   /* 
    * Find the critical path , longest path in the tree 
