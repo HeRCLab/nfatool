@@ -23,7 +23,7 @@ parse_anml.o: parse_anml.cpp parse_anml.h
 partition.o: partition.cpp partition.h
 	$(CC) $(CFLAGS) -c $<
 
-nfatool: main.cpp nfatool.h allocate_memory.o scc.o visualization.o allocate_stes.o parse_anml.o partition.o
+nfatool: main.cpp nfatool.h allocate_memory.o scc.o visualization.o allocate_stes.o parse_anml.o partition.o 
 	$(CC) $(CFLAGS) $< $(LIBS) $(MODULES) -o nfatool $(LIBS)
 
 clean:
