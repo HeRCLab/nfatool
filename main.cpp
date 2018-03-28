@@ -35,6 +35,7 @@ xmlNode **node_table;
 
 int max_fanout=0;
 int max_stes=0;
+int largest_component; 
 
 vector<int> visited2;
 
@@ -194,11 +195,15 @@ int main(int argc, char **argv){
 
   vector<int> path;
   int component_ok = 1;
-  for (i=0;i<component_list[largest_component].size();i++) {
-    for (j=i;j<component_list[largest_component].size();j++) {
-      if (!find_loop_path(i,j,path)) component_ok=0;
+
+
+  for (int i=0;i<component_list[largest_component].size();i++) {
+    for (int j=i;j<component_list[largest_component].size();j++) {
+
+      if (!find_loop_path(i,j,path,1)) { component_ok=0;  printf("Component NOT OKAY\n"); }
+	printf("Component is okay!\n"); 
   }
-  
+}  
   // print error
 
   printf ("max loop size = %d, constituent = %d\n",max_loop,max_loop_constituent);

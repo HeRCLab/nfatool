@@ -117,4 +117,6 @@ extern vector<int> strong_cycles;
 
 extern int *components;
 
+extern int largest_component;
+
 #endif
