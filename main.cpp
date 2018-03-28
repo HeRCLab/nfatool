@@ -79,6 +79,7 @@ int *components;
 
 int *dfs_visited;
 int max_loop=0;
+int max_loop_constituent=-1;
 
 /*
     global variables to find the maximum strong components number
@@ -189,7 +190,25 @@ int main(int argc, char **argv){
  */ 
 
   find_sccs();
-  printf ("max loop size = %d\n",max_loop);
+  int largest_scc = 0;
+
+  vector<int> path;
+  int component_ok = 1;
+  for (i=0;i<component_list[largest_component].size();i++) {
+    for (j=i;j<component_list[largest_component].size();j++) {
+      if (!find_loop_path(i,j,path)) component_ok=0;
+  }
+  
+  // print error
+
+  printf ("max loop size = %d, constituent = %d\n",max_loop,max_loop_constituent);
+  // reset the visited array since we will recycle it
+  vector<int> max_loop_path;
+  int ste = 0;
+  do {
+    for (int i=0;i<num_states;i++) visited[i]=0;
+  } while ((!find_loop_path(max_loop_constituent,ste++,max_loop_path,1)) && (ste < num_states));
+  dump_dot_file((char *)"max_loop",root,max_loop_path);
  
   /* 
    * Find the critical path , longest path in the tree 

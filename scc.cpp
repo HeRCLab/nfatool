@@ -30,8 +30,8 @@ void find_sccs () {
     //printf ("\n");
   }
 
-  printf ("largest component is %d (size=%d), members: ",largest_component,largest_component_size);
 #ifdef DEBUG
+  printf ("largest component is %d (size=%d), members: ",largest_component,largest_component_size);
   for (k=0;k<largest_component_size;k++) printf("%d (%s) ",component_list[largest_component][k],
    node_table[component_list[largest_component][k]]->properties->children->content);
 #endif
@@ -60,6 +60,8 @@ int visited_size () {
   for (int i=0;i<num_states;i++) if (visited[i]) size++;
   return size;
 }
+
+
 
 void dfs(int current_node,int start) {
     int flag,visited_node,in_loop=0,i;
@@ -163,8 +165,12 @@ void dfs(int current_node,int start) {
       /*printf ("loop found (\"%s\" to \"%s\", length = %d\n",ANML_NAME(current_node),
                                                             ANML_NAME(current_node),
                                                             dfs_visited[current_node]+1);*/
-      if ((dfs_visited[current_node]) > max_loop) max_loop=dfs_visited[current_node];
+      if ((dfs_visited[current_node]) > max_loop) {
+        max_loop=dfs_visited[current_node];
+        max_loop_constituent = current_node;
+      }
       decrement_dfs_visited();
+
       return;
   }
 }
@@ -180,4 +186,23 @@ void assign(int u,int root,int *components) {
       assign(reverse_table[u][i],root,components);
     }
   }
+}
+
+int find_loop_path (int target,int ste,vector <int> &path,int start) {
+  int ret=0,i;
+  if (target==ste && !start) return 1;
+
+  if (visited[ste]) return 0;
+  visited[ste]=1;
+
+  for (i=0;i<max_edges;i++) {
+    if (edge_table[ste][i]==-1) break;
+    ret=find_loop_path(target,edge_table[ste][i],path,0);
+    if (ret) {
+      path.push_back(ste);
+      return 1;
+    }
+  }
+
+  return 0;
 }

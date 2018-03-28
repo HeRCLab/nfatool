@@ -71,6 +71,7 @@ extern bool cycle_confirm;
 
 extern int *dfs_visited;
 extern int max_loop;
+extern int max_loop_constituent;
 
 extern int num_states,
     STEinFile,
