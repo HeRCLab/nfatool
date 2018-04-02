@@ -177,48 +177,48 @@ int main(int argc, char **argv){
 /*
  *finds the biggest strongly connected components as an int
  */
-  pass_one();
+//  pass_one();
 //  dump_dot_file((char *)"Omari_scc", root, strong_cycles);
 
 /*
  * calculate transpose graph
  */
 
-//   reverse_edge_table();
+  reverse_edge_table();
 
-//  /* 
-//   * Find the strongly cycles components 
-//  */ 
+ /* 
+  * Find the strongly cycles components 
+ */ 
 
-//   find_sccs();
-//   int largest_scc = 0;
+  find_sccs();
+  int largest_scc = 0;
 
-//   vector<int> path;
-//   int component_ok = 1;
+  vector<int> path;
+  int component_ok = 1;
 
 
-//   for (int i=0;i<component_list[largest_component].size();i++) {
-//     for (int j=i;j<component_list[largest_component].size();j++) {
+  for (int i=0;i<component_list[largest_component].size();i++) {
+    for (int j=i;j<component_list[largest_component].size();j++) {
 
-//       if (!find_loop_path(i,j,path,1)) { component_ok=0;  printf("Component NOT OKAY\n"); }
-// 	printf("Component is okay!\n"); 
-//   }
-// }  
-//   // print error
+      if (!find_loop_path(i,j,path,1)) { component_ok=0;  printf("Component NOT OKAY\n"); }
+	printf("Component is okay!\n"); 
+  }
+}  
+  // print error
 
-//   printf ("max loop size = %d, constituent = %d\n",max_loop,max_loop_constituent);
-//   // reset the visited array since we will recycle it
-//   vector<int> max_loop_path;
-//   int ste = 0;
-//   do {
-//     for (int i=0;i<num_states;i++) visited[i]=0;
-//   } while ((!find_loop_path(max_loop_constituent,ste++,max_loop_path,1)) && (ste < num_states));
-//   dump_dot_file((char *)"max_loop",root,max_loop_path);
+  printf ("max loop size = %d, constituent = %d\n",max_loop,max_loop_constituent);
+  // reset the visited array since we will recycle it
+  vector<int> max_loop_path;
+  int ste = 0;
+  do {
+    for (int i=0;i<num_states;i++) visited[i]=0;
+  } while ((!find_loop_path(max_loop_constituent,ste++,max_loop_path,1)) && (ste < num_states));
+  dump_dot_file((char *)"max_loop",root,max_loop_path);
  
-//   /* 
-//    * Find the critical path , longest path in the tree 
-//   */ 
-//   find_critical_path(); 
+  /* 
+   * Find the critical path , longest path in the tree 
+  */ 
+  find_critical_path(); 
   
 
 
