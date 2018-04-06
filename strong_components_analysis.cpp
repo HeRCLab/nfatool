@@ -43,22 +43,35 @@ void check(int val)
 
 void pass_two(int val)
 {
-	for (int i = 0; i < max_edges; i++)
+	if (visited[val] == 1)
 	{
-		potential_node_in_cycle=edge_table[val][i];
-		pass_three(edge_table[val][i]);
+		return;
+	}
+	else{
+		visited[val] = 1;
+		for (int i = 0; i < max_edges; i++)
+		{
+			potential_node_in_cycle=edge_table[val][i];
+			pass_three(edge_table[val][i]);
+		}
 	}
 }
 
 void pass_three(int val)
 {
-	if (val == possible_end_of_cycle)
+	if (val == -1)
+		{
+			return;
+		}
+
+	else if (val == possible_end_of_cycle)
 	{
 		strong_cycles.push_back(potential_node_in_cycle);
 		pass_two(potential_node_in_cycle);
 		return;
 	}
 	for (int i =  0; i <max_edges; i++){
+
 		pass_three(edge_table[val][i]);
 	}
 }
@@ -69,16 +82,28 @@ void pass_one()
 	{
 		for (int j = 0; j < max_edges; j++)
 		{
+			if (edge_table[i][j] == -1)
+				{
+					break;
+				}
+
 			if (edge_table[i][j] < i)
 			{
 				start_of_cycle = edge_table[i][j];
+
 				possible_end_of_cycle = i;
 
 				check(edge_table[i][j]);
 
 				if (cycle_confirm)
 				{
-					strong_cycles.push_back(edge_table[i][j]);
+					printf("Starting at STE %d, the cycle ends at STE %d \n",start_of_cycle, possible_end_of_cycle );
+					for (int i = 0; i < num_states; i++)
+					{
+						visited[i] = 0;
+					}
+
+					//strong_cycles.push_back(edge_table[i][j]);
 					pass_two(edge_table[i][j]);
 
 					if(strong_cycles.size() > max_strong_node)
@@ -91,4 +116,5 @@ void pass_one()
 			}
 		}
 	}
+	printf("The largest strongest component holds %d STE\n", max_strong_node);
 }
