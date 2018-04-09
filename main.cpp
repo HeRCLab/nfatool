@@ -76,6 +76,7 @@ vector<int> *state_colors;
 vector<int> *sccs;
 map <int,vector<int> > component_list;
 int *components;
+int largest_component_size=0,largest_component;
 
 int *dfs_visited;
 int max_loop=0;
@@ -89,6 +90,11 @@ int start_of_cycle=0;
 int potential_node_in_cycle=0;
 int possible_end_of_cycle=0;
 int max_strong_node=0;
+
+vector<int> deepest_path;
+int deepest=0;
+
+int total_visited2_size=0;
 
 int main(int argc, char **argv){
     char filename[1024];
@@ -186,36 +192,65 @@ int main(int argc, char **argv){
   reverse_edge_table();
 
  /* 
-  * Find the strongly cycles components 
+  * Find the strongly connected components and optionally dump to file
  */ 
-
   find_sccs();
-  int largest_scc = 0;
 
+#ifdef DEBUG
+  printf ("largest component is %d (size=%d)\n",largest_component,largest_component_size);
+  /*
+  for (k=0;k<largest_component_size;k++) printf("%d (%s) ",component_list[largest_component][k],
+  node_table[component_list[largest_component][k]]->properties->children->content);
+  printf ("\n");
+  */
+  dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component]);
+#endif
+
+/*
+ * validate largest SCC
+ */
+  /*
   vector<int> path;
   int component_ok = 1;
-  for (i=0;i<component_list[largest_component].size();i++) {
-    for (j=i;j<component_list[largest_component].size();j++) {
-      if (!find_loop_path(i,j,path)) component_ok=0;
+  for (int i=0;i<component_list[largest_component].size();i++) {
+    for (int j=i;j<component_list[largest_component].size();j++) {
+      if (!find_loop_path(i,j,path,0)) {
+        component_ok=0;
+    //    fprintf(stderr,"error:  component %d has unreachable path %d (\"%s\") -> %d (\"%s\")\n",
+    //                                                                          largest_component,i,ANML_NAME(i),j,ANML_NAME(j));
+      }
+    }
   }
-  
+  */
+
+/*
+ * find maximum loop
+ */
   // print error
 
   printf ("max loop size = %d, constituent = %d\n",max_loop,max_loop_constituent);
-  // reset the visited array since we will recycle it
-  vector<int> max_loop_path;
-  int ste = 0;
-  do {
+
+  if (max_loop != 0) {
+    // reset the visited array since we will recycle it
+    vector<int> max_loop_path;
+    int ste = 0;
     for (int i=0;i<num_states;i++) visited[i]=0;
-  } while ((!find_loop_path(max_loop_constituent,ste++,max_loop_path,1)) && (ste < num_states));
-  dump_dot_file((char *)"max_loop",root,max_loop_path);
- 
+    find_loop_path(max_loop_constituent,max_loop_constituent,max_loop_path,1);
+    dump_dot_file((char *)"max_loop",root,max_loop_path);
+  }
+
   /* 
    * Find the critical path , longest path in the tree 
   */ 
   find_critical_path(); 
   
-
+  printf ("deepest path = %d\n",deepest);
+  
+  for (int i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
+                          deepest_path[i],
+                          node_table[deepest_path[i]]->properties->children->content);
+  printf ("TERM\n");
+  
 
 
 

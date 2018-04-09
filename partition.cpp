@@ -6,24 +6,16 @@
 
 
 void find_critical_path () {
-        int i,depth=0,deepest=0;
-        vector<int> path,deepest_path;
-        int *visited;
-
-        visited=(int *)malloc(sizeof(int)*num_states);
+        int i,depth=0;
+        vector<int> path;
+        
         for (i=0;i<num_states;i++) visited[i]=0;
 
         for (i=0;i<num_states;i++) {
                 if (start_state[i]) {
-                        dfs_critical(i,depth,deepest,deepest_path,path);\
+                        dfs_critical(i,depth,deepest,deepest_path,path);
                 }
         }
-
-        printf ("deepest path = %d\n",deepest);
-        for (i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
-                                deepest_path[i],
-                                node_table[deepest_path[i]]->properties->children->content);
-        printf ("TERM\n");
 
         free(visited);
 }

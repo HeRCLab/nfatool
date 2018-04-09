@@ -48,7 +48,7 @@ void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset) {
     		if (aNode->type==XML_ELEMENT_NODE && !strcmp((const char *)aNode->name,"state-transition-element")){
         		found = 0;
         		for (int j=0;j<subset.size();j++) if (subset[j]==i) found=1;
-        			if (found) fprintf (myFile,"\t%d [label=\"%s:%s\" peripherals=%d];\n",i,aNode->properties->children->content,
+        			if (found) fprintf (myFile,"\t%d [label=\"%d:%s:%s\" peripherals=%d];\n",i,i,aNode->properties->children->content,
         				aNode->properties->next->children->content,
         				start_state[i]+report_table[i]+1);
         				i++;

@@ -37,6 +37,8 @@ using namespace std;
 
 extern unsigned char **next_state_table;
 
+extern int total_visited2_size;
+
 extern int **edge_table;
 extern int **orig_edge_table;
 extern int **reverse_table;
@@ -115,6 +117,11 @@ extern vector<int> *sccs;
 extern map <int,vector<int> > component_list;
 extern vector<int> strong_cycles;
 
+extern int largest_component_size,largest_component;
+
 extern int *components;
+
+extern vector<int> deepest_path;
+extern int deepest;
 
 #endif

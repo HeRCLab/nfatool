@@ -1,21 +1,20 @@
 #include "nfatool.h"
 
 void find_sccs () {
-  int i,k,component_num,
-      largest_component_size=0,largest_component;
+  int i,k,component_num;
 
   for (i=0;i<num_states;i++) visited[i]=0;
 
   dfs(0,1);
+
 /*
   for(int i=0;i<visited2.size();i++) {
     assign(visited2[i],visited2[i],components);
   }
 */
 
-  printf(" Visited_size = %d\n", (int)visited2.size()); 
+  //printf(" Visited_size = %d\n", (int)visited2.size()); 
 
-  map <int,vector<int> > component_list;
   for (i=0;i<num_states;i++) {
     component_list[components[i]].push_back(i);
   }
@@ -29,16 +28,6 @@ void find_sccs () {
     //for (k=0;k<(*j).second.size();k++) printf("%d ",(*j).second[k]);
     //printf ("\n");
   }
-
-#ifdef DEBUG
-  printf ("largest component is %d (size=%d), members: ",largest_component,largest_component_size);
-  for (k=0;k<largest_component_size;k++) printf("%d (%s) ",component_list[largest_component][k],
-   node_table[component_list[largest_component][k]]->properties->children->content);
-#endif
-  printf ("\n");
-
-
-  dump_dot_file((char *)"largest_scc",rootGlobal,component_list[largest_component]);
 }
 
 void reset_dfs_visited_flags() {
@@ -60,8 +49,6 @@ int visited_size () {
   for (int i=0;i<num_states;i++) if (visited[i]) size++;
   return size;
 }
-
-
 
 void dfs(int current_node,int start) {
     int flag,visited_node,in_loop=0,i;
@@ -96,7 +83,7 @@ void dfs(int current_node,int start) {
           }
         }
 
-        printf("ANML root nodes = %d\n",root_nodes);
+        printf("ANML root nodes (no incoming edges or only self-loop) = %d\n",root_nodes);
 
         /*
          * FALLBACK MODE:  SELECT IMAGINARY ROOT NODES TO ACHIEVE 100% COVERAGE
@@ -177,7 +164,15 @@ void dfs(int current_node,int start) {
 
 void assign(int u,int root,int *components) {
   int i;
-  if (components[u]==-1) {
+
+  if ((components[u]==-1) && (!visited[u]))  {
+    #ifdef DEBUG
+      printf ("WARNING!  STE %d is reachable by >1 start STEs\n",u);
+    #endif
+  } else
+
+  if ((components[u]==-1) && (visited[u])) {
+
     components[u] = root;
 
     for (i=0;i<max_fan_in;i++) {
