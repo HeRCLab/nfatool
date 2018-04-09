@@ -121,7 +121,11 @@ extern int largest_component_size,largest_component;
 
 extern int *components;
 
+<<<<<<< HEAD
 extern vector<int> deepest_path;
 extern int deepest;
+=======
+extern int largest_component;
+>>>>>>> b8d5532d728aaebf8684615e250370346f9f323d
 
 #endif
