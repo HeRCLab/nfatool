@@ -18,6 +18,8 @@
 #include <vector>
 #include <list>
 #include <deque>
+#include <queue>
+
 using namespace std;
 
 #include "partition.h"
@@ -124,5 +126,7 @@ extern int *components;
 extern vector<int> deepest_path;
 extern int deepest;
 extern int largest_component;
+
+extern int *root_node;
 
 #endif

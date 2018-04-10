@@ -5,7 +5,8 @@ void find_sccs () {
 
   for (i=0;i<num_states;i++) visited[i]=0;
 
-  dfs(0,1);
+  // find sccs and ignore "weird start states", i.e. states marked as start but with non-self incoming edges
+  dfs(0,1,0);
 
 /*
   for(int i=0;i<visited2.size();i++) {
@@ -15,9 +16,23 @@ void find_sccs () {
 
   //printf(" Visited_size = %d\n", (int)visited2.size()); 
 
+  // collect states into SCC categories
   for (i=0;i<num_states;i++) {
     component_list[components[i]].push_back(i);
   }
+  
+  // check to see if we have unassigned states
+  if (component_list[-1].size() != 0) {
+	  printf ("WARNING:  detected states that are not assigned to components!  Re-running component assignment allowing weird start states\n");
+	  dfs(0,1,1);
+  }
+  
+  for (i=0;i<component_list[-1].size();i++) {
+	  int ste = component_list[-1][i];
+	  int new_component = components[ste];
+      component_list[new_component].push_back(ste);
+  }
+  component_list[-1].clear();
 
   for (map<int,vector<int> >::iterator j=component_list.begin(); j!=component_list.end(); j++) {
     if ((*j).second.size() > largest_component_size) {
@@ -50,7 +65,7 @@ int visited_size () {
   return size;
 }
 
-void dfs(int current_node,int start) {
+void dfs(int current_node,int start, int allow_weird_start_states) {
     int flag,visited_node,in_loop=0,i;
 
     int root_nodes=0;
@@ -66,10 +81,11 @@ void dfs(int current_node,int start) {
         for (i=0;i<num_states;i++) {
 
           if (start_state[i]) {
-           	if ((reverse_table[i][0]==-1) || ((reverse_table[i][0]==i) && (reverse_table[i][1] == -1))) {
-            		root_nodes++;
+           	if (allow_weird_start_states || ((reverse_table[i][0]==-1) || ((reverse_table[i][0]==i) && (reverse_table[i][1] == -1)))) {
+            	root_nodes++;
+				root_node[i]=1;
                 reset_dfs_visited_flags();
-            		dfs(i,0);
+            		dfs(i,0,allow_weird_start_states);
                 for(int i=0;i<visited2.size();i++) {
                   assign(visited2[i],visited2[i],components);
                 }
@@ -96,7 +112,7 @@ void dfs(int current_node,int start) {
             for (i=0;i<num_states;i++) if (!visited[i]) break;
             printf ("selecting arbitrary root STE %d\n",i);
             reset_dfs_visited_flags();
-            dfs(i,0);
+            dfs(i,0,allow_weird_start_states);
             printf ("yield = %d/%d STEs\n",visited_size(),num_states);
             for(int i=0;i<visited2.size();i++) {
               assign(visited2[i],visited2[i],components);
@@ -134,7 +150,7 @@ void dfs(int current_node,int start) {
             	    }
             */        
           //if (!visited_node) dfs(edge_table[current_node][j],0);
-		dfs(edge_table[current_node][j],0);
+		dfs(edge_table[current_node][j],0,allow_weird_start_states);
         }
   
     visited2.insert(visited2.begin(),current_node);

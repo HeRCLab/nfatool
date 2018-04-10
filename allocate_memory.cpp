@@ -57,6 +57,9 @@ void allocate_memory() {
 
     state_colors = new vector<int>[num_states];
 
+	root_node = (int *)malloc((sizeof(int))*num_states);
+	 for (int i=0;i<num_states;i++) root_node[i]=0;
+	
     for (int i=0;i<MAX_COLORS;i++) color_count[i]=0;
 
     sccs = new vector<int>[num_states];

@@ -1,9 +1,10 @@
  #include "nfatool.h"
 
-void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset) {
+void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset, int colors) {
   FILE *myFile;
   int found,found2;
-
+  char str[1024];
+  
   const char *error;
 
   int *id; 
@@ -11,7 +12,6 @@ void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset) {
 
   pcre *re; 
   int rc=0; 
-  char str[1024];
 
   int erroroff = 0,
        erroffset = 0;
@@ -46,12 +46,28 @@ void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset) {
 
 	  for(aNode=tmpNode;aNode; aNode = aNode->next){
     		if (aNode->type==XML_ELEMENT_NODE && !strcmp((const char *)aNode->name,"state-transition-element")){
-        		found = 0;
-        		for (int j=0;j<subset.size();j++) if (subset[j]==i) found=1;
-        			if (found) fprintf (myFile,"\t%d [label=\"%d:%s:%s\" peripherals=%d];\n",i,i,aNode->properties->children->content,
-        				aNode->properties->next->children->content,
-        				start_state[i]+report_table[i]+1);
-        				i++;
+        		found=0;
+        		for (int j=0;j<subset.size();j++) if (subset[j]==i) found=1; // check to see if the STE is part of the subset
+				if (subset.size()==0) found=1; // HACK: if subset is empty, assume we want to print all STEs
+        		if (found) {
+					if (colors) { // only print colors if specified
+						strcpy(str,":(");
+						for (int k=0; k<state_colors[i].size(); k++) {
+							sprintf (str,"%s,%d",str,state_colors[i][k]);
+						}
+						sprintf (str,"%s)",str);
+					} else 
+						strcpy(str,"");
+						
+					fprintf (myFile,"\t%d [label=\"%d:%s:%s%s\" peripherals=%d];\n",i,
+																					i,
+																					aNode->properties->children->content,
+																					aNode->properties->next->children->content,
+																					str,
+																					start_state[i]+report_table[i]+1);
+						
+				}
+        		i++;
       		}
   	}	
 
@@ -91,7 +107,7 @@ void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset) {
           if (subset[k]==i) found=1;
           if (subset[k]==edge_table[i][j]) found2=1;
         }
-        if (found && found2) fprintf (myFile,"%d -> %d;\n",i,edge_table[i][j]);
+        if ((found && found2)||(subset.size()==0)) fprintf (myFile,"%d -> %d;\n",i,edge_table[i][j]);
     }
   }
 

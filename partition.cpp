@@ -1,9 +1,9 @@
 #include "nfatool.h"
-#include "scc.h" 
 
 #define	OVECCOUNT  30
 #define STATEMAP_SIZE 150000
 
+using namespace std;
 
 void find_critical_path () {
         int i,depth=0;
@@ -89,7 +89,228 @@ void traverse_partition(int ste)
 
 } 
 
+void partition (int max_partition_size) {
+	int i,j,max_color_membership,color_to_split;
+	map <int,vector <int> > color_membership;
+	vector <int> virtual_root_edges,virtual_root_colors;
+	char str[1024];
+	
+	// initialize colors and set up virtual root
+	virtual_root_colors.push_back(0);
+	color_membership[0].push_back(-1); // -1 is stand-in for virtual root
+	for (i=0;i<num_states;i++) {
+		state_colors[i].push_back(0);
+		color_membership[0].push_back(i);
+		if (root_node[i]) virtual_root_edges.push_back(i); // create outgoing edges from virtual root
+	}
+	
+	// perform first check for partition violates
+	max_color_membership=0;
+	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
+		max_color_membership=color_membership[i].size();
+		color_to_split=i;
+	}
+	
+	int coloring = 0;
+	vector<int> myemptyvector;
+	while (max_color_membership > max_partition_size) {
+		// dump the dot file
+		sprintf (str,"coloring%d",coloring++);
+		dump_dot_file (str,rootGlobal,myemptyvector,1);
+		
+		int ste_to_split = find_lowest_pure_node(color_to_split,virtual_root_edges,virtual_root_colors);
+		if (ste_to_split==-2) {
+			fprintf (stderr,"ERROR:  cannot find pure color %d node!\n",color_to_split);
+			exit(0);
+		}
+		split_colors(ste_to_split,color_membership,virtual_root_edges,virtual_root_colors);
+		
+		max_color_membership=0;
+		for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
+			max_color_membership=color_membership[i].size();
+			color_to_split=i;
+		}
+	}
+	
+	// consolidation step
+	int merged;
+	do {		
+		merged=0;
+		// consolidate
+		for (i=0;i<current_color;i++) {
+			for (j=i+1;j<current_color;j++) {
+				if ((color_membership[i].size() + color_membership[j].size()) <= max_partition_size) {
+					merge_colors(i,j,color_membership);
+					merged=1;
+				}
+			}
+		}
+	} while (merged);
+}
 
+void merge_colors(int color1,int color2,map <int,vector <int> > &color_membership) {
+	int i;
+	
+	for (i=0;i<color_membership[color2].size();i++) {
+		int ste = color_membership[color2][i];
+		color_membership[color1].push_back(ste);
+		state_colors[ste].push_back(color1);
+		for (vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+			if (*j==color2) state_colors[ste].erase(j);
+			break;
+		}
+	}
+	color_membership[color2].clear();
+}
+
+int find_lowest_pure_node(int color,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+	queue <int> myqueue;
+	int i,found;
+	
+	myqueue.push(-1); // stand-in for virtual root
+	
+	while (myqueue.size()) {
+		int dequeued = myqueue.front();
+		myqueue.pop();
+		int num_colors = dequeued == -1 ? virtual_root_colors.size() : state_colors[dequeued].size();
+		int first_color = dequeued == -1 ? virtual_root_colors[0] : state_colors[dequeued][0];
+		
+		if (num_colors==1 && first_color==color) return dequeued;
+		
+		if (dequeued==-1)
+			for (i=0;i<virtual_root_edges.size();i++) myqueue.push(virtual_root_edges[i]);
+		else
+			for (i=0;i<max_edges;i++) if (edge_table[dequeued][i]==-1) break; else myqueue.push(edge_table[dequeued][i]);
+	}
+	
+	return -2; // cannot find appropriate STE
+}
+
+// This function finds all outgoing edges from an SCC
+vector <int> find_outgoing_edges (vector <int> scc) {
+	vector <int> edges;
+	int i,j,k,found;
+	
+	for (i=0; i<scc.size(); i++) {
+		for (j=0;j<max_edges;j++) {
+			if (edge_table[i][j]==-1) break;
+			
+			found=0;
+			for (k=0;k<scc.size();k++) if (edge_table[i][j]==scc[k]) found=1;
+			if (!found) edges.push_back(edge_table[i][j]);
+		}
+	}
+	
+	return edges;
+}
+
+// This function finds all outgoing edges from an SCC
+vector <int> find_incoming_edges (vector <int> scc) {
+	vector <int> edges;
+	int i,j,k,found;
+	
+	for (i=0; i<scc.size(); i++) {
+		for (j=0;j<max_fan_in;j++) {
+			if (reverse_table[i][j]==-1) break;
+			
+			found=0;
+			for (k=0;k<scc.size();k++) if (reverse_table[i][j]==scc[k]) found=1;
+			if (!found) edges.push_back(reverse_table[i][j]);
+		}
+	}
+	
+	return edges;
+}
+
+void split_colors (int ste, map <int,vector <int> > &color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+	int i,k,
+		original_color,
+		old_current_color=current_color;
+	vector<int> &ste_colors;
+	
+	if (ste==-1)
+		ste_colors=virtual_root_colors;
+	else
+		ste_colors=state_colors[ste];
+	
+	if (ste_colors.size() != 1) {
+		fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
+		exit(0);
+	}
+	
+	//TODO: modify the rest of this function to deal with the virtual root
+	
+	original_color = ste_colors[0];
+	
+	// STEP 1:  replace the original color from ste and its fellow SCC members
+	int scc_num = components[ste]; // find component number
+	vector <int> &scc_contents = component_list[scc_num]; // find members of that component
+	for (k=0;k<scc_contents.size();k++) {
+		int fellow_scc_member = scc_contents[k];
+		// remove the color from the list of colors for each node in the SCC
+		for (std::vector<int>::iterator j = state_colors[fellow_scc_member].begin() ; j != state_colors[fellow_scc_member].end() ; j++) {
+			if (*j == original_color) {
+				state_colors[fellow_scc_member].erase(j);
+				break;
+			}
+		}
+	}
+	
+	// STEP 2:  replace original color with a new color on each outgoing edge
+	vector <int> outgoing_edges = find_outgoing_edges(scc_contents);
+	for (i=0;i<outgoing_edges.size();i++) {
+		for (k=0;k<scc_contents.size();k++) state_colors[scc_contents[k]].push_back(current_color); // note: current_color is a new color!
+		int dest_node = outgoing_edges[i];
+		replace_color(dest_node,original_color,current_color,color_membership);
+		current_color++;
+	}
+	
+	vector <int> incoming_edges = find_incoming_edges(scc_contents);
+	
+	// STEP 3:  recurse backward to root
+	for (k=0;k<incoming_edges.size();k++) {
+		reverse_replace_color(incoming_edges[k],original_color,old_current_color,current_color,color_membership);
+	}
+	
+	// clear the original color
+	color_membership[original_color].clear();
+}
+
+void replace_color (int ste, int original_color, int new_color, map <int,vector <int> > &color_membership) {
+	int i,j;
+	
+	for (i=0;i<max_edges;i++) {
+		if (edge_table[ste][i]==-1) break;
+		for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+			if (*j == original_color) {
+				state_colors[ste].erase(j);
+				break;
+			}
+		}
+		state_colors[ste].push_back(new_color);
+		color_membership[new_color].push_back(ste);
+		replace_color (edge_table[ste][i],original_color,new_color,color_membership);
+	}
+}
+
+void reverse_replace_color (int ste, int original_color, int new_color_start, int new_color_end, map <int,vector <int> > &color_membership) {
+	int i,k;
+	
+	for (i=0;i<max_fan_in;i++) {
+		if (reverse_table[ste][i]==-1) break;
+		for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+			if (*j == original_color) {
+				state_colors[ste].erase(j);
+				break;
+			}
+		}
+		for (k=new_color_start;k<new_color_end;k++)	{
+			state_colors[ste].push_back(k);
+			color_membership[k].push_back(ste);
+		}
+		reverse_replace_color (edge_table[ste][i],original_color,new_color_start,new_color_end,color_membership);
+	}
+}
 
 void split_colorv2(int ste, int color_from, int color_to)    /* RASHA ** adding ste as parameter in split_colorv2   **/
 

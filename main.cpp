@@ -35,7 +35,6 @@ xmlNode **node_table;
 
 int max_fanout=0;
 int max_stes=0;
-int largest_component_size; 
 
 vector<int> visited2;
 
@@ -96,6 +95,8 @@ vector<int> deepest_path;
 int deepest=0;
 
 int total_visited2_size=0;
+
+int *root_node;
 
 int main(int argc, char **argv){
     char filename[1024];
@@ -204,7 +205,7 @@ int main(int argc, char **argv){
   node_table[component_list[largest_component][k]]->properties->children->content);
   printf ("\n");
   */
-  dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component]);
+  dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component],0);
 #endif
 
 /*
@@ -236,7 +237,7 @@ int main(int argc, char **argv){
     int ste = 0;
     for (int i=0;i<num_states;i++) visited[i]=0;
     find_loop_path(max_loop_constituent,max_loop_constituent,max_loop_path,1);
-    dump_dot_file((char *)"max_loop",root,max_loop_path);
+    dump_dot_file((char *)"max_loop",root,max_loop_path,0);
   }
 
   /* 
@@ -249,12 +250,12 @@ int main(int argc, char **argv){
   for (int i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
                           deepest_path[i],
                           node_table[deepest_path[i]]->properties->children->content);
-  printf ("TERM\n");
+  printf ("\n");
   
-
-
-
-
+  /*
+   * Partition the graph
+   */
+  if (max_stes) partition(max_stes);
 
 /*
  * save the original state of the graph, since we'll be changing it significantly

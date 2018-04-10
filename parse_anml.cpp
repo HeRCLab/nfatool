@@ -190,7 +190,7 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
 				}
 			}
 			pcre_free(re);
-		}else if (!strcmp((const char *)attr->name,"start") ) {
+		}else if (!strcmp((const char *)attr->name,"start") && strcmp((const char *)attr->children->content,"none")) {
       *start = 1;
     }
 	}
