@@ -11,7 +11,7 @@ int find_lowest_pure_node(int color,vector <int> &virtual_root_edges, vector <in
 vector <int> find_outgoing_edges (vector <int> scc);
 vector <int> find_incoming_edges (vector <int> scc);
 void split_colors (int ste, map <int,vector <int> > &color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors);
-void replace_color (int ste, int orginal_color, int new_color, map <int,vector <int> > &color_membership);
+void replace_color (int ste, int original_color, int new_color, map <int,vector <int> > &color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors);
 void reverse_replace_color (int ste, int orginal_color, int new_color_start, int new_color_end, map <int,vector <int> > &color_membership);
 
 // original versions of the partitioning functions

@@ -226,62 +226,116 @@ void split_colors (int ste, map <int,vector <int> > &color_membership,vector <in
 	int i,k,
 		original_color,
 		old_current_color=current_color;
-	vector<int> &ste_colors;
+	vector<int> ste_colors;
 	
-	if (ste==-1)
-		ste_colors=virtual_root_colors;
-	else
+	// clear visitied to avoid inifinite loops
+	for (i=0;i<num_states;i++) visited[i]=0;
+		
+	if (ste!=-1) {
+		// not virtual root
+		
 		ste_colors=state_colors[ste];
+		if (ste_colors.size() != 1) {
+			fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
+			exit(0);
+		}
+		
+		original_color = ste_colors[0];
 	
-	if (ste_colors.size() != 1) {
-		fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
-		exit(0);
-	}
-	
-	//TODO: modify the rest of this function to deal with the virtual root
-	
-	original_color = ste_colors[0];
-	
-	// STEP 1:  replace the original color from ste and its fellow SCC members
-	int scc_num = components[ste]; // find component number
-	vector <int> &scc_contents = component_list[scc_num]; // find members of that component
-	for (k=0;k<scc_contents.size();k++) {
-		int fellow_scc_member = scc_contents[k];
-		// remove the color from the list of colors for each node in the SCC
-		for (std::vector<int>::iterator j = state_colors[fellow_scc_member].begin() ; j != state_colors[fellow_scc_member].end() ; j++) {
+		// STEP 1:  delete the original color from ste and its fellow SCC members
+		int scc_num = components[ste]; // find component number
+		vector <int> &scc_contents = component_list[scc_num]; // find members of that component
+		for (k=0;k<scc_contents.size();k++) {
+			int fellow_scc_member = scc_contents[k];
+			// remove the color from the list of colors for each node in the SCC
+			for (std::vector<int>::iterator j = state_colors[fellow_scc_member].begin() ; j != state_colors[fellow_scc_member].end() ; j++) {
+				if (*j == original_color) {
+					state_colors[fellow_scc_member].erase(j);
+					break;
+				}
+			}
+		}
+		// STEP 2:  replace original color with a new color on each outgoing edge
+		vector <int> outgoing_edges = find_outgoing_edges(scc_contents);
+		
+		for (i=0;i<outgoing_edges.size();i++) {
+			for (k=0;k<scc_contents.size();k++) state_colors[scc_contents[k]].push_back(current_color); // note: current_color is a new color!
+			int dest_node = outgoing_edges[i];
+			replace_color(dest_node,original_color,current_color,color_membership,virtual_root_edges,virtual_root_colors);
+			current_color++;
+		}
+		
+		// clear visitied to avoid inifinite loops
+		for (i=0;i<num_states;i++) visited[i]=0;
+		
+		// STEP 3:  recurse backward to root
+		vector <int> incoming_edges = find_incoming_edges(scc_contents);
+		for (k=0;k<incoming_edges.size();k++) {
+			reverse_replace_color(incoming_edges[k],original_color,old_current_color,current_color,color_membership);
+		}
+		
+	} else {
+		// virtual root
+		
+		ste_colors=virtual_root_colors;
+		if (ste_colors.size() != 1) {
+			fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
+			exit(0);
+		}
+		
+		original_color = ste_colors[0];
+		
+		// STEP 1:  delete the original color from ste and its fellow SCC members
+		for (std::vector<int>::iterator j = virtual_root_colors.begin() ; j != virtual_root_colors.end() ; j++) {
 			if (*j == original_color) {
-				state_colors[fellow_scc_member].erase(j);
+				virtual_root_colors.erase(j);
 				break;
 			}
 		}
-	}
-	
-	// STEP 2:  replace original color with a new color on each outgoing edge
-	vector <int> outgoing_edges = find_outgoing_edges(scc_contents);
-	for (i=0;i<outgoing_edges.size();i++) {
-		for (k=0;k<scc_contents.size();k++) state_colors[scc_contents[k]].push_back(current_color); // note: current_color is a new color!
-		int dest_node = outgoing_edges[i];
-		replace_color(dest_node,original_color,current_color,color_membership);
-		current_color++;
-	}
-	
-	vector <int> incoming_edges = find_incoming_edges(scc_contents);
-	
-	// STEP 3:  recurse backward to root
-	for (k=0;k<incoming_edges.size();k++) {
-		reverse_replace_color(incoming_edges[k],original_color,old_current_color,current_color,color_membership);
+		
+		// STEP 2:  replace original color with a new color on each outgoing edge
+		vector <int> &outgoing_edges = virtual_root_edges;
+		
+		for (i=0;i<outgoing_edges.size();i++) {
+			virtual_root_colors.push_back(current_color); // note: current_color is a new color!
+			int dest_node = outgoing_edges[i];
+			replace_color(dest_node,original_color,current_color,color_membership,virtual_root_edges,virtual_root_colors);
+			current_color++;
+		}
+		
 	}
 	
 	// clear the original color
 	color_membership[original_color].clear();
 }
 
-void replace_color (int ste, int original_color, int new_color, map <int,vector <int> > &color_membership) {
+void replace_color (int ste, int original_color, int new_color, map <int,vector <int> > &color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
 	int i,j;
 	
-	for (i=0;i<max_edges;i++) {
-		if (edge_table[ste][i]==-1) break;
-		for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+	if (ste!=-1) {
+		if (visited[ste]) return;
+		visited[ste]=1;
+	}
+	
+	if (ste==-1) {
+		//  virtual root
+		
+		for (std::vector<int>::iterator j = virtual_root_colors.begin() ; j != virtual_root_colors.end() ; j++) { // for each color (iterator)
+			if (*j == original_color) {
+				virtual_root_colors.erase(j);
+				break;
+			}
+		}
+		virtual_root_colors.push_back(new_color);
+		color_membership[new_color].push_back(ste);
+		for (i=0;i<virtual_root_edges.size();i++) { // for each edge
+			replace_color (virtual_root_edges[i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
+		}
+		
+	} else {
+		// not virtual root
+		
+		for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) { // for each color (iterator)
 			if (*j == original_color) {
 				state_colors[ste].erase(j);
 				break;
@@ -289,26 +343,36 @@ void replace_color (int ste, int original_color, int new_color, map <int,vector 
 		}
 		state_colors[ste].push_back(new_color);
 		color_membership[new_color].push_back(ste);
-		replace_color (edge_table[ste][i],original_color,new_color,color_membership);
+		
+		for (i=0;i<max_edges;i++) { // for each edge
+			if (edge_table[ste][i]==-1) break;
+			replace_color (edge_table[ste][i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
+		}
 	}
 }
 
 void reverse_replace_color (int ste, int original_color, int new_color_start, int new_color_end, map <int,vector <int> > &color_membership) {
 	int i,k;
 	
+	if (ste!=-1) {
+		if (visited[ste]) return;
+		visited[ste]=1;
+	}
+	
+	for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+		if (*j == original_color) {
+			state_colors[ste].erase(j);
+			break;
+		}
+	}
+	for (k=new_color_start;k<new_color_end;k++)	{
+		state_colors[ste].push_back(k);
+		color_membership[k].push_back(ste);
+	}
+	
 	for (i=0;i<max_fan_in;i++) {
 		if (reverse_table[ste][i]==-1) break;
-		for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
-			if (*j == original_color) {
-				state_colors[ste].erase(j);
-				break;
-			}
-		}
-		for (k=new_color_start;k<new_color_end;k++)	{
-			state_colors[ste].push_back(k);
-			color_membership[k].push_back(ste);
-		}
-		reverse_replace_color (edge_table[ste][i],original_color,new_color_start,new_color_end,color_membership);
+		reverse_replace_color (reverse_table[ste][i],original_color,new_color_start,new_color_end,color_membership);
 	}
 }
 
