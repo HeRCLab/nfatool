@@ -226,7 +226,6 @@ void split_colors (int ste, map <int,vector <int> > &color_membership,vector <in
 	int i,k,
 		original_color,
 		old_current_color=current_color;
-	vector<int> ste_colors;
 	
 	// clear visitied to avoid inifinite loops
 	for (i=0;i<num_states;i++) visited[i]=0;
@@ -234,7 +233,7 @@ void split_colors (int ste, map <int,vector <int> > &color_membership,vector <in
 	if (ste!=-1) {
 		// not virtual root
 		
-		ste_colors=state_colors[ste];
+		vector<int> &ste_colors=state_colors[ste];
 		if (ste_colors.size() != 1) {
 			fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
 			exit(0);
@@ -265,7 +264,7 @@ void split_colors (int ste, map <int,vector <int> > &color_membership,vector <in
 			current_color++;
 		}
 		
-		// clear visitied to avoid inifinite loops
+		// clear visited to avoid inifinite loops
 		for (i=0;i<num_states;i++) visited[i]=0;
 		
 		// STEP 3:  recurse backward to root
@@ -277,7 +276,7 @@ void split_colors (int ste, map <int,vector <int> > &color_membership,vector <in
 	} else {
 		// virtual root
 		
-		ste_colors=virtual_root_colors;
+		vector <int> &ste_colors=virtual_root_colors;
 		if (ste_colors.size() != 1) {
 			fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
 			exit(0);
@@ -327,7 +326,8 @@ void replace_color (int ste, int original_color, int new_color, map <int,vector 
 			}
 		}
 		virtual_root_colors.push_back(new_color);
-		color_membership[new_color].push_back(ste);
+		vector <int> &colors = color_membership[new_color];
+		colors.push_back(ste);
 		for (i=0;i<virtual_root_edges.size();i++) { // for each edge
 			replace_color (virtual_root_edges[i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
 		}
@@ -341,8 +341,10 @@ void replace_color (int ste, int original_color, int new_color, map <int,vector 
 				break;
 			}
 		}
+		//state_colors.emplace(ste,vector<int>{}); // ?
 		state_colors[ste].push_back(new_color);
-		color_membership[new_color].push_back(ste);
+		vector<int> &colors=color_membership[new_color];
+		colors.push_back(ste);
 		
 		for (i=0;i<max_edges;i++) { // for each edge
 			if (edge_table[ste][i]==-1) break;
