@@ -91,7 +91,8 @@ void traverse_partition(int ste)
 
 void partition (int max_partition_size) {
 	int i,j,max_color_membership,color_to_split;
-	map <int,vector <int> > color_membership;
+	//map <int,vector <int> > color_membership;
+	vector <int> color_membership[10000];
 	vector <int> virtual_root_edges,virtual_root_colors;
 	char str[1024];
 	
@@ -148,7 +149,7 @@ void partition (int max_partition_size) {
 	} while (merged);
 }
 
-void merge_colors(int color1,int color2,map <int,vector <int> > &color_membership) {
+void merge_colors(int color1,int color2,vector <int> *color_membership) {
 	int i;
 	
 	for (i=0;i<color_membership[color2].size();i++) {
@@ -222,7 +223,7 @@ vector <int> find_incoming_edges (vector <int> scc) {
 	return edges;
 }
 
-void split_colors (int ste, map <int,vector <int> > &color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
 	int i,k,
 		original_color,
 		old_current_color=current_color;
@@ -308,7 +309,7 @@ void split_colors (int ste, map <int,vector <int> > &color_membership,vector <in
 	color_membership[original_color].clear();
 }
 
-void replace_color (int ste, int original_color, int new_color, map <int,vector <int> > &color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+void replace_color (int ste, int original_color, int new_color, vector <int> *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
 	int i,j;
 	
 	if (ste!=-1) {
@@ -353,7 +354,7 @@ void replace_color (int ste, int original_color, int new_color, map <int,vector 
 	}
 }
 
-void reverse_replace_color (int ste, int original_color, int new_color_start, int new_color_end, map <int,vector <int> > &color_membership) {
+void reverse_replace_color (int ste, int original_color, int new_color_start, int new_color_end, vector <int> *color_membership) {
 	int i,k;
 	
 	if (ste!=-1) {
