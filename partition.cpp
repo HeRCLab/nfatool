@@ -92,8 +92,10 @@ void traverse_partition(int ste)
 void partition (int max_partition_size) {
 	int i,j,max_color_membership,color_to_split;
 	//map <int,vector <int> > color_membership;
-	vector <int> color_membership[10000];
-	vector <int> virtual_root_edges,virtual_root_colors;
+//	vector <int> v = new vector<int>(10); 
+	vector <int> *color_membership = new vector<int> (10000); // new vector<int>();
+	vector <int> virtual_root_colors;
+	vector <int> virtual_root_edges;//,virtual_root_colors;
 	char str[1024];
 	
 	// initialize colors and set up virtual root
@@ -234,7 +236,7 @@ void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual
 	if (ste!=-1) {
 		// not virtual root
 		
-		vector<int> &ste_colors=state_colors[ste];
+		vector<int> ste_colors=state_colors[ste];
 		if (ste_colors.size() != 1) {
 			fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
 			exit(0);
@@ -295,8 +297,10 @@ void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual
 		
 		// STEP 2:  replace original color with a new color on each outgoing edge
 		vector <int> &outgoing_edges = virtual_root_edges;
-		
+//		virtual_root_colors.push_back(current_color); 
 		for (i=0;i<outgoing_edges.size();i++) {
+	//		for(std::vector<int>::iterator j=virtual_root_colors.begin(); j!=virtual_root_colors.end(); j++)
+	//		virtual_root_colors.erase(j); 
 			virtual_root_colors.push_back(current_color); // note: current_color is a new color!
 			int dest_node = outgoing_edges[i];
 			replace_color(dest_node,original_color,current_color,color_membership,virtual_root_edges,virtual_root_colors);
@@ -307,6 +311,7 @@ void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual
 	
 	// clear the original color
 	color_membership[original_color].clear();
+
 }
 
 void replace_color (int ste, int original_color, int new_color, vector <int> *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
@@ -328,7 +333,8 @@ void replace_color (int ste, int original_color, int new_color, vector <int> *co
 		}
 		virtual_root_colors.push_back(new_color);
 		vector <int> &colors = color_membership[new_color];
-		colors.push_back(ste);
+//		colors.push_back(ste);
+//		&color_membership.push_back(ste); 
 		for (i=0;i<virtual_root_edges.size();i++) { // for each edge
 			replace_color (virtual_root_edges[i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
 		}
@@ -345,8 +351,8 @@ void replace_color (int ste, int original_color, int new_color, vector <int> *co
 		//state_colors.emplace(ste,vector<int>{}); // ?
 		state_colors[ste].push_back(new_color);
 		vector<int> &colors=color_membership[new_color];
-		colors.push_back(ste);
-		
+//		colors.push_back(ste);
+	//	color_membership.push_back(ste); 	
 		for (i=0;i<max_edges;i++) { // for each edge
 			if (edge_table[ste][i]==-1) break;
 			replace_color (edge_table[ste][i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
@@ -447,32 +453,6 @@ void replace_colorv2(int str, int old_color, int new_color)
     }
     for (std::vector<int>::iterator j = state_colors[str].begin(); j != state_colors[str].end(); j++)
     {
-      // if (j == old_color)
-      // {
-      //   if (visitedcycle[str] == 1)
-      //   {
-      //     for (int a = 0; a < Tree_Cyle.size(); a++)
-      //     {
-      //       for (int b = 0; b < Tree_Cyle[a].size(); b++)
-      //       {
-      //         if (Tree_Cyle[a][b] == str)
-      //         {
-      //           for (int c = 0; c < Tree_Cyle[a].size(); c++)
-      //           {
-      //             state_colors[str].erase(j);
-      //             state_colors[str].push_back(new_color);
-      //             color_count[new_color]++;
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      //   else
-      //     state_colors[str].erase(i);
-      //     state_colors[str].push_back(new_color);
-      //     color_count[new_color]++;
-      // }
-
       if (*j == old_color)
           {
             state_colors[str].erase(j);
@@ -502,91 +482,3 @@ void max_color_size (int &max_color_size,int &max_color) {
   }
 }
 
-
-void becchi_partition () 
-{
-  int max_color,max_color_size;
-
-  // find strongly-connected components, results stored in globals component_list and components
-  find_sccs();
-
-  // initial:  all STEs have one color (no replication)
-  for (int i = 0; i < num_states; i++)
-  {
-    state_colors[i].push_back(0); /// = 0;  				/* RASHA ** use push back to initialize with 0 **/ 
-  }
-
-
-
-
-  // create virtual root node
-  
-  
-
-  // for (int i = 0; i<num_states; i++) 
-  // {                                                            
-  //   if (start_state[i] == 1) 
-  //   {
-  //     start_color = i;
-
-  //     for (int j = i; i < num_states; j++)
-  //     {
-  //       traverse_partition(j);  
-  //     }
-  //   }
-  // }
-  
-  // color_size_exceeded=0;
-
-  /*
-   *  The nested for loop below will set a flag for each ste that is found 
-   *  within the vector that stores stes that are contain inside a cycle
-   *
-   */
-
-  // for (int a = 0; a < Tree_Cyle.size(); a++)
-  // {
-  //   for (int b = 0; b < Tree_Cyle[a].size(); b++)
-  //   {
-  //     for (int c = 0; c < num_states; c++)
-  //     {
-  //       for (int d = 0; d < max_edges; d++)
-  //       {
-  //         if (edge_table[c][d] == Tree_Cyle[a][b])
-  //         {
-  //           visitedcycle[Tree_Cyle[a][b]] = 1;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  
-  // for (int i=0; i<MAX_COLORS; i++) {
-  //   if (color_count[i] > MAX_PART_SIZE) {
-  //     color_size_exceeded = 1;
-  //   }
-  // }
-
-//find_max_color_size(max_color_size,max_color);    	/* RASHA **  No definitin to find_max_color_size */
-
-for (int i = 0; i < num_states; i++)
-
-while (max_color_size > max_stes) { 
-  split_colorv2(i,max_color,current_color);
-  color_count[max_color]=0;
-//  max_color_size(max_color_size,max_color);      	/* RASHA ** change find_max_color_size to max_color_size NOT WORKED**/ 
-  }
-}
-
-/*void max_color_size (int &max_color_size,int &max_color) {
-  int i,max_color_size=1,max_color=-1;
-  int color_size[MAX_COLORS];
-
-  for (i=0;i<MAX_COLORS;i++) color_size[i]=0;
-  for (i=0;i<num_states;i++) color_size[state_colors[i]]++;
-  for (i=0;i<MAX_COLORS;i++) if (color_size[i]>max_color_size) {
-    max_color_size=color_size[i];
-    max_color=i;
-  }
-}
-*/
