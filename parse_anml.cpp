@@ -140,6 +140,7 @@ int count_states (xmlNode *anode) {
 	  }*/
           state_map[(const char *)attr->children->content]=states;
           state_map2[states] = tmp;
+	  
         }
       }
     states++;

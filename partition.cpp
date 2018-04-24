@@ -355,6 +355,7 @@ void replace_color (int ste, int original_color, int new_color, vector <int> *co
 	//	color_membership.push_back(ste); 	
 		for (i=0;i<max_edges;i++) { // for each edge
 			if (edge_table[ste][i]==-1) break;
+                       
 			replace_color (edge_table[ste][i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
 		}
 	}

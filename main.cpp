@@ -171,10 +171,14 @@ int main(int argc, char **argv){
  * finds the critical path of tree
  */
   for (int i = 0; i < num_states; i++)
+
   {
+    fprintf(stderr,"STE %d (\"%s\") )!\n",i,ANML_NAME(i)); 
     visited[i] = 0;
   }
 
+//  printf("---------------------------------------%s\n", (char *) node_table[11]); 
+  
 /*
  *finds the largest critical path
  */
