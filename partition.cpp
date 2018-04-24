@@ -17,7 +17,7 @@ void find_critical_path () {
                 }
         }
 
-        free(visited);
+        //free(visited);
 }
 
 void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,vector <int> &path) {
@@ -93,7 +93,7 @@ void partition (int max_partition_size) {
 	int i,j,max_color_membership,color_to_split;
 	//map <int,vector <int> > color_membership;
 //	vector <int> v = new vector<int>(10); 
-	vector <int> *color_membership = new vector<int> (10000); // new vector<int>();
+	struct jlist color_membership[10000]; // new vector<int>();
 	vector <int> virtual_root_colors;
 	vector <int> virtual_root_edges;//,virtual_root_colors;
 	char str[1024];
@@ -151,7 +151,7 @@ void partition (int max_partition_size) {
 	} while (merged);
 }
 
-void merge_colors(int color1,int color2,vector <int> *color_membership) {
+void merge_colors(int color1,int color2,struct jlist *color_membership) {
 	int i;
 	
 	for (i=0;i<color_membership[color2].size();i++) {
@@ -225,7 +225,7 @@ vector <int> find_incoming_edges (vector <int> scc) {
 	return edges;
 }
 
-void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+void split_colors (int ste, struct jlist *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
 	int i,k,
 		original_color,
 		old_current_color=current_color;
@@ -303,6 +303,7 @@ void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual
 	//		virtual_root_colors.erase(j); 
 			virtual_root_colors.push_back(current_color); // note: current_color is a new color!
 			int dest_node = outgoing_edges[i];
+			color_membership[current_color].push_back(ste);
 			replace_color(dest_node,original_color,current_color,color_membership,virtual_root_edges,virtual_root_colors);
 			current_color++;
 		}
@@ -314,7 +315,7 @@ void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual
 
 }
 
-void replace_color (int ste, int original_color, int new_color, vector <int> *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+void replace_color (int ste, int original_color, int new_color, struct jlist *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
 	int i,j;
 	
 	if (ste!=-1) {
@@ -332,7 +333,7 @@ void replace_color (int ste, int original_color, int new_color, vector <int> *co
 			}
 		}
 		virtual_root_colors.push_back(new_color);
-		vector <int> &colors = color_membership[new_color];
+		struct jlist &colors = color_membership[new_color];
 //		colors.push_back(ste);
 //		&color_membership.push_back(ste); 
 		for (i=0;i<virtual_root_edges.size();i++) { // for each edge
@@ -350,7 +351,8 @@ void replace_color (int ste, int original_color, int new_color, vector <int> *co
 		}
 		//state_colors.emplace(ste,vector<int>{}); // ?
 		state_colors[ste].push_back(new_color);
-		vector<int> &colors=color_membership[new_color];
+		//vector<int> &colors=
+		color_membership[new_color].push_back(ste);
 //		colors.push_back(ste);
 	//	color_membership.push_back(ste); 	
 		for (i=0;i<max_edges;i++) { // for each edge
@@ -361,7 +363,7 @@ void replace_color (int ste, int original_color, int new_color, vector <int> *co
 	}
 }
 
-void reverse_replace_color (int ste, int original_color, int new_color_start, int new_color_end, vector <int> *color_membership) {
+void reverse_replace_color (int ste, int original_color, int new_color_start, int new_color_end, struct jlist *color_membership) {
 	int i,k;
 	
 	if (ste!=-1) {

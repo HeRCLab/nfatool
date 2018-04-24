@@ -29,6 +29,7 @@ using namespace std;
 #include "scc.h"
 #include "allocate_memory.h"
 #include "strong_components_analysis.h"
+#include "list.h"
 
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
