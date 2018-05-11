@@ -5,10 +5,18 @@
 
 using namespace std;
 
-void dump_color_info (vector <int> *color_membership) {
+void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root_colors) {
 	int i,j;
 
+/*
 	printf ("state colors\n");
+	printf ("%5d ",-1);
+	for (j=0;j<virtual_root_colors.size();j++) {
+		if (j>0) printf (",");
+		printf ("%d",virtual_root_colors[j]);
+	}
+	printf ("\n");
+
 	for (i=0;i<num_states;i++) {
 		printf ("%5d ",i);
 		for (j=0;j<state_colors[i].size();j++) {
@@ -19,23 +27,37 @@ void dump_color_info (vector <int> *color_membership) {
 	}
 
 	printf ("\n");
-
+*/
 	int total_stes=0;
-	printf ("color states\n");
+
+	//printf ("color states\n");
 	for (i=0;i<current_color;i++) {
-		printf ("%5d (%d) ",i,(int)color_membership[i].size());
+		//printf ("%5d (%d) ",i,(int)color_membership[i].size());
 		for (j=0;j<color_membership[i].size();j++) {
-			if (j>0) printf (",");
-			printf ("%d",color_membership[i][j]);
+			//if (j>0) printf (",");
+			//printf ("%d",color_membership[i][j]);
 			total_stes++;
 		}
-		printf ("\n");
+		//printf ("\n");
 	}
 
+	int partitions=0;
+	double utilization=0.0;
+	for (i=0;i<MAX_COLORS;i++) {
+		if (color_membership[i].size() != 0) partitions++;
+		utilization += (double)color_membership[i].size()/(double)max_stes;
+	}
+	utilization /= (double)partitions;
+
 	printf ("\n");
-	printf ("original stes = %d, stes after partitioning = %d, replications = %d\n",num_states,
+	printf ("partitions = %d\naverage partition utilization = %0.2f%%\noriginal stes = %d\nstes after partitioning = %d\nreplications = %d\n",
+																					partitions,
+																					utilization*100.0,
+																					num_states,
 																					total_stes,
-																					total_stes-num_states);
+																					total_stes-num_states-partitions); // subtract virt. root
+
+
 }
 
 void clear_visited_flags () {
@@ -80,58 +102,11 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
     depth--;
 }
 
-
-void traverse_partition(int ste)
-{
-
-  if (visitedColorTrav[ste] == 1)
-  {
-    return; 
-  }
-  else if(ste == -1)
-  {
-    return;
-  }
-  else
-
-    printf("The STE is: %d\n", ste);
-
-   visitedColorTrav[ste] = 1;
-
-   state_colors[ste].push_back(current_color);
-
-   color_count[current_color]++;
-
-   for (int i = 0; i < num_states; i++)
-   {
-     for (int j = 0; j < max_edges; j++)
-     {
-       if (edge_table[i][j] == -1)
-       {
-         break;
-       }
-       else if ((edge_table[i][j] == ste) && (i == start_color))
-       {
-         current_color++;
-         break;
-       }
-     }
-   }
-
-   for (int i = 0; i < max_edges; i++)
-   {
-
-      traverse_partition(edge_table[ste][i]);
-
-   }
-
-} 
-
 void partition (int max_partition_size) {
 	int i,j,max_color_membership,color_to_split;
 	//map <int,vector <int> > color_membership;
 //	vector <int> v = new vector<int>(10); 
-	vector <int> color_membership[10000]; // new vector<int>();
+	vector <int> color_membership[MAX_COLORS]; // new vector<int>();
 	vector <int> virtual_root_colors;
 	vector <int> virtual_root_edges;//,virtual_root_colors;
 	char str[1024];
@@ -156,9 +131,9 @@ void partition (int max_partition_size) {
 	int coloring = 0;
 
 	// dump the dot file
-	sprintf (str,"coloring%d",coloring++);
-	dump_dot_file (str,rootGlobal,myemptyvector,1);
-	dump_color_info(color_membership);
+	//sprintf (str,"coloring%d",coloring++);
+	//dump_dot_file (str,rootGlobal,myemptyvector,1);
+	//dump_color_info(color_membership,virtual_root_colors);
 
 	while (max_color_membership > max_partition_size) {
 		
@@ -176,9 +151,9 @@ void partition (int max_partition_size) {
 		}
 
 		// dump the dot file
-		sprintf (str,"coloring%d",coloring++);
-		dump_dot_file (str,rootGlobal,myemptyvector,1);
-		dump_color_info(color_membership);
+		//sprintf (str,"coloring%d",coloring++);
+		//dump_dot_file (str,rootGlobal,myemptyvector,1);
+		//dump_color_info(color_membership, virtual_root_colors);
 	}
 	
 	// consolidation step
@@ -191,29 +166,42 @@ void partition (int max_partition_size) {
 			for (j=i+1;j<current_color;j++) {
 				if (color_membership[j].size()==0) continue;
 				if ((color_membership[i].size() + color_membership[j].size()) <= max_partition_size) {
-					merge_colors(i,j,color_membership);
+					merge_colors(i,j,color_membership,virtual_root_colors);
 					merged=1;
 				}
 			}
 		}
 		// dump the dot file
-		sprintf (str,"coloring%d",coloring++);
-		dump_dot_file (str,rootGlobal,myemptyvector,1);
-		dump_color_info(color_membership);
+		//sprintf (str,"coloring%d",coloring++);
+		//dump_dot_file (str,rootGlobal,myemptyvector,1);
+		//dump_color_info(color_membership,virtual_root_colors);
 	} while (merged);
+
+	dump_color_info(color_membership,virtual_root_colors);
 }
 
-void merge_colors(int color1,int color2,vector <int> *color_membership) {
+void merge_colors(int color1,int color2,vector <int> *color_membership, vector <int> &virtual_root_colors) {
 	// TODO:  deal with virtual root node!
 	int i;
 	
 	for (i=0;i<color_membership[color2].size();i++) {
 		int ste = color_membership[color2][i];
-		color_membership[color1].push_back(ste);
-		state_colors[ste].push_back(color1);
-		for (vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
-			if (*j==color2) {
-				state_colors[ste].erase(j);
+		int found=0;
+		for (int j=0;j<color_membership[color1].size();j++) if (color_membership[color1][j]==ste) found=1;
+		if (!found) color_membership[color1].push_back(ste);
+		if (ste==-1) {
+			virtual_root_colors.push_back(color1);
+			for (vector<int>::iterator j = virtual_root_colors.begin() ; j != virtual_root_colors.end() ; j++) {
+				if (*j==color2) {
+					virtual_root_colors.erase(j);
+				}
+			}
+		} else {
+			state_colors[ste].push_back(color1);
+			for (vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+				if (*j==color2) {
+					state_colors[ste].erase(j);
+				}
 			}
 		}
 	}
@@ -234,16 +222,25 @@ int find_lowest_pure_node(int color,vector <int> &virtual_root_edges, vector <in
 	while (myqueue.size() > 0) {
 		int dequeued = myqueue.front();
 		myqueue.pop();
-		if (visited[dequeued]) continue;
-		visited[dequeued]=1;
+
+		// virtual root cannot be part of a cycle, so there's no reason to check if it's already visited
+		if (dequeued != -1) {
+			if (visited[dequeued]) continue;
+			visited[dequeued]=1;
+		}
+
 		int num_colors = dequeued == -1 ? virtual_root_colors.size() : state_colors[dequeued].size();
 		int first_color = dequeued == -1 ? virtual_root_colors[0] : state_colors[dequeued][0];
 		
 		// find the number of "real" (non-loopback) outgoing edges
 		int outgoing_edges=0;
-		for (i=0;i<max_edges;i++) {
-			if (edge_table[dequeued][i]==-1) break;
-			if (edge_table[dequeued][i]!=dequeued) outgoing_edges++;
+		if (dequeued == -1) {
+			outgoing_edges = (int)virtual_root_edges.size();
+		} else {
+			for (i=0;i<max_edges;i++) {
+				if (edge_table[dequeued][i]==-1) break;
+				if (edge_table[dequeued][i]!=dequeued) outgoing_edges++;
+			}
 		}
 
 		if (num_colors==1 && first_color==color && outgoing_edges!=0 && outgoing_edges!=1) return dequeued;
@@ -457,87 +454,6 @@ void reverse_replace_color (int ste, int original_color, int new_color_start, in
 	}
 }
 
-void split_colorv2(int ste, int color_from, int color_to)    /* RASHA ** adding ste as parameter in split_colorv2   **/
-
-{ 
-
-  int k;
-
-  /*
-   * Erases all the colors within the tree before adding new colors 
-   */
-
-  for (std::vector<int>::iterator i = state_colors[ste].begin();i!=state_colors[ste].end();i++)
-  {
-    if (*i==color_from)     				/*RASHA ** change color to color_from **/ 
-      {
-        state_colors[ste].erase(i);
-      }
-  }
-
-  /*
-   * add colors to the highest priortize ste for splitting based on the amount of outgoing edges it may have 
-   */
-
-  for (int i = 1; i <= ExactOutEdge[ste]; i++)
-  {
-    state_colors[ste].push_back(color_to++);           /* RASHA**  Color to color_to **/ 
-  }
-
-  /*
-   * when a new brach is found from the start state the color will change among that branch
-   */
-
-  for (std::vector<int>::iterator i = state_colors[ste].begin(); i != state_colors[ste].end(); i++)
-  {
-    k++;
-      
-    if (edge_table[ste][k] == -1)
-    {
-      break;
-    }
-
-    replace_colorv2(edge_table[ste][k],color_to,*i);      /* RASHA ** color to color_to **/
-  }
-
-}
-
-void replace_colorv2(int str, int old_color, int new_color)
-{
-  /*
-   * This is a function that is called recursively onto the branch that it lies on.
-   * iterator is used to check the vector if it contains the color
-   * 
-   * My solution for cycle: create multi-dem vector that stores every cycle found. if one ste that 
-   *                        is found within the cycle, a nested for loop will trigger making a similar 
-   *                        for every ste within the cycle.
-   */
-
-  if (str == -1)
-  {
-    return;
-  }
-
-  for (int i = 0; i < max_edges; i++){
-    if (edge_table[str][i] == -1)
-    {
-      break;
-    }
-    for (std::vector<int>::iterator j = state_colors[str].begin(); j != state_colors[str].end(); j++)
-    {
-      if (*j == old_color)
-          {
-            state_colors[str].erase(j);
-            state_colors[str].push_back(new_color);
-            color_count[new_color]++;
-          }    
-    }
-    replace_colorv2(edge_table[str][i], old_color, new_color);
-  }
-}
-
-
-
 void max_color_size (int &max_color_size,int &max_color) {
   int i; 
   max_color_size=1;
@@ -553,4 +469,3 @@ void max_color_size (int &max_color_size,int &max_color) {
     max_color=i;
   }
 }
-
