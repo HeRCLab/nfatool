@@ -33,7 +33,7 @@ using namespace std;
 
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
-#define MAX_COLORS      100000
+#define MAX_COLORS      10000
 #define MAX_PART_SIZE   1024
 
 #define ANML_NAME(ste_num)  node_table[ste_num]->properties->children->content

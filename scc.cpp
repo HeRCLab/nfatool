@@ -83,7 +83,7 @@ void dfs(int current_node,int start, int allow_weird_start_states) {
           if (start_state[i]) {
            	if (allow_weird_start_states || ((reverse_table[i][0]==-1) || ((reverse_table[i][0]==i) && (reverse_table[i][1] == -1)))) {
             	root_nodes++;
-				root_node[i]=1;
+				        root_node[i]=1;
                 reset_dfs_visited_flags();
             		dfs(i,0,allow_weird_start_states);
                 for(int i=0;i<visited2.size();i++) {
@@ -111,6 +111,7 @@ void dfs(int current_node,int start, int allow_weird_start_states) {
             // pick a "root" node and proceed with DFS
             for (i=0;i<num_states;i++) if (!visited[i]) break;
             printf ("selecting arbitrary root STE %d\n",i);
+            root_node[i]=1;
             reset_dfs_visited_flags();
             dfs(i,0,allow_weird_start_states);
             printf ("yield = %d/%d STEs\n",visited_size(),num_states);
