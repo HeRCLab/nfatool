@@ -142,7 +142,13 @@ void partition (int max_partition_size) {
 		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
 	}
 
-	printf ("found %d natural partitions\n",natural_partitions);
+	int min_partition=num_states,max_partition=0;
+	for (i=0;i<natural_partitions;i++) {
+		if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
+		if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
+	}
+
+	printf ("found %d natural partitions ranging in size from %d to %d\n",natural_partitions,min_partition,max_partition);
 	
 	// perform first check for partition violations
 	max_color_membership=0;
