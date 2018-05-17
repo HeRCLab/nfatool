@@ -137,8 +137,8 @@ void partition (int max_partition_size) {
 	int natural_partition_num=0;
 	clear_visited_flags();
 	for (i=0;i<virtual_root_edges.size();i++) {
-		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_list,max_edges);
-		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_list,max_reverse_edges);
+		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table,max_edges);
+		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
 		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
 	}
 
