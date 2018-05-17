@@ -3,7 +3,18 @@
 #define	OVECCOUNT  30
 #define STATEMAP_SIZE 150000
 
-using namespace std;
+using namespace std; 
+
+void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges) {
+  if (visted[ste]) return;
+  visited[ste]=1;
+
+  members.push_back(ste);
+  for (int i=0;i<max_edges;i++) {
+  	if (graph[ste][i]==-1) break;
+  	add_connected_stes(graph[ste][i],members,graph,max_edges);
+  }
+}
 
 void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root_colors) {
 	int i,j;
@@ -120,8 +131,26 @@ void partition (int max_partition_size) {
 		color_membership[0].push_back(i);
 		if (root_node[i]) virtual_root_edges.push_back(i); // create outgoing edges from virtual root
 	}
+
+	// find "natural partitions
+	vector <int> natural_partitions[MAX_COLORS];
+	int natural_partition_num=0;
+	clear_visited_flags();
+	for (i=0;i<virtual_root_edges.size();i++) {
+		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_list,max_edges);
+		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_list,max_reverse_edges);
+		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
+	}
+
+	int min_partition=num_states,max_partition=0;
+	for (i=0;i<natural_partitions;i++) {
+		if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
+		if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
+	}
+
+	printf ("found %d natural partitions ranging in size from %d to %d\n",natural_partitions,min_partition,max_partition);
 	
-	// perform first check for partition violates
+	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
 		max_color_membership=color_membership[i].size();
