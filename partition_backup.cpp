@@ -25,7 +25,7 @@ void find_critical_path () {
 				node_table[deepest_path[i]]->properties->children->content);
 	printf ("TERM\n");
 
-	free(visited);
+//	free(visited);
 }
 
 void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,vector <int> &path) {

@@ -7,6 +7,7 @@
 #include "list.h"
 
 // new partitioning code
+void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges);
 void partition (int max_partition_size);
 void merge_colors(int color1,int color2,vector <int> *color_membership, vector <int> &virtual_root_colors);
 int find_lowest_pure_node(int color,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors);

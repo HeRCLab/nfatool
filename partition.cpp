@@ -5,14 +5,23 @@
 
 using namespace std; 
 
+
+ 
+
 void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges) {
-  if (visted[ste]) return;
+  if (visited[ste]) return;
   visited[ste]=1;
 
   members.push_back(ste);
   for (int i=0;i<max_edges;i++) {
   	if (graph[ste][i]==-1) break;
   	add_connected_stes(graph[ste][i],members,graph,max_edges);
+	//dump_dot_file (graph[ste][i],rootGlobal,myemptyvector,1);
+
+//	partition_nodes[ste][i] = graph[ste][i]; 
+	printf("(%d,%d) \n", ste, graph[ste][i]) ;
+//	printf("STE = %d , edge = %d ->  %d\n", ste, i, graph[ste][i]); 
+
   }
 }
 
@@ -136,20 +145,31 @@ void partition (int max_partition_size) {
 	vector <int> natural_partitions[MAX_COLORS];
 	int natural_partition_num=0;
 	clear_visited_flags();
+//	printf("Partition = 0 \n\n"); 
 	for (i=0;i<virtual_root_edges.size();i++) {
-		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_list,max_edges);
-		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_list,max_reverse_edges);
-		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
-	}
+			printf("Partition = %d\n\n", natural_partition_num);
 
+			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
+			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
+			if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
+
+		
+	}
 	int min_partition=num_states,max_partition=0;
-	for (i=0;i<natural_partitions;i++) {
+
+	for (i=0;i<natural_partition_num;i++) {
 		if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
 		if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
+	}		
+
+	for (i = 0; i < natural_partition_num; i++){
+	    printf("Natural Partition = %d\n", i); 
+	    
+	    for (j = 0; j < natural_partitions[i].size(); j++)
+		printf ("found -> %d, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j],min_partition,max_partition);
+	
 	}
 
-	printf ("found %d natural partitions ranging in size from %d to %d\n",natural_partitions,min_partition,max_partition);
-	
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {

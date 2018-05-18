@@ -30,6 +30,7 @@ using namespace std;
 #include "allocate_memory.h"
 #include "strong_components_analysis.h"
 #include "list.h"
+#include "v2.h" 
 
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
@@ -101,7 +102,8 @@ extern int num_states,
     potential_node_in_cycle,
     possible_end_of_cycle,
     max_strong_node,
-    color_count[MAX_COLORS];
+    color_count[MAX_COLORS], 
+    max_reverse_edges;
 
 
 extern xmlNode *rootGlobal, /*< root node of the .ANML file */
@@ -128,6 +130,10 @@ extern vector<int> deepest_path;
 extern int deepest;
 extern int largest_component;
 
+
 extern int *root_node;
 
+
+extern int **edge_list; 
+extern int **reverse_list; 
 #endif

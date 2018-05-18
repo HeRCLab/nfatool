@@ -59,6 +59,7 @@ int num_states=0,
     path_length=0,
     max_path =1,
     Path_compare = 0,
+    max_reverse_edges,
     color_count[MAX_COLORS];
 
 xmlNode *rootGlobal, /*< root node of the .ANML file */
@@ -82,6 +83,8 @@ int *dfs_visited;
 int max_loop=0;
 int max_loop_constituent=-1;
 
+int **edge_list; 
+int **reverse_list; 
 /*
     global variables to find the maximum strong components number
  */
@@ -173,7 +176,7 @@ int main(int argc, char **argv){
   for (int i = 0; i < num_states; i++)
 
   {
-    fprintf(stderr,"STE %d (\"%s\") )!\n",i,ANML_NAME(i)); 
+//    fprintf(stderr,"STE %d (\"%s\") )!\n",i,ANML_NAME(i)); 
     visited[i] = 0;
   }
 
@@ -249,17 +252,35 @@ int main(int argc, char **argv){
   */ 
   find_critical_path(); 
   
-  printf ("deepest path = %d\n",deepest);
+//  printf ("deepest path = %d\n",deepest);
   
-  for (int i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
-                          deepest_path[i],
-                          node_table[deepest_path[i]]->properties->children->content);
-  printf ("\n");
+//  for (int i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
+//                          deepest_path[i],
+//                          node_table[deepest_path[i]]->properties->children->content);
+//  printf ("\n");
   
   /*
    * Partition the graph
    */
   if (max_stes) partition(max_stes);
+
+
+
+
+
+
+  /* 
+   * Validate partitions 
+   */ 
+
+
+// for (int i=0; i<num_states; i++) printf("%d (%s) ->", 
+//				node_table[i], 
+//				node_table[i]->properties->children->content); 
+				
+//   printf("\n"); 
+
+
 
 /*
  * save the original state of the graph, since we'll be changing it significantly

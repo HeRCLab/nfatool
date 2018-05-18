@@ -37,11 +37,14 @@ void jlist::push_back (int val) {
 
 	if (!anode) {
 		anode = this->head = (struct node *)malloc(sizeof(struct node));
+		//if(anode->next == NULL)  { free(anode); return;} 
 		anode->next = 0;
 		anode->val = val;
 	} else {
 		while (anode->next) anode=anode->next;
 		anode = anode->next = (struct node *)malloc(sizeof(struct node));
+//		 anode = (struct node *)malloc(sizeof(struct node));
+		//if(anode->next == NULL) { free(anode); return; } 
 		anode->next = 0;
 		anode->val = val;
 	}

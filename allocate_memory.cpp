@@ -65,4 +65,24 @@ void allocate_memory() {
     sccs = new vector<int>[num_states];
     components=(int *)malloc(sizeof(int)*num_states);
     for (int i=0;i<num_states;i++) components[i]=-1;
+
+
+
+
+edge_list = (int **)malloc((sizeof(int *))*num_states);
+  for (int i=0;i<num_states;i++) {
+    edge_list[i]=(int *)malloc(sizeof (int)*max_edges);
+    for (int j=0;j<max_edges;j++) edge_list[i][j]=-1;
+  }
+
+
+
+
+reverse_list = (int **)malloc((sizeof(int *))*num_states);
+  for (int i=0;i<num_states;i++) {
+    reverse_list[i]=(int *)malloc(sizeof (int)*max_edges);
+    for (int j=0;j<max_edges;j++) reverse_list[i][j]=-1;
+  }
+
+
 }
