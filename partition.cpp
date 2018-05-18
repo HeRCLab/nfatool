@@ -147,11 +147,18 @@ void partition (int max_partition_size) {
 	clear_visited_flags();
 //	printf("Partition = 0 \n\n"); 
 	for (i=0;i<virtual_root_edges.size();i++) {
+<<<<<<< HEAD
 			printf("Partition = %d\n\n", natural_partition_num);
 
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
 			if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
+=======
+		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table,max_edges);
+		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
+		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
+	}
+>>>>>>> 5fda554ce757af87953854c3f28af33a53779079
 
 		
 	}
