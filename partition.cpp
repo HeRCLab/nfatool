@@ -156,7 +156,7 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
 }
 
 void partition (int max_partition_size) {
-/* FILE *myFile;
+ FILE *myFile;
         char filename[1024] ="natural_partition.dot";
         myFile = fopen ("natural_partition.dot","w+");
 
@@ -166,7 +166,7 @@ void partition (int max_partition_size) {
         }
 
           fprintf (myFile,"digraph G {\n");
-*/
+
 
 
 	int i,j,max_color_membership,color_to_split;
@@ -219,16 +219,24 @@ void partition (int max_partition_size) {
 		if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
 	}		
 
+	
 	for (i = 0; i < natural_partition_num; i++){
 	    printf("Natural Partition = %d\n", i); 
 	    
 	   
-	    for (j = 0; j < natural_partitions[i].size(); j++)
-printf ("found -> %d, node = %s, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j], node_table[natural_partitions[i][j]]->properties->children->content, min_partition,max_partition);
-	
-	}
+	    for (j = 0; j < natural_partitions[i].size(); j++){
+		printf ("found -> %d, node = %s, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j], node_table[natural_partitions[i][j]]->properties->children->content, min_partition,max_partition);
 
-	
+			if(j==natural_partitions[i].size())
+				fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
+			else 
+
+				fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
+
+		}
+	    fprintf(myFile, ";\n"); 
+	}	
+		fprintf(myFile, "\n}\n"); 
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
@@ -286,8 +294,8 @@ printf ("found -> %d, node = %s, natural partitions ranging in size from %d to %
 	} while (merged);
 
 	dump_color_info(color_membership,virtual_root_colors);
-}
 
+}
 void merge_colors(int color1,int color2,vector <int> *color_membership, vector <int> &virtual_root_colors) {
 	// TODO:  deal with virtual root node!
 	int i;
