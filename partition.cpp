@@ -6,25 +6,59 @@
 using namespace std; 
 
 
+void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges) {
+/*	FILE *myFile; 
+	char filename[1024] ="natural_partition.dot"; 
+	myFile = fopen ("natural_partition.dot","w+"); 
+
+	if(!myFile){ 
+		perror(filename); 
+		exit(0); 
+	} 
+
+	  fprintf (myFile,"digraph G {\n");
+	
+*/
+
+//  	for (int i=0;i<max_edges;i++) {
+        //        if (graph[ste][i]==-1) break;
+ 	//               add_connected_stes(graph[ste][i],members,graph,max_edges);
+/*
+                        fprintf (myFile,"\t%d [label=\"%d:%s\" peripherals=%d];\n",                                                     ste,
+                                                                                                                                        ste,
+                                                                                                                                        node_table[ste]->properties->children->content,
+                                                                                                                                       // node_table[edge_table[ste][0]]->properties->children->content,
+                          //                                                                                                              //                 str,
+                                                                                                                                        start_state[ste]+report_table[ste]+1);
+*/
+	if (visited[ste]) return;
+               visited[ste]=1;
  
 
-void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges) {
-  if (visited[ste]) return;
-  visited[ste]=1;
+	members.push_back(ste);
 
-  members.push_back(ste);
-  for (int i=0;i<max_edges;i++) {
-  	if (graph[ste][i]==-1) break;
-  	add_connected_stes(graph[ste][i],members,graph,max_edges);
-	//dump_dot_file (graph[ste][i],rootGlobal,myemptyvector,1);
+  
+  	for (int i=0;i<max_edges;i++) {
+  		if (graph[ste][i]==-1) break;
+		  	add_connected_stes(graph[ste][i],members,graph,max_edges); 
+			
+			printf ("%s -> %s;\n",node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content);
+				
+	
+//	dump_dot_file (node_table[graph[ste][i]]->properties->children->content,rootGlobal,members,1);
 
 //	partition_nodes[ste][i] = graph[ste][i]; 
-	printf("(%d,%d) \n", ste, graph[ste][i]) ;
+//	printf("%d -> %d;\n", ste, graph[ste][i]);
+//	fprintf(myFile, "%s -> %s;\n", node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content); 
 //	printf("STE = %d , edge = %d ->  %d\n", ste, i, graph[ste][i]); 
+  
 
-  }
+//	fprintf(myFile,"}\n");
+//	  fclose(myFile);
+
+	}
+
 }
-
 void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root_colors) {
 	int i,j;
 
@@ -77,7 +111,6 @@ void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root
 																					total_stes,
 																					total_stes-num_states-partitions); // subtract virt. root
 
-
 }
 
 void clear_visited_flags () {
@@ -123,6 +156,19 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
 }
 
 void partition (int max_partition_size) {
+/* FILE *myFile;
+        char filename[1024] ="natural_partition.dot";
+        myFile = fopen ("natural_partition.dot","w+");
+
+        if(!myFile){
+                perror(filename);
+                exit(0);
+        }
+
+          fprintf (myFile,"digraph G {\n");
+*/
+
+
 	int i,j,max_color_membership,color_to_split;
 	//map <int,vector <int> > color_membership;
 //	vector <int> v = new vector<int>(10); 
@@ -147,21 +193,25 @@ void partition (int max_partition_size) {
 	clear_visited_flags();
 //	printf("Partition = 0 \n\n"); 
 	for (i=0;i<virtual_root_edges.size();i++) {
-<<<<<<< HEAD
-			printf("Partition = %d\n\n", natural_partition_num);
+
+			printf("\nPartition = %d\n", natural_partition_num);
 
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
 			if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
-=======
-		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table,max_edges);
-		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
-		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
-	}
->>>>>>> 5fda554ce757af87953854c3f28af33a53779079
 
-		
+		 
+
+//		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table,max_edges);
+//		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
+//		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
+
+        
+
 	}
+
+
+
 	int min_partition=num_states,max_partition=0;
 
 	for (i=0;i<natural_partition_num;i++) {
@@ -172,11 +222,13 @@ void partition (int max_partition_size) {
 	for (i = 0; i < natural_partition_num; i++){
 	    printf("Natural Partition = %d\n", i); 
 	    
+	   
 	    for (j = 0; j < natural_partitions[i].size(); j++)
-		printf ("found -> %d, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j],min_partition,max_partition);
+printf ("found -> %d, node = %s, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j], node_table[natural_partitions[i][j]]->properties->children->content, min_partition,max_partition);
 	
 	}
 
+	
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
