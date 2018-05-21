@@ -7,30 +7,7 @@ using namespace std;
 
 
 void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges) {
-/*	FILE *myFile; 
-	char filename[1024] ="natural_partition.dot"; 
-	myFile = fopen ("natural_partition.dot","w+"); 
 
-	if(!myFile){ 
-		perror(filename); 
-		exit(0); 
-	} 
-
-	  fprintf (myFile,"digraph G {\n");
-	
-*/
-
-//  	for (int i=0;i<max_edges;i++) {
-        //        if (graph[ste][i]==-1) break;
- 	//               add_connected_stes(graph[ste][i],members,graph,max_edges);
-/*
-                        fprintf (myFile,"\t%d [label=\"%d:%s\" peripherals=%d];\n",                                                     ste,
-                                                                                                                                        ste,
-                                                                                                                                        node_table[ste]->properties->children->content,
-                                                                                                                                       // node_table[edge_table[ste][0]]->properties->children->content,
-                          //                                                                                                              //                 str,
-                                                                                                                                        start_state[ste]+report_table[ste]+1);
-*/
 	if (visited[ste]) return;
                visited[ste]=1;
  
@@ -43,19 +20,6 @@ void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges)
 		  	add_connected_stes(graph[ste][i],members,graph,max_edges); 
 			
 			printf ("%s -> %s;\n",node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content);
-				
-	
-//	dump_dot_file (node_table[graph[ste][i]]->properties->children->content,rootGlobal,members,1);
-
-//	partition_nodes[ste][i] = graph[ste][i]; 
-//	printf("%d -> %d;\n", ste, graph[ste][i]);
-//	fprintf(myFile, "%s -> %s;\n", node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content); 
-//	printf("STE = %d , edge = %d ->  %d\n", ste, i, graph[ste][i]); 
-  
-
-//	fprintf(myFile,"}\n");
-//	  fclose(myFile);
-
 	}
 
 }
@@ -159,25 +123,8 @@ void partition (int max_partition_size) {
  FILE *myFile;
  FILE *Destination ; 
 
-        char filename[1024];// ="natural_partition.dot";
-//        myFile = fopen ("natural_partition.dot","w+");
+        char filename[1024];
 	char str[1024]; 
-
-	int file_generated=0; 
-
-  //      if(!myFile){
-    //            perror(filename);
-      //          exit(0);
-    ///    }
-
-
-// 	sprintf(str, "subautomata%d.dot", files_generated++);
-  //      Destination = fopen(str, "w+");
-       
-       
-       //   fprintf (myFile,"digraph G {\n");
-//	  fprintf(Destination, "digraph G {\n"); 			
-
 
 	int i,j,max_color_membership,color_to_split;
 	//map <int,vector <int> > color_membership;
@@ -208,19 +155,9 @@ void partition (int max_partition_size) {
 
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
-			if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
-
-		 
-
-//		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table,max_edges);
-//		add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
-//		if (natural_partitions[natural_partition_num].size()) natural_partition_num++;
-
-        
+			if (natural_partitions[natural_partition_num].size()) natural_partition_num++; 
 
 	}
-
-
 
 	int min_partition=num_states,max_partition=0;
 
@@ -238,31 +175,20 @@ void partition (int max_partition_size) {
 	    
 	   
 	    for (j = 0; j < natural_partitions[i].size(); j++){
-//		printf ("found -> %d, node = %s, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j], node_table[natural_partitions[i][j]]->properties->children->content, min_partition,max_partition);
 
-	/*	      sprintf(filename, "subautomata%d.dot", files_generated++);
-		      myFile = fopen(filename, "w+");
-			fprintf (myFile,"digraph G {\n");
-*/
-
-			if(j==natural_partitions[i].size()-1){
+			if(j==natural_partitions[i].size()-1)
 				fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
-//				fprintf(Destination, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
+			else 
 
-			}else 
+                               fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
 
-			{
-                                fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
-  //                              fprintf(Destination, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
-
-                        }
 
 }	 
-//	    fprintf(myFile, ";\n"); 
+
 	    fprintf(myFile,";\n}\n"); 
 	    fclose(myFile); 
 	}	
-//		fprintf(myFile, "\n}\n"); 
+
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {

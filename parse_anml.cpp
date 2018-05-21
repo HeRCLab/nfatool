@@ -239,10 +239,10 @@ int fill_in_table (xmlNode *aNode,int current_state) {
 
       if(shift == max_stes-1){
         node_table[Change_of_start]->prev->next = NULL;
-        sprintf(str, "subautomata%d.anml", files_generated++);
-        Destination = fopen(str, "w+");
-        xmlDocDump(Destination, document);
-        fclose(Destination);
+//        sprintf(str, "subautomata%d.anml", files_generated++);
+//        Destination = fopen(str, "w+");
+//        xmlDocDump(Destination, document);
+//        fclose(Destination);
         rootGlobal->children = node_table[Change_of_start];
         shift = 0;
       }
