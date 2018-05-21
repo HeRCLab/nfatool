@@ -157,16 +157,26 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
 
 void partition (int max_partition_size) {
  FILE *myFile;
-        char filename[1024] ="natural_partition.dot";
-        myFile = fopen ("natural_partition.dot","w+");
+ FILE *Destination ; 
 
-        if(!myFile){
-                perror(filename);
-                exit(0);
-        }
+        char filename[1024];// ="natural_partition.dot";
+//        myFile = fopen ("natural_partition.dot","w+");
+	char str[1024]; 
 
-          fprintf (myFile,"digraph G {\n");
+	int file_generated=0; 
 
+  //      if(!myFile){
+    //            perror(filename);
+      //          exit(0);
+    ///    }
+
+
+// 	sprintf(str, "subautomata%d.dot", files_generated++);
+  //      Destination = fopen(str, "w+");
+       
+       
+       //   fprintf (myFile,"digraph G {\n");
+//	  fprintf(Destination, "digraph G {\n"); 			
 
 
 	int i,j,max_color_membership,color_to_split;
@@ -175,7 +185,7 @@ void partition (int max_partition_size) {
 	vector <int> color_membership[MAX_COLORS]; // new vector<int>();
 	vector <int> virtual_root_colors;
 	vector <int> virtual_root_edges;//,virtual_root_colors;
-	char str[1024];
+//	char str[1024];
 	vector<int> myemptyvector;
 	
 	// initialize colors and set up virtual root
@@ -222,21 +232,37 @@ void partition (int max_partition_size) {
 	
 	for (i = 0; i < natural_partition_num; i++){
 	    printf("Natural Partition = %d\n", i); 
+		sprintf(filename, "subautomata%d.dot", i);
+                      myFile = fopen(filename, "w+");
+                        fprintf (myFile,"digraph G {\n");
 	    
 	   
 	    for (j = 0; j < natural_partitions[i].size(); j++){
-		printf ("found -> %d, node = %s, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j], node_table[natural_partitions[i][j]]->properties->children->content, min_partition,max_partition);
+//		printf ("found -> %d, node = %s, natural partitions ranging in size from %d to %d\n", natural_partitions[i][j], node_table[natural_partitions[i][j]]->properties->children->content, min_partition,max_partition);
 
-			if(j==natural_partitions[i].size())
+	/*	      sprintf(filename, "subautomata%d.dot", files_generated++);
+		      myFile = fopen(filename, "w+");
+			fprintf (myFile,"digraph G {\n");
+*/
+
+			if(j==natural_partitions[i].size()-1){
 				fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
-			else 
+//				fprintf(Destination, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
 
-				fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
+			}else 
 
-		}
-	    fprintf(myFile, ";\n"); 
+			{
+                                fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
+  //                              fprintf(Destination, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
+
+                        }
+
+}	 
+//	    fprintf(myFile, ";\n"); 
+	    fprintf(myFile,";\n}\n"); 
+	    fclose(myFile); 
 	}	
-		fprintf(myFile, "\n}\n"); 
+//		fprintf(myFile, "\n}\n"); 
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
