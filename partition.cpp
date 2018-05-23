@@ -23,9 +23,10 @@ void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges)
   	for (int i=0;i<max_edges;i++) {
   		if (graph[ste][i]==-1) break;
 		  	add_connected_stes(graph[ste][i],members,graph,max_edges); 
-			
+		 			
 //			printf ("%s -> %s;\n",node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content);
 	}
+
 
 //clear_visited_flags ();
 
@@ -160,12 +161,15 @@ void partition (int max_partition_size) {
 	clear_visited_flags();
 //	printf("Partition = 0 \n\n"); 
 	for (i=0;i<virtual_root_edges.size();i++) {
-
 //			printf("\nPartition = %d\n", natural_partition_num);
 
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
-			if (natural_partitions[natural_partition_num].size()) natural_partition_num++; 
+
+//			printf("%d\n", natural_partition_num); 
+			
+			if (natural_partitions[natural_partition_num].size()) 
+				natural_partition_num++; 
 // clear_visited_flags();
 
 
