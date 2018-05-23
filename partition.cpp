@@ -5,6 +5,11 @@
 
 using namespace std; 
 
+void clear_visited_flags () {
+        // clear visitied to avoid inifinite loops
+        for (int i=0;i<num_states;i++) visited[i]=0;
+}
+
 
 void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges) {
 
@@ -19,8 +24,10 @@ void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges)
   		if (graph[ste][i]==-1) break;
 		  	add_connected_stes(graph[ste][i],members,graph,max_edges); 
 			
-			printf ("%s -> %s;\n",node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content);
+//			printf ("%s -> %s;\n",node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content);
 	}
+
+//clear_visited_flags ();
 
 }
 void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root_colors) {
@@ -77,11 +84,11 @@ void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root
 
 }
 
-void clear_visited_flags () {
+/*void clear_visited_flags () {
 	// clear visitied to avoid inifinite loops
 	for (int i=0;i<num_states;i++) visited[i]=0;
 }
-
+*/
 void find_critical_path () {
         int i,depth=0;
         vector<int> path;
@@ -123,6 +130,9 @@ void partition (int max_partition_size) {
  FILE *myFile;
  FILE *Destination ; 
 
+ FILE *myFile2; 
+
+
         char filename[1024];
 	char str[1024]; 
 
@@ -151,44 +161,60 @@ void partition (int max_partition_size) {
 //	printf("Partition = 0 \n\n"); 
 	for (i=0;i<virtual_root_edges.size();i++) {
 
-			printf("\nPartition = %d\n", natural_partition_num);
+//			printf("\nPartition = %d\n", natural_partition_num);
 
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
 			if (natural_partitions[natural_partition_num].size()) natural_partition_num++; 
+// clear_visited_flags();
+
 
 	}
 
+
 	int min_partition=num_states,max_partition=0;
+	int cnt =0; 
 
 	for (i=0;i<natural_partition_num;i++) {
 		if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
 		if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
 	}		
 
+	 myFile2 = fopen("countstates.txt","w+");
+
 	
 	for (i = 0; i < natural_partition_num; i++){
-	    printf("Natural Partition = %d\n", i); 
+//	        printf("Natural Partition = %d\n", i); 
 		sprintf(filename, "subautomata%d.dot", i);
-                      myFile = fopen(filename, "w+");
-                        fprintf (myFile,"digraph G {\n");
+                myFile = fopen(filename, "w+");
+                fprintf (myFile,"digraph G {\n");
+//		myFile2 = fopen("countstates.txt","w+"); 
 	    
 	   
 	    for (j = 0; j < natural_partitions[i].size(); j++){
 
-			if(j==natural_partitions[i].size()-1)
+			if(j==natural_partitions[i].size()-1){ cnt++; 
 				fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
-			else 
+			}else {
 
                                fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
+				cnt++; 
 
-
+			}	
+//	printf("count per partition%d = %d\n", i, cnt); 
+//	cnt=0; 
 }	 
 
+ 		fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
+        	cnt=0;
+
 	    fprintf(myFile,";\n}\n"); 
+//	    fclose(myFile2); 
 	    fclose(myFile); 
 	}	
 
+
+ fclose(myFile2);
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
