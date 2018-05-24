@@ -33,24 +33,7 @@ void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges)
 void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root_colors) {
 	int i,j;
 
-/*
-	printf ("state colors\n");
-	printf ("%5d ",-1);
-	for (j=0;j<virtual_root_colors.size();j++) {
-		if (j>0) printf (",");
-		printf ("%d",virtual_root_colors[j]);
-	}
-	printf ("\n");
-	for (i=0;i<num_states;i++) {
-		printf ("%5d ",i);
-		for (j=0;j<state_colors[i].size();j++) {
-			if (j>0) printf (",");
-			printf ("%d",state_colors[i][j]);
-		}
-		printf ("\n");
-	}
-	printf ("\n");
-*/
+
 	int total_stes=0;
 
 	//printf ("color states\n");
@@ -79,14 +62,9 @@ void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root
 																					num_states,
 																					total_stes,
 																					total_stes-num_states-partitions); // subtract virt. root
-
 }
 
-/*void clear_visited_flags () {
-	// clear visitied to avoid inifinite loops
-	for (int i=0;i<num_states;i++) visited[i]=0;
-}
-*/
+
 void find_critical_path () {
         int i,depth=0;
         vector<int> path;
@@ -99,7 +77,6 @@ void find_critical_path () {
                 }
         }
 
-        //free(visited);
 }
 
 void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,vector <int> &path) {
@@ -126,6 +103,7 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
 
 void partition (int max_partition_size) {
  FILE *myFile;
+ FILE *myFile3; 
  FILE *Destination ; 
 
  FILE *myFile2; 
@@ -166,54 +144,97 @@ void partition (int max_partition_size) {
 //			printf("%d\n", natural_partition_num); 
 			
 			if(natural_partitions[natural_partition_num].size()) natural_partition_num++;
-
-		
 }
 
-	// Find the actual Natural Partitions checking if each NFA has start and leaf 
+// Check with VASim works exactly except with Snort, ER, Hamming 
+      myFile3 = fopen("countstates_extra.txt","w+");
+	int cnt2=0; 
+        for (i = 0; i < natural_partition_num; i++){
+               sprintf(filename, "automata%d.dot", i);
+               myFile = fopen(filename, "w+");
+               fprintf (myFile,"digraph G {\n");
+
+
+            for (j = 0; j < natural_partitions[i].size(); j++){
+
+                        if(j==natural_partitions[i].size()-1){
+                                cnt2++;
+                                fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
+                        }else {
+
+                               fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
+                                cnt2++;
+
+                        }
+
+	    }
+            fprintf(myFile3,"count per partition%d = %d\n", i, cnt2);
+            cnt2=0;
+
+            fprintf(myFile,";\n}\n");
+            fclose(myFile);
+        }
+
+	 fclose(myFile3);
+
+
+     	int min_partition=num_states,max_partition=0;
+        int cnt =0;
+
+        for (i=0;i<natural_partition_num;i++) {
+                if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
+                if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
+        }
+
+//*********************/ 
+
+// Find the actual Natural Partitions checking if each NFA has start and leaf  For Snort, ER, Hamming 
 
 	int n=0, np=0, temp; 
 	vector <int> natural_partitions_real[MAX_COLORS];
 
-	for (i=0;i<natural_partition_num;i++) 
+	for (i=0;i<natural_partition_num;i++) { 
+		
 		for (j = 0; j < natural_partitions[i].size(); j++)
 			if(!report_table[natural_partitions[i][j]]) {
-//				temp = natural_partitions[i][j]; 
-//				natural_partitions_real[np].insert(n,temp);
 
-//				n++; 
+//				n+= natural_partitions[i].size(); 
+				
+//				for(int k=0;k<natural_partitions[i].size(); k++) {
+///					temp = natural_partitions[i][k]; 
+//					natural_partitions_real[np].push_back(temp);
+	//			}		
 				continue; 
+
 			}else { 
 				np++; 
+  // 			        n=0; 
+
 				break; 					
 			}
+//
+//		printf("partition%d=%d\n", i, n); 
+	}
+
 	
 	printf("Number of Natural Partitions =%d\n", np); 
 
 
 
-	int min_partition=num_states,max_partition=0;
-	int cnt =0; 
 
-	for (i=0;i<natural_partition_num;i++) {
-		if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
-		if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
-	}		
-/*
-	 myFile2 = fopen("countstates.txt","w+");
 
-	
+	myFile2 = fopen("countstates.txt","w+");
+
 	for (i = 0; i < np; i++){
-//	        printf("Natural Partition = %d\n", i); 
 		sprintf(filename, "subautomata%d.dot", i);
                 myFile = fopen(filename, "w+");
                 fprintf (myFile,"digraph G {\n");
-//		myFile2 = fopen("countstates.txt","w+"); 
-	    
+   
 	   
 	    for (j = 0; j < natural_partitions_real[i].size(); j++){
 
-			if(j==natural_partitions_real[i].size()-1){ cnt++; 
+			if(j==natural_partitions_real[i].size()-1){
+				cnt++; 
 				fprintf(myFile, "%s", node_table[natural_partitions_real[i][j]]->properties->children->content);
 			}else {
 
@@ -221,21 +242,23 @@ void partition (int max_partition_size) {
 				cnt++; 
 
 			}	
-//	printf("count per partition%d = %d\n", i, cnt); 
-//	cnt=0; 
+
 }	 
 
- 		fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
-        	cnt=0;
+	    fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
+            cnt=0;
 
 	    fprintf(myFile,";\n}\n"); 
-//	    fclose(myFile2); 
 	    fclose(myFile); 
 	}	
 
 
  fclose(myFile2);
-*/
+
+
+/// ---------------------
+
+
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
