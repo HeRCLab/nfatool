@@ -172,16 +172,15 @@ void partition (int max_partition_size) {
 
 	// Find the actual Natural Partitions checking if each NFA has start and leaf 
 
-	int n=0, np=0, temp; 
+	int n=0, np=0; 
 	vector <int> natural_partitions_real[MAX_COLORS];
 
 	for (i=0;i<natural_partition_num;i++) 
 		for (j = 0; j < natural_partitions[i].size(); j++)
+		
 			if(!report_table[natural_partitions[i][j]]) {
-//				temp = natural_partitions[i][j]; 
-//				natural_partitions_real[np].insert(n,temp);
-
-//				n++; 
+				natural_partitions_real[np][n] = natural_partitions[i][j]; 
+				n++; 
 				continue; 
 			}else { 
 				np++; 
@@ -199,11 +198,11 @@ void partition (int max_partition_size) {
 		if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
 		if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
 	}		
-/*
+
 	 myFile2 = fopen("countstates.txt","w+");
 
 	
-	for (i = 0; i < np; i++){
+	for (i = 0; i < xnatural_partition_num; i++){
 //	        printf("Natural Partition = %d\n", i); 
 		sprintf(filename, "subautomata%d.dot", i);
                 myFile = fopen(filename, "w+");
@@ -211,13 +210,13 @@ void partition (int max_partition_size) {
 //		myFile2 = fopen("countstates.txt","w+"); 
 	    
 	   
-	    for (j = 0; j < natural_partitions_real[i].size(); j++){
+	    for (j = 0; j < natural_partitions[i].size(); j++){
 
-			if(j==natural_partitions_real[i].size()-1){ cnt++; 
-				fprintf(myFile, "%s", node_table[natural_partitions_real[i][j]]->properties->children->content);
+			if(j==natural_partitions[i].size()-1){ cnt++; 
+				fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
 			}else {
 
-                               fprintf(myFile, "%s->", node_table[natural_partitions_real[i][j]]->properties->children->content);
+                               fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
 				cnt++; 
 
 			}	
@@ -235,7 +234,6 @@ void partition (int max_partition_size) {
 
 
  fclose(myFile2);
-*/
 	// perform first check for partition violations
 	max_color_membership=0;
 	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {

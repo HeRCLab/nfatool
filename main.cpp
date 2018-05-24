@@ -265,6 +265,8 @@ int main(int argc, char **argv){
   if (max_stes) partition(max_stes);
 
 
+//for(int i=0; i< num_states; i++) 
+//	printf("report[%d] = %d\n", i, report_table[i]);  
 
 
 
