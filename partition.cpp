@@ -21,19 +21,14 @@ void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges)
   
   	for (int i=0;i<max_edges;i++) {
   		if (graph[ste][i]==-1) break;
-
 		  	add_connected_stes(graph[ste][i],members,graph,max_edges); 
-		 			
 //			printf ("%s -> %s;\n",node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content);
 	}
-
-//clear_visited_flags ();
-
 }
+
 void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root_colors) {
+
 	int i,j;
-
-
 	int total_stes=0;
 
 	//printf ("color states\n");
@@ -63,7 +58,6 @@ void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root
 																					total_stes,
 																					total_stes-num_states-partitions); // subtract virt. root
 }
-
 
 void find_critical_path () {
         int i,depth=0;
@@ -134,13 +128,11 @@ void partition (int max_partition_size) {
 	vector <int> natural_partitions[MAX_COLORS];
 	int natural_partition_num=0;
 	clear_visited_flags();
-//	printf("Partition = 0 \n\n"); 
+
 	for (i=0;i<virtual_root_edges.size();i++) {
 //			printf("\nPartition = %d\n", natural_partition_num);
-
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
 			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
-
 //			printf("%d\n", natural_partition_num); 
 			
 			if(natural_partitions[natural_partition_num].size()) natural_partition_num++;
@@ -148,36 +140,35 @@ void partition (int max_partition_size) {
 
 // Check with VASim works exactly except with Snort, ER, Hamming 
       myFile3 = fopen("countstates_extra.txt","w+");
-	int cnt2=0; 
-        for (i = 0; i < natural_partition_num; i++){
+      int cnt2=0; 
+      
+      for (i = 0; i < natural_partition_num; i++){
                sprintf(filename, "automata%d.dot", i);
                myFile = fopen(filename, "w+");
                fprintf (myFile,"digraph G {\n");
 
 
-            for (j = 0; j < natural_partitions[i].size(); j++){
-
+  	       for (j = 0; j < natural_partitions[i].size(); j++){
                         if(j==natural_partitions[i].size()-1){
                                 cnt2++;
                                 fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
                         }else {
-
                                fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
                                 cnt2++;
-
                         }
 
-	    }
-            fprintf(myFile3,"count per partition%d = %d\n", i, cnt2);
-            cnt2=0;
+	        }
 
-            fprintf(myFile,";\n}\n");
-            fclose(myFile);
-        }
+	       fprintf(myFile3,"count per partition%d = %d\n", i, cnt2);
+               cnt2=0;
 
+               fprintf(myFile,";\n}\n");
+               fclose(myFile);
+      }
 	 fclose(myFile3);
 
 
+// --------------------------------------
      	int min_partition=num_states,max_partition=0;
         int cnt =0;
 
@@ -189,26 +180,35 @@ void partition (int max_partition_size) {
 //*********************/ 
 
 // Find the actual Natural Partitions checking if each NFA has start and leaf  For Snort, ER, Hamming 
-
 	int n=0, np=0, temp; 
 	vector <int> natural_partitions_real[MAX_COLORS];
 
 	for (i=0;i<natural_partition_num;i++) { 
 		
 		for (j = 0; j < natural_partitions[i].size(); j++)
-			if(!report_table[natural_partitions[i][j]]) {
 
-//				n+= natural_partitions[i].size(); 
+			if(!report_table[natural_partitions[i][j]]) {
+				n++; 
 				
-//				for(int k=0;k<natural_partitions[i].size(); k++) {
-///					temp = natural_partitions[i][k]; 
-//					natural_partitions_real[np].push_back(temp);
-	//			}		
+				if(n==natural_partitions[i].size()) {
+                                        for (int k = 0; k < natural_partitions[i].size(); k++){
+                                                temp = natural_partitions[i][k];
+                                                natural_partitions_real[np].push_back(temp);
+            		                 }
+					break; 
+				}
+				else 
 				continue; 
 
-			}else { 
+			}
+			else {				
+				for (int k = 0; k < natural_partitions[i].size(); k++){
+					temp = natural_partitions[i][k];
+                                        natural_partitions_real[np].push_back(temp);
+				}
+
 				np++; 
-  // 			        n=0; 
+   			        n=0; 
 
 				break; 					
 			}
