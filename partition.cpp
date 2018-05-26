@@ -99,7 +99,6 @@ void partition (int max_partition_size) {
  FILE *myFile;
  FILE *myFile3; 
  FILE *Destination ; 
-
  FILE *myFile2; 
 
 
@@ -147,7 +146,6 @@ void partition (int max_partition_size) {
                myFile = fopen(filename, "w+");
                fprintf (myFile,"digraph G {\n");
 
-
   	       for (j = 0; j < natural_partitions[i].size(); j++){
                         if(j==natural_partitions[i].size()-1){
                                 cnt2++;
@@ -166,8 +164,6 @@ void partition (int max_partition_size) {
                fclose(myFile);
       }
 	 fclose(myFile3);
-
-
 // --------------------------------------
      	int min_partition=num_states,max_partition=0;
         int cnt =0;
@@ -176,7 +172,6 @@ void partition (int max_partition_size) {
                 if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
                 if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
         }
-
 //*********************/ 
 
 // Find the actual Natural Partitions checking if each NFA has start and leaf  For Snort, ER, Hamming 
@@ -199,30 +194,21 @@ void partition (int max_partition_size) {
 				}
 				else 
 				continue; 
-
 			}
 			else {				
 				for (int k = 0; k < natural_partitions[i].size(); k++){
 					temp = natural_partitions[i][k];
                                         natural_partitions_real[np].push_back(temp);
 				}
-
 				np++; 
    			        n=0; 
-
 				break; 					
 			}
-//
-//		printf("partition%d=%d\n", i, n); 
 	}
 
-	
+	int min_real=10000;
+
 	printf("Number of Natural Partitions =%d\n", np); 
-
-
-
-
-
 	myFile2 = fopen("countstates.txt","w+");
 
 	for (i = 0; i < np; i++){
@@ -245,16 +231,21 @@ void partition (int max_partition_size) {
 
 }	 
 
+	    if(cnt<min_real) min_real=cnt;
 	    fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
             cnt=0;
 
 	    fprintf(myFile,";\n}\n"); 
+	
+	    printf(" Min natural partition = %d, i = %d \n", min_real, i);
+
 	    fclose(myFile); 
 	}	
 
 
  fclose(myFile2);
 
+/// printf("Min natural partition =%d \n", min_real); 
 
 /// ---------------------
 
