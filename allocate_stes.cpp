@@ -137,10 +137,14 @@ int reverse_movement_map (int n) {
 
 void check_graphs () {
 	int i,j,k;
+ 	for (i=0;i<num_states;i++) 
+                for (j=0;j<max_edges;j++) 
+                      printf("edge_table[%d][%d]= %d\n", i, j, edge_table[i][j]);
 	
 	//#pragma omp parallel for
 	for (i=0;i<num_states;i++) {
 		for (j=0;j<max_edges;j++) {
+//			printf("edge_table[%d][%d]= %d\n", i, j, edge_table[i][j]); 
 			if (edge_table[i][j]==-1) break;
 			if (orig_edge_table[movement_map[i]][j] != movement_map[edge_table[i][j]]) {
 				fprintf (stderr,"error: new edge %d->%d should map to original edge %d->%d\n",i,edge_table[i][j],movement_map[i],orig_edge_table[movement_map[i]][j]);
@@ -251,7 +255,7 @@ int validate_interconnection() {
 	    //if (max_differential_score>0) {
 			//printf ("moved STE in position %d to position %d due to bad edge %d->%d, best score = %d\n",best_from,best_to,i,edge_table[i][j],min_differential_score);
 			move_ste(best_from,best_to);
-			printf("----------moving %d to %d\n",best_from,best_to);
+//			printf("----------moving %d to %d\n",best_from,best_to);
 		//}
         violations++;
 		

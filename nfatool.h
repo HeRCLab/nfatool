@@ -22,6 +22,7 @@
 
 using namespace std;
 
+ 
 #include "partition.h"
 #include "parse_anml.h"
 #include "visualization.h"

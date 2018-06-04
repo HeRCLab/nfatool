@@ -17,12 +17,10 @@ void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges)
                visited[ste]=1;
  
 	members.push_back(ste);
-
   
   	for (int i=0;i<max_edges;i++) {
   		if (graph[ste][i]==-1) break;
 		  	add_connected_stes(graph[ste][i],members,graph,max_edges); 
-//			printf ("%s -> %s;\n",node_table[ste]->properties->children->content, node_table[graph[ste][i]]->properties->children->content);
 	}
 }
 
@@ -31,9 +29,7 @@ void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root
 	int i,j;
 	int total_stes=0;
 
-	//printf ("color states\n");
 	for (i=0;i<current_color;i++) {
-		//printf ("%5d (%d) ",i,(int)color_membership[i].size());
 		for (j=0;j<color_membership[i].size();j++) {
 			//if (j>0) printf (",");
 			//printf ("%d",color_membership[i][j]);
@@ -62,7 +58,7 @@ void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root
 void find_critical_path () {
         int i,depth=0;
         vector<int> path;
-        
+   
         for (i=0;i<num_states;i++) visited[i]=0;
 
         for (i=0;i<num_states;i++) {
@@ -103,6 +99,7 @@ void partition (int max_partition_size) {
 
 
         char filename[1024];
+	char filename3[104]; 
 	char str[1024]; 
 
 	int i,j,max_color_membership,color_to_split;
@@ -163,7 +160,7 @@ void partition (int max_partition_size) {
                fprintf(myFile,";\n}\n");
                fclose(myFile);
       }
-	 fclose(myFile3);
+     fclose(myFile3);
 // --------------------------------------
      	int min_partition=num_states,max_partition=0;
         int cnt =0;
@@ -206,25 +203,71 @@ void partition (int max_partition_size) {
 			}
 	}
 
-	int min_real=10000;
 
+
+
+	int min_real=10000;
+	char c = '"'; 
 	printf("Number of Natural Partitions =%d\n", np); 
+//	printf("%d\n", np);
+
 	myFile2 = fopen("countstates.txt","w+");
 
 	for (i = 0; i < np; i++){
-		sprintf(filename, "subautomata%d.dot", i);
+		sprintf(filename, "subautomata%d.anml", i);
+		//sprintf(filename3, "subautomata%d.anml",i); 
                 myFile = fopen(filename, "w+");
-                fprintf (myFile,"digraph G {\n");
+		//myFile3= fopen(filename3, "w+"); 
+
+//                fprintf (myFile,"digraph G {\n");
+		  fprintf(myFile, "<automata-network id=%cMotomata%c name=%cmot.anml%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<description></description>\n", c,c,c,c,c,c);
+
+		
+
    
 	   
 	    for (j = 0; j < natural_partitions_real[i].size(); j++){
 
 			if(j==natural_partitions_real[i].size()-1){
 				cnt++; 
-				fprintf(myFile, "%s", node_table[natural_partitions_real[i][j]]->properties->children->content);
+//				 xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+				  fprintf(myFile, "		<report-on-match reportcode=%c%s%c/>\n", c, node_table[natural_partitions_real[i][j]]->properties->children->content,c);//->properties->children->content, c); 
+				  fprintf(myFile,"	</state-transition-element>\n");
+				  fprintf(myFile, "</automata-network>\n"); 
+				  fprintf(myFile,"</anml>\n");
+
+//				fprintf(myFile, "%s", node_table[natural_partitions_real[i][j]]->properties->children->content);
+			
+			}else if (j==0){
+  				fprintf(myFile, "	<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
+                                                                                                node_table[natural_partitions_real[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+                                fprintf(myFile,"		<activate-on-match element=%c%s%c/>\n", c,
+                                                                                node_table[natural_partitions_real[i][j+1]]->properties->children->content,
+                                                                                c);
+                                fprintf(myFile, "	</state-transition-element>\n");
+
+
 			}else {
 
-                               fprintf(myFile, "%s->", node_table[natural_partitions_real[i][j]]->properties->children->content);
+ 				fprintf(myFile, "	<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+												node_table[natural_partitions_real[i][j]]->properties->children->content,
+												c,
+												c,
+												c,
+												c,c);	
+		                fprintf(myFile,"		<activate-on-match element=%c%s%c/>\n", c, 
+										node_table[natural_partitions_real[i][j+1]]->properties->children->content,
+										c);
+				fprintf(myFile, "	</state-transition-element>\n"); 
+			
+// 				 xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+//                               fprintf(myFile, "%s->", node_table[natural_partitions_real[i][j]]->properties->children->content);
 				cnt++; 
 
 			}	
@@ -232,10 +275,11 @@ void partition (int max_partition_size) {
 }	 
 
 	    if(cnt<min_real) min_real=cnt;
-	    fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
+//	    fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
+	    fprintf(myFile2, "%d\n", cnt);
             cnt=0;
 
-	    fprintf(myFile,";\n}\n"); 
+//	    fprintf(myFile,";\n}\n"); 
 	
 	    printf(" Min natural partition = %d, i = %d \n", min_real, i);
 
@@ -245,7 +289,8 @@ void partition (int max_partition_size) {
 
  fclose(myFile2);
 
-/// printf("Min natural partition =%d \n", min_real); 
+ printf("Min partition =%d \n", min_partition);
+ printf("Max partition = %d\n", max_partition);  
 
 /// ---------------------
 

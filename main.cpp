@@ -297,12 +297,12 @@ int main(int argc, char **argv){
 /*
  * map logical STEs to physical STEs, if the user specified a maximum hardware fan-out
  */
- // int violations;
- // int i=0;
- // if (max_fanout) while (violations=validate_interconnection()) {
-  //  if (!(i%1)) printf ("*********************scan complete, violations = %d\n",violations);
-   // i++;
-//  };
+  int violations;
+  int i=0;
+  if (max_fanout) while (violations=validate_interconnection()) {
+    if (!(i%1)) printf ("*********************scan complete, violations = %d\n",violations);
+   	 i++;
+  };
 
 
   return 0;
