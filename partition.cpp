@@ -212,16 +212,15 @@ void partition (int max_partition_size) {
 //	printf("%d\n", np);
 
 	myFile2 = fopen("countstates.txt","w+");
-
+/*
 	for (i = 0; i < np; i++){
-		sprintf(filename, "subautomata%d.anml", i);
+		sprintf(filename, "automata_%d.anml", i);
 		//sprintf(filename3, "subautomata%d.anml",i); 
                 myFile = fopen(filename, "w+");
 		//myFile3= fopen(filename3, "w+"); 
 
 //                fprintf (myFile,"digraph G {\n");
-		  fprintf(myFile, "<automata-network id=%cMotomata%c name=%cmot.anml%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<description></description>\n", c,c,c,c,c,c);
-
+		  fprintf(myFile, "<anml version=%c1.0%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<automata-network id=%cnfatool%c>\n",c,c,c,c,c,c);
 		
 
    
@@ -232,38 +231,45 @@ void partition (int max_partition_size) {
 				cnt++; 
 //				 xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
 
-				  fprintf(myFile, "		<report-on-match reportcode=%c%s%c/>\n", c, node_table[natural_partitions_real[i][j]]->properties->children->content,c);//->properties->children->content, c); 
-				  fprintf(myFile,"	</state-transition-element>\n");
+ 				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
+                                                                                                node_table[natural_partitions_real[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+
+				  fprintf(myFile, "	<report-on-match reportcode=%c1%c/>\n", c,c);//->properties->children->content, c); 
+				  fprintf(myFile,"</state-transition-element>\n");
 				  fprintf(myFile, "</automata-network>\n"); 
 				  fprintf(myFile,"</anml>\n");
 
 //				fprintf(myFile, "%s", node_table[natural_partitions_real[i][j]]->properties->children->content);
 			
 			}else if (j==0){
-  				fprintf(myFile, "	<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
+  				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
                                                                                                 node_table[natural_partitions_real[i][j]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,
                                                                                                 c,
                                                                                                 c,c);
-                                fprintf(myFile,"		<activate-on-match element=%c%s%c/>\n", c,
+                                fprintf(myFile,"	<activate-on-match element=%c%s%c/>\n", c,
                                                                                 node_table[natural_partitions_real[i][j+1]]->properties->children->content,
                                                                                 c);
-                                fprintf(myFile, "	</state-transition-element>\n");
+                                fprintf(myFile, "</state-transition-element>\n");
 
 
 			}else {
 
- 				fprintf(myFile, "	<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+ 				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
 												node_table[natural_partitions_real[i][j]]->properties->children->content,
 												c,
 												c,
 												c,
 												c,c);	
-		                fprintf(myFile,"		<activate-on-match element=%c%s%c/>\n", c, 
+		                fprintf(myFile,"	<activate-on-match element=%c%s%c/>\n", c, 
 										node_table[natural_partitions_real[i][j+1]]->properties->children->content,
 										c);
-				fprintf(myFile, "	</state-transition-element>\n"); 
+				fprintf(myFile, "</state-transition-element>\n"); 
 			
 // 				 xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
 
@@ -291,6 +297,81 @@ void partition (int max_partition_size) {
 
  printf("Min partition =%d \n", min_partition);
  printf("Max partition = %d\n", max_partition);  
+*/
+
+
+
+  for (i = 0; i < natural_partition_num; i++){
+                sprintf(filename, "automata_%d.anml", i);
+                //sprintf(filename3, "subautomata%d.anml",i);
+                myFile = fopen(filename, "w+");
+                //myFile3= fopen(filename3, "w+");
+
+//                fprintf (myFile,"digraph G {\n");
+                  fprintf(myFile, "<anml version=%c1.0%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<automata-network id=%cnfatool%c>\n",c,c,c,c,c,c);
+
+
+
+
+
+            for (j = 0; j < natural_partitions[i].size(); j++){
+
+                        if(j==natural_partitions[i].size()-1){
+                                cnt++;
+//                               xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+
+
+       fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
+                                                                                                node_table[natural_partitions[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+                                fprintf(myFile,"        <activate-on-match element=%c%s%c/>\n", c,
+                                                                                node_table[natural_partitions[i][j+1]]->properties->children->content,
+                                                                                c);
+                                fprintf(myFile, "</state-transition-element>\n");
+
+
+                        }else {
+
+
+                             fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+                                                                                                node_table[natural_partitions[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+                                fprintf(myFile,"        <activate-on-match element=%c%s%c/>\n", c,
+                                                                                node_table[natural_partitions[i][j+1]]->properties->children->content, 
+                                                                                c);
+                                fprintf(myFile, "</state-transition-element>\n");
+
+//                               xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+//                               fprintf(myFile, "%s->", node_table[natural_partitions_real[i][j]]->properties->children->content);
+                                cnt++;
+
+                        }
+
+}
+
+            if(cnt<min_real) min_real=cnt;
+//          fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
+//            fprintf(myFile2, "%d\n", cnt);
+//            cnt=0;
+
+//          fprintf(myFile,";\n}\n");
+
+            printf(" Min natural partition = %d, i = %d \n", min_real, i);
+
+            fclose(myFile);
+        }
+
+
+ //fclose(myFile2);
+
 
 /// ---------------------
 
