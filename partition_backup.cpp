@@ -1,211 +1,738 @@
+// Countstates_extra.txt -> natural partitions 
+// Countstates.txt -> natural partitions real 
+
+
 #include "nfatool.h"
 
 #define	OVECCOUNT  30
 #define STATEMAP_SIZE 150000
 
-void find_critical_path () {
-	int i,depth=0,deepest=0;
-	vector<int> path,deepest_path;
-	int *visited;
+using namespace std; 
 
-	visited=(int *)malloc(sizeof(int)*num_states);
-	for (i=0;i<num_states;i++) visited[i]=0;
+void clear_visited_flags () {
+        // clear visitied to avoid inifinite loops
+        for (int i=0;i<num_states;i++) visited[i]=0;
+}
 
-	for (i=0;i<num_states;i++) {
-		if (start_state[i]) {
-			path.push_back(i);
-			dfs_critical(i,depth,deepest,deepest_path,path);
-			path.pop_back();
+
+void add_connected_stes (int ste,vector<int> &members,int **graph,int max_edges) {
+
+	if (visited[ste]) return;
+               visited[ste]=1;
+ 
+	members.push_back(ste);
+  
+  	for (int i=0;i<max_edges;i++) {
+  		if (graph[ste][i]==-1) break;
+		  	add_connected_stes(graph[ste][i],members,graph,max_edges); 
+	}
+}
+
+void dump_color_info (vector <int> *color_membership, vector <int> &virtual_root_colors) {
+
+	int i,j;
+	int total_stes=0;
+
+	for (i=0;i<current_color;i++) {
+		for (j=0;j<color_membership[i].size();j++) {
+			//if (j>0) printf (",");
+			//printf ("%d",color_membership[i][j]);
+			total_stes++;
 		}
+		//printf ("\n");
 	}
 
-	printf ("deepest path = %d\n",deepest);
-	for (i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
-				deepest_path[i],
-				node_table[deepest_path[i]]->properties->children->content);
-	printf ("TERM\n");
+	int partitions=0;
+	double utilization=0.0;
+	for (i=0;i<MAX_COLORS;i++) {
+		if (color_membership[i].size() != 0) partitions++;
+		utilization += (double)color_membership[i].size()/(double)max_stes;
+	}
+	utilization /= (double)partitions;
 
-//	free(visited);
+	printf ("\n");
+	printf ("partitions = %d\naverage partition utilization = %0.2f%%\noriginal stes = %d\nstes after partitioning = %d\nreplications = %d\n",
+																					partitions,
+																					utilization*100.0,
+																					num_states,
+																					total_stes,
+																					total_stes-num_states-partitions); // subtract virt. root
+}
+
+void find_critical_path () {
+        int i,depth=0;
+        vector<int> path;
+   
+        for (i=0;i<num_states;i++) visited[i]=0;
+
+        for (i=0;i<num_states;i++) {
+                if (start_state[i]) {
+                        dfs_critical(i,depth,deepest,deepest_path,path);
+                }
+        }
+
 }
 
 void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,vector <int> &path) {
-	int i;
+        int i;
 
-	if (visited[ste]) return;
-	visited[ste]=1;
+        if (visited[ste]) return;
+        path.push_back(ste);
+        visited[ste]=1;
+        depth++;
 
-	depth++;
+        if (depth > deepest) {
+                deepest = depth;
+                deepest_path = path;
+        }
 
-	if (depth > deepest) {
-		deepest = depth;
-		deepest_path = path;
-	}
-
-	for (i=0;i<max_edges;i++) {
-		if (edge_table[ste][i]==-1) break;
-
-		if (i!=0) path.pop_back();
-		path.push_back(edge_table[ste][i]);
-		dfs_critical(edge_table[ste][i],depth,deepest,deepest_path,path);
-	}
-
-	path.push_back(edge_table[ste][i]);
-
-	depth--;
+        for (i=0;i<max_edges;i++) {
+                if (edge_table[ste][i]==-1) break;
+                dfs_critical(edge_table[ste][i],depth,deepest,deepest_path,path);
+        }
+        
+	path.pop_back();
+    depth--;
 }
 
-void traverse_partition(int ste)
-{
+void partition (int max_partition_size) {
+ FILE *myFile;
+ FILE *myFile3; 
+ FILE *Destination ; 
+ FILE *myFile2; 
+ FILE *myFile4; 
 
-  if (visitedColorTrav[ste] == 1)
-  {
-    return; 
-  }
-  else if(ste == -1)
-  {
-    return;
-  }
-  else
+ char filename[1024];
+ char filename3[104]; 
+ char str[1024]; 
 
-    printf("The STE is: %d\n", ste);
+	int i,j,max_color_membership,color_to_split;
+	//map <int,vector <int> > color_membership;
+//	vector <int> v = new vector<int>(10); 
+	vector <int> color_membership[MAX_COLORS]; // new vector<int>();
+	vector <int> virtual_root_colors;
+	vector <int> virtual_root_edges;//,virtual_root_colors;
+//	char str[1024];
+	vector<int> myemptyvector;
+	
+	// initialize colors and set up virtual root
+	virtual_root_colors.push_back(0);
+	color_membership[0].push_back(-1); // -1 is stand-in for virtual root
+	for (i=0;i<num_states;i++) {
+		state_colors[i].push_back(0);
+		color_membership[0].push_back(i);
+		if (root_node[i]) virtual_root_edges.push_back(i); // create outgoing edges from virtual root
+	}
 
-   visitedColorTrav[ste] = 1;
+	// find "natural partitions
+	vector <int> natural_partitions[MAX_COLORS];
+	int natural_partition_num=0;
+	clear_visited_flags();
 
-   state_colors[ste].push_back(current_color);
-
-   color_count[current_color]++;
-
-   for (int i = 0; i < num_states; i++)
-   {
-     for (int j = 0; j < max_edges; j++)
-     {
-       if (edge_table[i][j] == -1)
-       {
-         break;
-       }
-       else if ((edge_table[i][j] == ste) && (i == start_color))
-       {
-         current_color++;
-         break;
-       }
-     }
-   }
-
-   for (int i = 0; i < max_edges; i++)
-   {
-
-      traverse_partition(edge_table[ste][i]);
-
-   }
+	for (i=0;i<virtual_root_edges.size();i++) {
+//			printf("\nPartition = %d\n", natural_partition_num);
+			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],edge_table, max_edges);
+			add_connected_stes(virtual_root_edges[i],natural_partitions[natural_partition_num],reverse_table,max_reverse_edges);
+//			printf("%d\n", natural_partition_num); 
+			
+			if(natural_partitions[natural_partition_num].size()) natural_partition_num++;
 }
 
-
-void split_colorv2(int ste, int color_from, int color_to)    /* RASHA ** adding ste as parameter in split_colorv2   **/
-
-{ 
-
-  int k;
-
-  /*
-   * Erases all the colors within the tree before adding new colors 
-   */
-
-  for (std::vector<int>::iterator i = state_colors[ste].begin();i!=state_colors[ste].end();i++)
-  {
-    if (*i==color_from)     				/*RASHA ** change color to color_from **/ 
-      {
-        state_colors[ste].erase(i);
-      }
-  }
-
-  /*
-   * add colors to the highest priortize ste for splitting based on the amount of outgoing edges it may have 
-   */
-
-  for (int i = 1; i <= ExactOutEdge[ste]; i++)
-  {
-    state_colors[ste].push_back(color_to++);           /* RASHA**  Color to color_to **/ 
-  }
-
-  /*
-   * when a new brach is found from the start state the color will change among that branch
-   */
-
-  for (std::vector<int>::iterator i = state_colors[ste].begin(); i != state_colors[ste].end(); i++)
-  {
-    k++;
+// Check with VASim works exactly except with Snort, ER, Hamming 
+      myFile3 = fopen("countstates_extra.txt","w+");
+      int cnt2=0; 
       
-    if (edge_table[ste][k] == -1)
-    {
-      break;
-    }
+      for (i = 0; i < natural_partition_num; i++){
+               sprintf(filename, "automata%d.dot", i);
+               myFile = fopen(filename, "w+");
+               fprintf (myFile,"digraph G {\n");
 
-    replace_colorv2(edge_table[ste][k],color_to,*i);      /* RASHA ** color to color_to **/
-  }
+  	       for (j = 0; j < natural_partitions[i].size(); j++){
+                        if(j==natural_partitions[i].size()-1){
+                                cnt2++;
+                                fprintf(myFile, "%s", node_table[natural_partitions[i][j]]->properties->children->content);
+                        }else {
+                               fprintf(myFile, "%s->", node_table[natural_partitions[i][j]]->properties->children->content);
+                                cnt2++;
+                        }
+	        }
+
+//	       fprintf(myFile3,"count per partition%d = %d\n", i, cnt2);
+		fprintf(myFile3, "%d\n", cnt2); 
+               cnt2=0;
+
+               fprintf(myFile,";\n}\n");
+               fclose(myFile);
+      }
+     fclose(myFile3);
+// --------------------------------------
+     	int min_partition=num_states,max_partition=0;
+        int cnt =0;
+
+        for (i=0;i<natural_partition_num;i++) {
+                if (natural_partitions[i].size() < min_partition) min_partition=natural_partitions[i].size();
+                if (natural_partitions[i].size() > max_partition) max_partition=natural_partitions[i].size();
+        }
+//*********************/ 
+
+// Find the actual Natural Partitions checking if each NFA has start and leaf  For Snort, ER, Hamming 
+	int n=0, np=0, temp; 
+	vector <int> natural_partitions_real[MAX_COLORS];
+
+	for (i=0;i<natural_partition_num;i++) { 
+		
+		for (j = 0; j < natural_partitions[i].size(); j++)
+
+			if(!report_table[natural_partitions[i][j]]) {
+				n++; 
+				
+				if(n==natural_partitions[i].size()) {
+                                        for (int k = 0; k < natural_partitions[i].size(); k++){
+                                                temp = natural_partitions[i][k];
+                                                natural_partitions_real[np].push_back(temp);
+            		                 }
+					break; 
+				}
+				else 
+				continue; 
+			}
+			else {				
+				for (int k = 0; k < natural_partitions[i].size(); k++){
+					temp = natural_partitions[i][k];
+                                        natural_partitions_real[np].push_back(temp);
+				}
+				np++; 
+   			        n=0; 
+				break; 					
+			}
+	}
+
+
+	int min_real=10000;
+	char c = '"'; 
+	printf("Number of Natural Partitions =%d\n", np); 
+//	printf("%d\n", np);
+
+
+
+
+// Dump the natural partitions into anml files 
+
+	myFile2 = fopen("countstates.txt","w+");
+
+	for (i = 0; i < np; i++){
+		sprintf(filename, "automata_%d.anml", i);
+		sprintf(filename3, "subautomata%d.anml",i); 
+//		myFile4 = fopen(filename3,"w+"); 
+                myFile = fopen(filename, "w+");
+		//myFile3= fopen(filename3, "w+"); 
+
+  ///              fprintf (myFile4,"digraph G {\n");
+
+		  fprintf(myFile, "<anml version=%c1.0%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<automata-network id=%cnfatool%c>\n",c,c,c,c,c,c);
+			   
+		    for (j = 0; j < natural_partitions_real[i].size(); j++){
+
+			if(j==natural_partitions_real[i].size()-1){
+				cnt++; 
+//				 xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+ 				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+                                                                                                //natural_partitions_real[i][j], 
+												node_table[natural_partitions_real[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+						
+
+				  fprintf(myFile, "	<report-on-match reportcode=%c1%c/>\n", c,c);//->properties->children->content, c); 
+				  fprintf(myFile,"</state-transition-element>\n");
+				  fprintf(myFile, "</automata-network>\n"); 
+				  fprintf(myFile,"</anml>\n");
+
+//				fprintf(myFile4, "%s", node_table[natural_partitions_real[i][j]]->properties->children->content);
+			
+			}else if (j==0){
+  				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
+                                                                                                //natural_partitions_real[i][j], 
+												node_table[natural_partitions_real[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+				for(int k=0;k<max_edges;k++) {
+					if(edge_table[natural_partitions_real[i][j]][k]==-1) break; 	
+                                	fprintf(myFile,"	<activate-on-match element=%c%s%c/>\n", c,
+                                                                                node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content,
+                                                                                c);
+//	                        }
+//				fprintf(myFile, "</state-transition-element>\n");
+//				fprintf(myFile4, "%s->", node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content);
+ 				}
+                                fprintf(myFile, "</state-transition-element>\n");
+
+			
+			}else {
+				
+				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+												//natural_partitions_real[i][j],
+												node_table[natural_partitions_real[i][j]]->properties->children->content,
+												c,
+												c,
+												c,
+												c,c);	
+  				for(int k=0; k<max_edges;k++) {
+                                
+					if(edge_table[natural_partitions_real[i][j]][k]==-1) break;
+
+		                	fprintf(myFile,"	<activate-on-match element=%c%s%c/>\n", c, 
+										node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content,
+										c);
+	//			}
+//				fprintf(myFile, "</state-transition-element>\n");
+			
+// 				 xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+  //                             fprintf(myFile4, "%s->", node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content);
+				}fprintf(myFile, "</state-transition-element>\n");
+
+
+				cnt++; 
+
+			}	
+
+}	 
+
+	    if(cnt<min_real) min_real=cnt;
+//	    fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
+	    fprintf(myFile2, "max_Edges = %d, %d\n", max_edges, cnt);
+            cnt=0;
+
+//	    fprintf(myFile,";\n}\n"); 
+	
+	    printf(" Min natural partition = %d, i = %d \n", min_real, i);
+
+	    fclose(myFile); 
+	}	
+
+
+ fclose(myFile2);
+
+ printf("Min partition =%d \n", min_partition);
+ printf("Max partition = %d\n", max_partition);  
+
+
+
+/*
+  for (i = 0; i < natural_partition_num; i++){
+                sprintf(filename, "automata_%d.anml", i);
+                //sprintf(filename3, "subautomata%d.anml",i);
+                myFile = fopen(filename, "w+");
+                //myFile3= fopen(filename3, "w+");
+
+//                fprintf (myFile,"digraph G {\n");
+                  fprintf(myFile, "<anml version=%c1.0%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<automata-network id=%cnfatool%c>\n",c,c,c,c,c,c);
+
+
+
+
+
+            for (j = 0; j < natural_partitions[i].size(); j++){
+
+                        if(j==natural_partitions[i].size()-1){
+                                cnt++;
+//                               xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+
+
+       fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
+                                                                                                node_table[natural_partitions[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+                                fprintf(myFile,"        <activate-on-match element=%c%s%c/>\n", c,
+                                                                                node_table[natural_partitions[i][j+1]]->properties->children->content,
+                                                                                c);
+                                fprintf(myFile, "</state-transition-element>\n");
+
+
+                        }else {
+
+
+                             fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+                                                                                                node_table[natural_partitions[i][j]]->properties->children->content,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,
+                                                                                                c,c);
+                                fprintf(myFile,"        <activate-on-match element=%c%s%c/>\n", c,
+                                                                                node_table[natural_partitions[i][j+1]]->properties->children->content, 
+                                                                                c);
+                                fprintf(myFile, "</state-transition-element>\n");
+
+//                               xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
+
+//                               fprintf(myFile, "%s->", node_table[natural_partitions_real[i][j]]->properties->children->content);
+                                cnt++;
+
+                        }
 
 }
 
-void replace_colorv2(int str, int old_color, int new_color)
-{
-  /*
-   * This is a function that is called recursively onto the branch that it lies on.
-   * iterator is used to check the vector if it contains the color
-   * 
-   * My solution for cycle: create multi-dem vector that stores every cycle found. if one ste that 
-   *                        is found within the cycle, a nested for loop will trigger making a similar 
-   *                        for every ste within the cycle.
-   */
+            if(cnt<min_real) min_real=cnt;
+//          fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
+//            fprintf(myFile2, "%d\n", cnt);
+//            cnt=0;
 
-  if (str == -1)
-  {
-    return;
-  }
+//          fprintf(myFile,";\n}\n");
 
-  for (int i = 0; i < max_edges; i++){
-    if (edge_table[str][i] == -1)
-    {
-      break;
-    }
-    for (std::vector<int>::iterator j = state_colors[str].begin(); j != state_colors[str].end(); j++)
-    {
-      // if (j == old_color)
-      // {
-      //   if (visitedcycle[str] == 1)
-      //   {
-      //     for (int a = 0; a < Tree_Cyle.size(); a++)
-      //     {
-      //       for (int b = 0; b < Tree_Cyle[a].size(); b++)
-      //       {
-      //         if (Tree_Cyle[a][b] == str)
-      //         {
-      //           for (int c = 0; c < Tree_Cyle[a].size(); c++)
-      //           {
-      //             state_colors[str].erase(j);
-      //             state_colors[str].push_back(new_color);
-      //             color_count[new_color]++;
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      //   else
-      //     state_colors[str].erase(i);
-      //     state_colors[str].push_back(new_color);
-      //     color_count[new_color]++;
-      // }
+            printf(" Min natural partition = %d, i = %d \n", min_real, i);
 
-      if (*j == old_color)
-          {
-            state_colors[str].erase(j);
-            state_colors[str].push_back(new_color);
-            color_count[new_color]++;
-          }    
-    }
-    replace_colorv2(edge_table[str][i], old_color, new_color);
-  }
+            fclose(myFile);
+        }
+
+*/
+ //fclose(myFile2);
+
+
+/// ---------------------
+
+
+	// perform first check for partition violations
+	max_color_membership=0;
+	for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
+		max_color_membership=color_membership[i].size();
+		color_to_split=i;
+	}
+	
+	int coloring = 0;
+
+	// dump the dot file
+	//sprintf (str,"coloring%d",coloring++);
+	//dump_dot_file (str,rootGlobal,myemptyvector,1);
+	//dump_color_info(color_membership,virtual_root_colors);
+
+	while (max_color_membership > max_partition_size) {
+		
+		int ste_to_split = find_lowest_pure_node(color_to_split,virtual_root_edges,virtual_root_colors);
+		if (ste_to_split==-2) {
+			fprintf (stderr,"ERROR:  cannot find pure color %d node; cannot partition!\n",color_to_split);
+			exit(0);
+		}
+		split_colors(ste_to_split,color_membership,virtual_root_edges,virtual_root_colors);
+		
+		max_color_membership=0;
+		for (i=0;i<current_color;i++) if (color_membership[i].size() > max_color_membership) {
+			max_color_membership=color_membership[i].size();
+			color_to_split=i;
+		}
+
+		// dump the dot file
+		//sprintf (str,"coloring%d",coloring++);
+		//dump_dot_file (str,rootGlobal,myemptyvector,1);
+		//dump_color_info(color_membership, virtual_root_colors);
+	}
+	
+	// consolidation step
+	int merged;
+	do {		
+		merged=0;
+		// consolidate
+		for (i=0;i<current_color;i++) {
+			if (color_membership[i].size()==0) continue;
+			for (j=i+1;j<current_color;j++) {
+				if (color_membership[j].size()==0) continue;
+				if ((color_membership[i].size() + color_membership[j].size()) <= max_partition_size) {
+					merge_colors(i,j,color_membership,virtual_root_colors);
+					merged=1;
+				}
+			}
+		}
+		// dump the dot file
+		//sprintf (str,"coloring%d",coloring++);
+		//dump_dot_file (str,rootGlobal,myemptyvector,1);
+		//dump_color_info(color_membership,virtual_root_colors);
+	} while (merged);
+
+	dump_color_info(color_membership,virtual_root_colors);
+
+}
+void merge_colors(int color1,int color2,vector <int> *color_membership, vector <int> &virtual_root_colors) {
+	// TODO:  deal with virtual root node!
+	int i;
+	
+	for (i=0;i<color_membership[color2].size();i++) {
+		int ste = color_membership[color2][i];
+		int found=0;
+		for (int j=0;j<color_membership[color1].size();j++) if (color_membership[color1][j]==ste) found=1;
+		if (!found) color_membership[color1].push_back(ste);
+		if (ste==-1) {
+			virtual_root_colors.push_back(color1);
+			for (vector<int>::iterator j = virtual_root_colors.begin() ; j != virtual_root_colors.end() ; j++) {
+				if (*j==color2) {
+					virtual_root_colors.erase(j);
+				}
+			}
+		} else {
+			state_colors[ste].push_back(color1);
+			for (vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+				if (*j==color2) {
+					state_colors[ste].erase(j);
+				}
+			}
+		}
+	}
+	color_membership[color2].clear();
 }
 
+int find_lowest_pure_node(int color,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+	queue <int> myqueue;
+	int i,found;
+	
+	if (virtual_root_edges.size() > 1)
+		myqueue.push(-1); // stand-in for virtual root
+	else
+		myqueue.push(virtual_root_edges[0]);
+	
+	clear_visited_flags();
 
+	while (myqueue.size() > 0) {
+		int dequeued = myqueue.front();
+		myqueue.pop();
+
+		// virtual root cannot be part of a cycle, so there's no reason to check if it's already visited
+		if (dequeued != -1) {
+			if (visited[dequeued]) continue;
+			visited[dequeued]=1;
+		}
+
+		int num_colors = dequeued == -1 ? virtual_root_colors.size() : state_colors[dequeued].size();
+		int first_color = dequeued == -1 ? virtual_root_colors[0] : state_colors[dequeued][0];
+		
+		// find the number of "real" (non-loopback) outgoing edges
+		int outgoing_edges=0;
+		if (dequeued == -1) {
+			outgoing_edges = (int)virtual_root_edges.size();
+		} else {
+			for (i=0;i<max_edges;i++) {
+				if (edge_table[dequeued][i]==-1) break;
+				if (edge_table[dequeued][i]!=dequeued) outgoing_edges++;
+			}
+		}
+
+		if (num_colors==1 && first_color==color && outgoing_edges!=0 && outgoing_edges!=1) return dequeued;
+		
+		if (dequeued==-1)
+			for (i=0;i<virtual_root_edges.size();i++) myqueue.push(virtual_root_edges[i]);
+		else
+			for (i=0;i<max_edges;i++) if (edge_table[dequeued][i]==-1) break; else myqueue.push(edge_table[dequeued][i]);
+	}
+	
+	return -2; // cannot find appropriate STE
+}
+
+// This function finds all outgoing edges from an SCC
+vector <int> find_outgoing_edges (vector <int> scc) {
+	vector <int> edges;
+	int i,j,k,found;
+	
+	for (i=0; i<scc.size(); i++) {
+		for (j=0;j<max_edges;j++) {
+			if (edge_table[scc[i]][j]==-1) break;
+			
+			found=0;
+			for (k=0;k<scc.size();k++) if (edge_table[scc[i]][j]==scc[k]) found=1;
+			if (!found) edges.push_back(edge_table[scc[i]][j]);
+		}
+	}
+	
+	return edges;
+}
+
+// This function finds all outgoing edges from an SCC
+vector <int> find_incoming_edges (vector <int> scc) {
+	vector <int> edges;
+	int i,j,k,found;
+	
+	for (i=0; i<scc.size(); i++) {
+		for (j=0;j<max_fan_in;j++) {
+			if (reverse_table[scc[i]][j]==-1) break;
+			
+			found=0;
+			for (k=0;k<scc.size();k++) if (reverse_table[scc[i]][j]==scc[k]) found=1;
+			if (!found) edges.push_back(reverse_table[scc[i]][j]);
+		}
+	}
+	
+	return edges;
+}
+
+void split_colors (int ste, vector <int> *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+	int i,k,
+		original_color,
+		old_current_color=current_color;
+	
+
+		
+	if (ste!=-1) {
+		// not virtual root
+		
+		vector<int> ste_colors=state_colors[ste];
+		if (ste_colors.size() != 1) {
+			fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
+			exit(0);
+		}
+		
+		original_color = ste_colors[0];
+	
+		// STEP 1:  delete the original color from ste and its fellow SCC members
+		int scc_num = components[ste]; // find component number
+		vector <int> &scc_contents = component_list[scc_num]; // find members of that component
+		for (k=0;k<scc_contents.size();k++) {
+			int fellow_scc_member = scc_contents[k];
+			// remove the color from the list of colors for each node in the SCC
+			for (std::vector<int>::iterator j = state_colors[fellow_scc_member].begin() ; j != state_colors[fellow_scc_member].end() ; j++) {
+				if (*j == original_color) {
+					state_colors[fellow_scc_member].erase(j);
+					break;
+				}
+			}
+		}
+		// STEP 2:  replace original color with a new color on each outgoing edge
+		vector <int> outgoing_edges = find_outgoing_edges(scc_contents);
+		
+		for (i=0;i<outgoing_edges.size();i++) {
+			for (k=0;k<scc_contents.size();k++) {
+				state_colors[scc_contents[k]].push_back(current_color); // note: current_color is a new color!
+				color_membership[current_color].push_back(scc_contents[k]);
+			}
+			int dest_node = outgoing_edges[i];
+			clear_visited_flags();
+			replace_color(dest_node,original_color,current_color,color_membership,virtual_root_edges,virtual_root_colors);
+			current_color++;
+		}
+		
+		// STEP 3:  recurse backward to root
+		vector <int> incoming_edges = find_incoming_edges(scc_contents);
+		for (k=0;k<incoming_edges.size();k++) {
+			clear_visited_flags();
+			reverse_replace_color(incoming_edges[k],original_color,old_current_color,current_color,color_membership);
+		}
+		
+	} else {
+		// virtual root
+		
+		vector <int> &ste_colors=virtual_root_colors;
+		if (ste_colors.size() != 1) {
+			fprintf(stderr,"ERROR:  split_colors() called on STE %d with %d colors (should be 1).\n",ste,(int)ste_colors.size());
+			exit(0);
+		}
+		
+		original_color = ste_colors[0];
+		
+		// STEP 1:  delete the original color from ste and its fellow SCC members
+		for (std::vector<int>::iterator j = virtual_root_colors.begin() ; j != virtual_root_colors.end() ; j++) {
+			if (*j == original_color) {
+				virtual_root_colors.erase(j);
+				break;
+			}
+		}
+		
+		// STEP 2:  replace original color with a new color on each outgoing edge
+		vector <int> &outgoing_edges = virtual_root_edges;
+//		virtual_root_colors.push_back(current_color); 
+		for (i=0;i<outgoing_edges.size();i++) {
+	//		for(std::vector<int>::iterator j=virtual_root_colors.begin(); j!=virtual_root_colors.end(); j++)
+	//		virtual_root_colors.erase(j); 
+			virtual_root_colors.push_back(current_color); // note: current_color is a new color!
+			int dest_node = outgoing_edges[i];
+			color_membership[current_color].push_back(ste);
+			clear_visited_flags();
+			replace_color(dest_node,original_color,current_color,color_membership,virtual_root_edges,virtual_root_colors);
+			current_color++;
+		}
+		
+	}
+	
+	// clear the original color
+	color_membership[original_color].clear();
+
+}
+
+void replace_color (int ste, int original_color, int new_color, vector <int> *color_membership,vector <int> &virtual_root_edges, vector <int> &virtual_root_colors) {
+	int i,j;
+	
+	if (ste!=-1) {
+		if (visited[ste]) return;
+		visited[ste]=1;
+	}
+	
+	if (ste==-1) {
+		//  virtual root
+		
+		for (std::vector<int>::iterator j = virtual_root_colors.begin() ; j != virtual_root_colors.end() ; j++) { // for each color (iterator)
+			if (*j == original_color) {
+				virtual_root_colors.erase(j);
+				break;
+			}
+		}
+		virtual_root_colors.push_back(new_color);
+		vector<int> &colors = color_membership[new_color];
+//		colors.push_back(ste);
+//		&color_membership.push_back(ste); 
+		for (i=0;i<virtual_root_edges.size();i++) { // for each edge
+			replace_color (virtual_root_edges[i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
+		}
+		
+	} else {
+		// not virtual root
+		
+		for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) { // for each color (iterator)
+			if (*j == original_color) {
+				state_colors[ste].erase(j);
+				break;
+			}
+		}
+		//state_colors.emplace(ste,vector<int>{}); // ?
+		state_colors[ste].push_back(new_color);
+		//vector<int> &colors=
+		color_membership[new_color].push_back(ste);
+//		colors.push_back(ste);
+	//	color_membership.push_back(ste); 	
+		for (i=0;i<max_edges;i++) { // for each edge
+			if (edge_table[ste][i]==-1) break;
+                       
+			replace_color (edge_table[ste][i],original_color,new_color,color_membership,virtual_root_edges,virtual_root_colors);
+		}
+	}
+}
+
+void reverse_replace_color (int ste, int original_color, int new_color_start, int new_color_end, vector <int> *color_membership) {
+	int i,k;
+	
+	if (ste!=-1) {
+		if (visited[ste]) return;
+		visited[ste]=1;
+	}
+	
+	for (std::vector<int>::iterator j = state_colors[ste].begin() ; j != state_colors[ste].end() ; j++) {
+		if (*j == original_color) {
+			state_colors[ste].erase(j);
+			break;
+		}
+	}
+	for (k=new_color_start;k<new_color_end;k++)	{
+		state_colors[ste].push_back(k);
+		color_membership[k].push_back(ste);
+	}
+	
+	for (i=0;i<max_fan_in;i++) {
+		if (reverse_table[ste][i]==-1) break;
+		reverse_replace_color (reverse_table[ste][i],original_color,new_color_start,new_color_end,color_membership);
+	}
+}
 
 void max_color_size (int &max_color_size,int &max_color) {
   int i; 
@@ -223,91 +750,3 @@ void max_color_size (int &max_color_size,int &max_color) {
   }
 }
 
-
-void becchi_partition () 
-{
-  int max_color,max_color_size;
-
-  // find strongly-connected components, results stored in globals component_list and components
-  find_sccs();
-
-  // initial:  all STEs have one color (no replication)
-  for (int i = 0; i < num_states; i++)
-  {
-    state_colors[i].push_back(0); /// = 0;  				/* RASHA ** use push back to initialize with 0 **/ 
-  }
-
-
-
-
-  // create virtual root node
-  
-  
-
-  // for (int i = 0; i<num_states; i++) 
-  // {                                                            
-  //   if (start_state[i] == 1) 
-  //   {
-  //     start_color = i;
-
-  //     for (int j = i; i < num_states; j++)
-  //     {
-  //       traverse_partition(j);  
-  //     }
-  //   }
-  // }
-  
-  // color_size_exceeded=0;
-
-  /*
-   *  The nested for loop below will set a flag for each ste that is found 
-   *  within the vector that stores stes that are contain inside a cycle
-   *
-   */
-
-  // for (int a = 0; a < Tree_Cyle.size(); a++)
-  // {
-  //   for (int b = 0; b < Tree_Cyle[a].size(); b++)
-  //   {
-  //     for (int c = 0; c < num_states; c++)
-  //     {
-  //       for (int d = 0; d < max_edges; d++)
-  //       {
-  //         if (edge_table[c][d] == Tree_Cyle[a][b])
-  //         {
-  //           visitedcycle[Tree_Cyle[a][b]] = 1;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  
-  // for (int i=0; i<MAX_COLORS; i++) {
-  //   if (color_count[i] > MAX_PART_SIZE) {
-  //     color_size_exceeded = 1;
-  //   }
-  // }
-
-//find_max_color_size(max_color_size,max_color);    	/* RASHA **  No definitin to find_max_color_size */
-
-for (int i = 0; i < num_states; i++)
-
-while (max_color_size > max_stes) { 
-  split_colorv2(i,max_color,current_color);
-  color_count[max_color]=0;
-//  max_color_size(max_color_size,max_color);      	/* RASHA ** change find_max_color_size to max_color_size NOT WORKED**/ 
-  }
-}
-
-/*void max_color_size (int &max_color_size,int &max_color) {
-  int i,max_color_size=1,max_color=-1;
-  int color_size[MAX_COLORS];
-
-  for (i=0;i<MAX_COLORS;i++) color_size[i]=0;
-  for (i=0;i<num_states;i++) color_size[state_colors[i]]++;
-  for (i=0;i<MAX_COLORS;i++) if (color_size[i]>max_color_size) {
-    max_color_size=color_size[i];
-    max_color=i;
-  }
-}
-*/
