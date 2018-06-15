@@ -200,8 +200,6 @@ void partition (int max_partition_size) {
 		  fprintf(myFile, "<anml version=%c1.0%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<automata-network id=%cnfatool%c>\n",c,c,c,c,c,c);
 		   
 		    for (j = 0; j < natural_partitions_real[i].size(); j++){
-			
-
 
 			if(report_table[natural_partitions_real[i][j]]) { // j==natural_partitions[i].size()-1){
 				cnt++; 
@@ -285,14 +283,14 @@ void partition (int max_partition_size) {
 
 
 for (i = 0; i < np; i++) { //natural_partition_num; i++){
-	 sprintf(filename, "automata%d.dot", i);
+     sprintf(filename, "automata%d.dot", i);
      myFile = fopen(filename, "w+");
      fprintf (myFile,"digraph G {\n");
 	  int cnt2=0;
 	 
-		    for (j = 0; j < natural_partitions_real[i].size(); j++){
+		    for (j = 0; j < natural_partitions_real[i].size(); j++)
 			
-			if(report_table[natural_partitions_real[i][j]]) { // j==natural_partitions[i].size()-1){
+/*			if(report_table[natural_partitions_real[i][j]]) { // j==natural_partitions[i].size()-1){
 				cnt2++; 
 
  				fprintf(myFile,"%s",node_table[natural_partitions_real[i][j]]->properties->children->content); 
@@ -304,9 +302,9 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
 					if(edge_table[natural_partitions_real[i][j]][k]==-1) break; 	
                                 	fprintf(myFile,"%s", node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content);
  				}
-                			
+           			
 			}else {
-				
+*/				
 //				fprintf(myFile, "%s->",node_table[natural_partitions_real[i][j]]->properties->children->content);
 				
   				for(int k=0; k<max_edges;k++) {
@@ -316,16 +314,19 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
 
 				//		fprintf(myFile, "->%s",node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content); 
 				//		else 
-			                	fprintf(myFile,"->%s", node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content);
+
+						fprintf(myFile, "%s->",node_table[natural_partitions_real[i][j]]->properties->children->content);
+
+			                	fprintf(myFile,"%s;\n", node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content);
 
 				}
 				cnt2++; 
 
-			}	
+		
 
-}	 
+	 
 
-				fprintf(myFile,";\n}\n");
+               fprintf(myFile,"\n}\n");
                fclose(myFile);
 
 	}	
