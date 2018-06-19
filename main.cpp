@@ -5,6 +5,7 @@
  */
 unsigned char **next_state_table;
 
+//int *symbol_table; 
 int **edge_table;
 int **orig_edge_table;
 int **reverse_table;
@@ -305,5 +306,10 @@ int main(int argc, char **argv){
   };
 
 
+
+
+for(int i=0; i<num_states; i++) 
+printf("%s\n", symbol_set); 
+ 
   return 0;
 }

@@ -1,5 +1,7 @@
 #include "nfatool.h"
 
+//int *symb; 
+
 void traverse_graph (int i) {
   int j=0;
   
@@ -157,6 +159,9 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
               *str2=str+2;
 	pcre *re;
 
+	FILE *myfile; 
+	myfile=fopen("symbols.txt", "w+");
+ 
 	const char *error;
 
 	int erroroff = 0,
@@ -165,7 +170,7 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
       ovector[OVECCOUNT];
 
 	xmlAttr *attr;
-
+	int k=0; 
 	*start = 0;
 
 	for (attr = Node->properties; attr; attr = attr->next){
@@ -176,8 +181,13 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
 		}else if (!strcmp((const char *)attr->name,"symbol-set")){
 
 			re = pcre_compile((const char *)attr->children->content,0,&error,&erroffset,NULL);
-    //  printf("State: %d symbol-set Hash: %s \n",SS++, attr->children->content);
 
+//			symbol_map[(const char *)attr->children->content]=states;
+
+//			symb = attr->children->content ; //re; 
+//
+      			fprintf(myfile,"%s\n", attr->children->content);
+			fclose(myfile); 
 			str[1]=0;
 
 			for (int i=0;i<256;i++){
@@ -190,11 +200,13 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
 					next_state_table[*id][i]= 1;
 				}
 			}
+//			fclose(myfile); 
 			pcre_free(re);
 		}else if (!strcmp((const char *)attr->name,"start") && strcmp((const char *)attr->children->content,"none")) {
       *start = 1;
     }
 	}
+//	fclose(myfile); 
 }
 
 void get_props_edge (xmlNode *aNode,int *id,int *areport) {

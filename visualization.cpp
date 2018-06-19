@@ -59,12 +59,10 @@ void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset, int colo
 					} else 
 						strcpy(str,"");
 						
-					fprintf (myFile,"\t%d [label=\"%d:%s:%s%s\" peripherals=%d];\n",i,
-																					i,
-																					aNode->properties->children->content,
-																					aNode->properties->next->children->content,
-																					str,
-																					start_state[i]+report_table[i]+1);
+					fprintf (myFile,"\t%d [label=\"%d:%s:%s%s\" peripherals=%d];\n",i,i,aNode->properties->children->content,
+													    aNode->properties->next->children->content,
+													    str,
+													    start_state[i]+report_table[i]+1);
 						
 				}
         		i++;

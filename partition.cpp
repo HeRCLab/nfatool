@@ -204,11 +204,12 @@ void partition (int max_partition_size) {
 			if(report_table[natural_partitions_real[i][j]]) { // j==natural_partitions[i].size()-1){
 				cnt++; 
 
- 				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+ 				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%c start=%cnone%c>\n",c,
                                                                                                 //natural_partitions_real[i][j], 
 												node_table[natural_partitions_real[i][j]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,
+												symbol_set[node_table[natural_partitions_real[i][j]]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,c);
 						
@@ -217,11 +218,12 @@ void partition (int max_partition_size) {
 				  fprintf(myFile,"</state-transition-element>\n");
 			
 			}else if (start_state[natural_partitions_real[i][j]]){ // j==0){
-  				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
+  				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%c start=%call-input%c>\n",c,
                                                                                                 //natural_partitions_real[i][j], 
 												node_table[natural_partitions_real[i][j]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,
+												//symbol_set[natural_partitions_real[i][j]],//->properties->children->content,
                                                                                                 c,
                                                                                                 c,c);
 				for(int k=0;k<max_edges;k++) {
@@ -235,10 +237,11 @@ void partition (int max_partition_size) {
 			
 			}else {
 				
-				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
+				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%c start=%cnone%c>\n",c,
 												node_table[natural_partitions_real[i][j]]->properties->children->content,
 												c,
 												c,
+												//symbol_set[natural_partitions_real[i][j]],//->properties->children->content,
 												c,
 												c,c);	
   				for(int k=0; k<max_edges;k++) {
