@@ -44,16 +44,21 @@ extern unsigned char **next_state_table;
 
 extern int total_visited2_size;
 
+extern vector<const char> symb; 
+
 extern int **edge_table;
 extern int **orig_edge_table;
 extern int **reverse_table;
 extern int **FanoutTable;
 
+extern unsigned char *symbol_set;
+//extern map <std::string,int> symbol_map;
+
 extern int *movement_map;
 
 extern unsigned char *report_table;
 extern unsigned char *start_state;
-extern unsigned char *symbol_set;
+//extern unsigned char symb;
 
 extern unsigned int *subnfa;
 extern char *visited;

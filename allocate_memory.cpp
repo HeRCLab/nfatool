@@ -4,7 +4,7 @@ void allocate_memory() {
   node_table = (xmlNode **)malloc(sizeof (xmlNode *)*num_states);
 
 //  symbol_set = (unsigned char *)malloc((sizeof(unsigned char*))*num_states);
-//  symb = (char *)malloc((sizeof(char*))*num_states);
+//  symb = (const char *)malloc((sizeof(const char*))*num_states);
 
 
   next_state_table= (unsigned char **)malloc((sizeof(char*))*num_states);

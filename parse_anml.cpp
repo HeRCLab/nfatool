@@ -159,8 +159,8 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
               *str2=str+2;
 	pcre *re;
 
-	FILE *myfile; 
-	myfile=fopen("symbols.txt", "w+");
+//	FILE *myfile; 
+//	myfile=fopen("symbols.txt", "w+");
  
 	const char *error;
 
@@ -180,14 +180,18 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
 
 		}else if (!strcmp((const char *)attr->name,"symbol-set")){
 
+
 			re = pcre_compile((const char *)attr->children->content,0,&error,&erroffset,NULL);
 
+			unsigned char *at = (unsigned char *) attr->children->content; 
+//			symb.push_back(at); 
 //			symbol_map[(const char *)attr->children->content]=states;
 
+//			symb[k++] = at; 
 //			symb = attr->children->content ; //re; 
-//
-      			fprintf(myfile,"%s\n", attr->children->content);
-			fclose(myfile); 
+//			unsigned char  *ss[k++] = (unsigned char *)at; 
+//	      		printf("%s\n", at);
+//			fclose(myfile); 
 			str[1]=0;
 
 			for (int i=0;i<256;i++){
