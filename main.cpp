@@ -4,8 +4,10 @@
  * global variabless
  */
 unsigned char **next_state_table;
+char  **symbol_table ;
+int **gates_2D; 
 
-//int *symbol_table; 
+
 int **edge_table;
 int **orig_edge_table;
 int **reverse_table;
@@ -171,6 +173,54 @@ int main(int argc, char **argv){
  */
   fill_in_table(root->children, 0);
 
+ 
+
+	// Next_state_table bit stream  
+
+  	FILE *myfile3 ;
+        myfile3 = fopen("ns_bitstream.txt", "w+") ;
+
+        for(int i=0; i<num_states; i++) {
+                fprintf(myfile3, "\n");
+
+                for(int j=0; j<256; j++)
+                        fprintf(myfile3 , "%d ", next_state_table[i][j]);
+        }
+
+        fclose(myfile3);
+
+	// gates bit stream
+
+  //      FILE *myfile3 ;
+  //      myfile3 = fopen("gates_bitstream.txt", "w+") ;
+
+        for(int i=0; i<num_states; i++) {
+        //        fprintf(myfile3, "\n");
+
+                for(int j=0; j<max_edges; j++) {
+			int dest = edge_table[i][j]; 
+				gates_2D[i][abs(dest-i)]=1;
+//        	                fprintf(myfile3 , "%d ", gates_2D);
+		}
+		if(report_table[i]) gates_2D[i][109] =1; 
+	
+        }
+
+    //    fclose(myfile3);
+
+	myfile3 = fopen("gates_bitstream.txt", "w+"); 
+	
+	for(int i=0; i< num_states; i++) {	
+		fprintf(myfile3, "\n"); 
+		for(int j=0; j<110; j++) 
+			fprintf(myfile3, "%d", gates_2D[i][j]); 
+
+	}
+
+// for(int i=0; i< num_states; i++) 
+//	for(int j=0; j<256; j++) 
+//		printf("next_state_table[%d][%d] = %d\n", i, j, next_state_table[i][j]); 
+
 /*
  * finds the critical path of tree
  */
@@ -306,10 +356,8 @@ int main(int argc, char **argv){
   };
 
 
+//for(int l=0; l<num_states; l++) 
+//	printf("%s\n", symbol_table[l]); 
 
-
-for(int i=0; i<num_states; i++) 
-printf("%s\n", symbol_set); 
- 
   return 0;
 }

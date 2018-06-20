@@ -32,6 +32,8 @@ using namespace std;
 #include "strong_components_analysis.h"
 #include "list.h"
 #include "v2.h" 
+#include "testing.h" 
+
 
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
@@ -40,7 +42,11 @@ using namespace std;
 
 #define ANML_NAME(ste_num)  node_table[ste_num]->properties->children->content
 
+
+extern int **gates_2D; 
+
 extern unsigned char **next_state_table;
+extern char **symbol_table; 
 
 extern int total_visited2_size;
 

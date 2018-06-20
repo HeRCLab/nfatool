@@ -9,6 +9,8 @@
 
 using namespace std; 
 
+
+
 void clear_visited_flags () {
         // clear visitied to avoid inifinite loops
         for (int i=0;i<num_states;i++) visited[i]=0;
@@ -204,12 +206,12 @@ void partition (int max_partition_size) {
 			if(report_table[natural_partitions_real[i][j]]) { // j==natural_partitions[i].size()-1){
 				cnt++; 
 
- 				fprintf(myFile, "<state-transition-element id=%c%c symbol-set=%c%c start=%cnone%c>\n",c,
+ 				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%s%c start=%cnone%c>\n",c,
                                                                                                 //natural_partitions_real[i][j], 
 												node_table[natural_partitions_real[i][j]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,
-												//symbol_set[node_table[natural_partitions_real[i][j]]->properties->children->content],
+												symbol_table[natural_partitions_real[i][j]],
                                                                                                 c,
                                                                                                 c,c);
 						
@@ -218,12 +220,13 @@ void partition (int max_partition_size) {
 				  fprintf(myFile,"</state-transition-element>\n");
 			
 			}else if (start_state[natural_partitions_real[i][j]]){ // j==0){
-  				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%c start=%call-input%c>\n",c,
+  				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%s%c start=%call-input%c>\n",c,
                                                                                                 //natural_partitions_real[i][j], 
 												node_table[natural_partitions_real[i][j]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,
-												//symbol_set[natural_partitions_real[i][j]],//->properties->children->content,
+												symbol_table[natural_partitions_real[i][j]],
+
                                                                                                 c,
                                                                                                 c,c);
 				for(int k=0;k<max_edges;k++) {
@@ -237,11 +240,12 @@ void partition (int max_partition_size) {
 			
 			}else {
 				
-				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%c start=%cnone%c>\n",c,
+				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%s%c start=%cnone%c>\n",c,
 												node_table[natural_partitions_real[i][j]]->properties->children->content,
 												c,
 												c,
-												//symbol_set[natural_partitions_real[i][j]],//->properties->children->content,
+												symbol_table[natural_partitions_real[i][j]],
+
 												c,
 												c,c);	
   				for(int k=0; k<max_edges;k++) {
@@ -295,9 +299,7 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
 			
 /*			if(report_table[natural_partitions_real[i][j]]) { // j==natural_partitions[i].size()-1){
 				cnt2++; 
-
  				fprintf(myFile,"%s",node_table[natural_partitions_real[i][j]]->properties->children->content); 
-
 			}else if (start_state[natural_partitions_real[i][j]]){ // j==0){
   				fprintf(myFile, "%s->",node_table[natural_partitions_real[i][j]]->properties->children->content);
 				
@@ -338,12 +340,10 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
 /*
       myFile3 = fopen("countstates_extra.txt","w+");
       int cnt2=0;
-
       for (i = 0; i < np; i++){
                sprintf(filename, "automata%d.dot", i);
                myFile = fopen(filename, "w+");
                fprintf (myFile,"digraph G {\n");
-
                for (j = 0; j < natural_partitions_real[i].size(); j++){
                         if(j==natural_partitions_real[i].size()-1){
                                 cnt2++;
@@ -353,11 +353,9 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
                                 cnt2++;
                         }
                 }
-
 //             fprintf(myFile3,"count per partition%d = %d\n", i, cnt2);
                 fprintf(myFile3, "%d\n", cnt2);
                cnt2=0;
-
                fprintf(myFile,";\n}\n");
                fclose(myFile);
       }
@@ -370,22 +368,12 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
                 //sprintf(filename3, "subautomata%d.anml",i);
                 myFile = fopen(filename, "w+");
                 //myFile3= fopen(filename3, "w+");
-
 //                fprintf (myFile,"digraph G {\n");
                   fprintf(myFile, "<anml version=%c1.0%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<automata-network id=%cnfatool%c>\n",c,c,c,c,c,c);
-
-
-
-
-
             for (j = 0; j < natural_partitions[i].size(); j++){
-
                         if(j==natural_partitions[i].size()-1){
                                 cnt++;
 //                               xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
-
-
-
        fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%call-input%c>\n",c,
                                                                                                 node_table[natural_partitions[i][j]]->properties->children->content,
                                                                                                 c,
@@ -396,11 +384,7 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
                                                                                 node_table[natural_partitions[i][j+1]]->properties->children->content,
                                                                                 c);
                                 fprintf(myFile, "</state-transition-element>\n");
-
-
                         }else {
-
-
                              fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%cA%c start=%cnone%c>\n",c,
                                                                                                 node_table[natural_partitions[i][j]]->properties->children->content,
                                                                                                 c,
@@ -411,28 +395,19 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
                                                                                 node_table[natural_partitions[i][j+1]]->properties->children->content, 
                                                                                 c);
                                 fprintf(myFile, "</state-transition-element>\n");
-
 //                               xmlDocDump(myFile, natural_partitions_real[i][j]);//->properties->children->content);
-
 //                               fprintf(myFile, "%s->", node_table[natural_partitions_real[i][j]]->properties->children->content);
                                 cnt++;
-
                         }
-
 }
-
             if(cnt<min_real) min_real=cnt;
 //          fprintf(myFile2,"count per partition%d = %d\n", i, cnt);
 //            fprintf(myFile2, "%d\n", cnt);
 //            cnt=0;
-
 //          fprintf(myFile,";\n}\n");
-
             printf(" Min natural partition = %d, i = %d \n", min_real, i);
-
             fclose(myFile);
         }
-
 */
  //fclose(myFile2);
 

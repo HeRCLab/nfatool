@@ -4,8 +4,18 @@ void allocate_memory() {
   node_table = (xmlNode **)malloc(sizeof (xmlNode *)*num_states);
 
 //  symbol_set = (unsigned char *)malloc((sizeof(unsigned char*))*num_states);
-//  symb = (const char *)malloc((sizeof(const char*))*num_states);
 
+  symbol_table= (char **)malloc((sizeof(char*))*num_states);
+  for(int i= 0;i< num_states;i++) symbol_table[i] = (char *)malloc(sizeof (char)*1024);
+
+
+ // 110 is the max fanout 
+  gates_2D = (int **)malloc((sizeof(int *))*num_states);
+  for (int i=0;i<num_states;i++) {
+    gates_2D[i]=(int *)malloc(sizeof (int)*110);
+    for (int j=0;j<110;j++) gates_2D[i][j]=0;
+  }
+ 
 
   next_state_table= (unsigned char **)malloc((sizeof(char*))*num_states);
   for(int i= 0;i< num_states;i++) next_state_table[i] = (unsigned char *)malloc(sizeof (unsigned char)*256);
