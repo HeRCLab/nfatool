@@ -36,6 +36,9 @@ int  state_map2[STATEMAP_SIZE];
 
 xmlNode **node_table;
 
+int Hard_fanout =4096; 
+int Hard_STEs=110; 
+
 int max_fanout=0;
 int max_stes=0;
 
@@ -117,7 +120,7 @@ int main(int argc, char **argv){
 
     int file_spec=0;
 
-    while ((c=getopt(argc,argv,"i:m:f:p:"))!=-1)
+    while ((c=getopt(argc,argv,"i:m:f:p"))!=-1)
       switch (c) {
         case 'i':
           strcpy(filename,optarg);
@@ -131,6 +134,18 @@ int main(int argc, char **argv){
           max_fanout=atoi(optarg);
           printf("setting max fanout to %d\n",max_fanout);
           break;
+/*	case 's':
+//          Hard_fanout=atoi(optarg);
+	  Hard_STEs = atoi(optarg); 
+ //         printf("setting max Hardware fanout to %d\n",Hard_fanout);
+	  printf("setting max Hardware STEs to %d\n", Hard_STEs); 
+          break;
+
+	case 't': 
+	  Hard_fanout = atoi(optarg); 
+	  printf("setting max Hardware Fanout to %d\n", Hard_fanout); 
+	  break; 
+*/
         case '?':
           if ((optopt == 'm' || optopt == 'f'))
                 fprintf (stderr, "Option -%c requires an argument.\n", optopt);
@@ -163,6 +178,8 @@ int main(int argc, char **argv){
     num_states=count_states(root);
     printf ("number of states = %d\n",num_states);
 
+
+
 /*
  * allocate memory for graph data structures
  */
@@ -171,8 +188,7 @@ int main(int argc, char **argv){
 /*
  * traverse ANML and transfer graph into tables
  */
-  fill_in_table(root->children, 0);
-
+  fill_in_table(root->children, 0);	
  
 
 	// Next_state_table bit stream  
@@ -180,7 +196,7 @@ int main(int argc, char **argv){
   	FILE *myfile3 ;
         myfile3 = fopen("ns_bitstream.txt", "w+") ;
 
-        for(int i=0; i<num_states; i++) {
+        for(int i=0; i<Hard_STEs; i++) {
                 fprintf(myfile3, "\n");
 
                 for(int j=0; j<256; j++)
@@ -194,7 +210,7 @@ int main(int argc, char **argv){
   //      FILE *myfile3 ;
   //      myfile3 = fopen("gates_bitstream.txt", "w+") ;
 
-        for(int i=0; i<num_states; i++) {
+        for(int i=0; i<Hard_STEs; i++) {
         //        fprintf(myfile3, "\n");
 
                 for(int j=0; j<max_edges; j++) {
@@ -202,7 +218,7 @@ int main(int argc, char **argv){
 				gates_2D[i][abs(dest-i)]=1;
 //        	                fprintf(myfile3 , "%d ", gates_2D);
 		}
-		if(report_table[i]) gates_2D[i][109] =1; 
+		if(report_table[i]) gates_2D[i][Hard_fanout-1] =1; 
 	
         }
 
@@ -210,9 +226,9 @@ int main(int argc, char **argv){
 
 	myfile3 = fopen("gates_bitstream.txt", "w+"); 
 	
-	for(int i=0; i< num_states; i++) {	
+	for(int i=0; i< Hard_STEs; i++) {	
 		fprintf(myfile3, "\n"); 
-		for(int j=0; j<110; j++) 
+		for(int j=0; j<Hard_fanout; j++) 
 			fprintf(myfile3, "%d", gates_2D[i][j]); 
 
 	}
