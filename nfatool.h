@@ -52,6 +52,7 @@ extern int total_visited2_size;
 
 extern vector<const char> symb; 
 
+
 extern int **edge_table;
 extern int **orig_edge_table;
 extern int **reverse_table;
@@ -115,7 +116,9 @@ extern int num_states,
     possible_end_of_cycle,
     max_strong_node,
     color_count[MAX_COLORS], 
-    max_reverse_edges;
+    max_reverse_edges,
+    Hard_fanout, 
+    Hard_STEs;
 
 
 extern xmlNode *rootGlobal, /*< root node of the .ANML file */
