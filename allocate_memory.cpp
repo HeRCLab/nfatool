@@ -10,8 +10,8 @@ void allocate_memory() {
 
 
  // 110 is the max fanout 
-  gates_2D = (int **)malloc((sizeof(int *))*4096);
-  for (int i=0;i<4096;i++) {
+  gates_2D = (int **)malloc((sizeof(int *))*num_states);
+ for (int i=0;i<num_states;i++) {
     gates_2D[i]=(int *)malloc(sizeof (int)*110);
     for (int j=0;j<110;j++) gates_2D[i][j]=0;
   }

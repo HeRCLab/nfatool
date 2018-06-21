@@ -134,18 +134,6 @@ int main(int argc, char **argv){
           max_fanout=atoi(optarg);
           printf("setting max fanout to %d\n",max_fanout);
           break;
-/*	case 's':
-//          Hard_fanout=atoi(optarg);
-	  Hard_STEs = atoi(optarg); 
- //         printf("setting max Hardware fanout to %d\n",Hard_fanout);
-	  printf("setting max Hardware STEs to %d\n", Hard_STEs); 
-          break;
-
-	case 't': 
-	  Hard_fanout = atoi(optarg); 
-	  printf("setting max Hardware Fanout to %d\n", Hard_fanout); 
-	  break; 
-*/
         case '?':
           if ((optopt == 'm' || optopt == 'f'))
                 fprintf (stderr, "Option -%c requires an argument.\n", optopt);
@@ -191,12 +179,14 @@ int main(int argc, char **argv){
   fill_in_table(root->children, 0);	
  
 
+
+
 	// Next_state_table bit stream  
 
   	FILE *myfile3 ;
         myfile3 = fopen("ns_bitstream.txt", "w+") ;
 
-        for(int i=0; i<Hard_STEs; i++) {
+        for(int i=0; i<num_states; i++) {
                 fprintf(myfile3, "\n");
 
                 for(int j=0; j<256; j++)
@@ -210,7 +200,7 @@ int main(int argc, char **argv){
   //      FILE *myfile3 ;
   //      myfile3 = fopen("gates_bitstream.txt", "w+") ;
 
-        for(int i=0; i<Hard_STEs; i++) {
+        for(int i=0; i<num_states; i++) {
         //        fprintf(myfile3, "\n");
 
                 for(int j=0; j<max_edges; j++) {
@@ -218,7 +208,7 @@ int main(int argc, char **argv){
 				gates_2D[i][abs(dest-i)]=1;
 //        	                fprintf(myfile3 , "%d ", gates_2D);
 		}
-		if(report_table[i]) gates_2D[i][Hard_fanout-1] =1; 
+		if(report_table[i]) gates_2D[i][109] =1; 
 	
         }
 
@@ -226,13 +216,12 @@ int main(int argc, char **argv){
 
 	myfile3 = fopen("gates_bitstream.txt", "w+"); 
 	
-	for(int i=0; i< Hard_STEs; i++) {	
+	for(int i=0; i< num_states; i++) {	
 		fprintf(myfile3, "\n"); 
-		for(int j=0; j<Hard_fanout; j++) 
+		for(int j=0; j<110; j++) 
 			fprintf(myfile3, "%d", gates_2D[i][j]); 
 
 	}
-
 // for(int i=0; i< num_states; i++) 
 //	for(int j=0; j<256; j++) 
 //		printf("next_state_table[%d][%d] = %d\n", i, j, next_state_table[i][j]); 
@@ -270,6 +259,7 @@ int main(int argc, char **argv){
  /* 
   * Find the strongly connected components and optionally dump to file
  */ 
+/*
   find_sccs();
 
 #ifdef DEBUG
@@ -279,8 +269,8 @@ int main(int argc, char **argv){
   node_table[component_list[largest_component][k]]->properties->children->content);
   printf ("\n");
   */
-  dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component],0);
-#endif
+  //dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component],0);
+//#endif
 
 /*
  * validate largest SCC
