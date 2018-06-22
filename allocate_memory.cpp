@@ -9,13 +9,24 @@ void allocate_memory() {
   for(int i= 0;i< num_states;i++) symbol_table[i] = (char *)malloc(sizeof (char)*1024);
 
 
- // 110 is the max fanout 
-  gates_2D = (int **)malloc((sizeof(int *))*num_states);
- for (int i=0;i<num_states;i++) {
-    gates_2D[i]=(int *)malloc(sizeof (int)*110);
-    for (int j=0;j<110;j++) gates_2D[i][j]=0;
+  next_2D = (int **)malloc((sizeof(int *))*256); 
+  for(int i=0; i<256; i++) {
+	next_2D[i] = (int *)malloc(sizeof(int)*num_states); 
+	for(int j=0; j<num_states; j++) next_2D[i][j]=0; 
+  } 
+
+
+ // Gates_2D size = Hardware max_stes x max_fan 
+  gates_2D = (int **)malloc((sizeof(int *))*max_stes);
+  for (int i=0;i<max_stes;i++) {
+    gates_2D[i]=(int *)malloc(sizeof (int)*max_fan);
+    for (int j=0;j<max_fan;j++) gates_2D[i][j]=0;
   }
  
+
+ 
+  gates_1D = (int *)malloc((sizeof(int*))*max_stes*max_fan); 
+  for(int i=0; i<num_states*max_stes*max_fan;i++) gates_1D[i] = 0; 
 
   next_state_table= (unsigned char **)malloc((sizeof(char*))*num_states);
   for(int i= 0;i< num_states;i++) next_state_table[i] = (unsigned char *)malloc(sizeof (unsigned char)*256);

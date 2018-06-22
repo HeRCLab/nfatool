@@ -4,8 +4,11 @@
  * global variabless
  */
 unsigned char **next_state_table;
+
 char  **symbol_table ;
 int **gates_2D; 
+int *gates_1D; 
+int **next_2D; 
 
 
 int **edge_table;
@@ -36,9 +39,6 @@ int  state_map2[STATEMAP_SIZE];
 
 xmlNode **node_table;
 
-int Hard_fanout =4096; 
-int Hard_STEs=110; 
-
 int max_fanout=0;
 int max_stes=0;
 
@@ -66,7 +66,8 @@ int num_states=0,
     max_path =1,
     Path_compare = 0,
     max_reverse_edges,
-    color_count[MAX_COLORS];
+    color_count[MAX_COLORS], 
+    max_fan=0;
 
 xmlNode *rootGlobal, /*< root node of the .ANML file */
         *start_stes[STATEMAP_SIZE];
@@ -120,7 +121,7 @@ int main(int argc, char **argv){
 
     int file_spec=0;
 
-    while ((c=getopt(argc,argv,"i:m:f:p"))!=-1)
+    while ((c=getopt(argc,argv,"i:m:f:p:x:"))!=-1)
       switch (c) {
         case 'i':
           strcpy(filename,optarg);
@@ -134,6 +135,11 @@ int main(int argc, char **argv){
           max_fanout=atoi(optarg);
           printf("setting max fanout to %d\n",max_fanout);
           break;
+ 	case 'x':
+          max_fan=atoi(optarg);
+          printf("setting max fanout to %d\n",max_fan);
+          break;
+
         case '?':
           if ((optopt == 'm' || optopt == 'f'))
                 fprintf (stderr, "Option -%c requires an argument.\n", optopt);
@@ -166,8 +172,6 @@ int main(int argc, char **argv){
     num_states=count_states(root);
     printf ("number of states = %d\n",num_states);
 
-
-
 /*
  * allocate memory for graph data structures
  */
@@ -176,10 +180,9 @@ int main(int argc, char **argv){
 /*
  * traverse ANML and transfer graph into tables
  */
-  fill_in_table(root->children, 0);	
+  fill_in_table(root->children, 0);
+
  
-
-
 
 	// Next_state_table bit stream  
 
@@ -189,39 +192,39 @@ int main(int argc, char **argv){
         for(int i=0; i<num_states; i++) {
                 fprintf(myfile3, "\n");
 
-                for(int j=0; j<256; j++)
+                for(int j=0; j<256; j++){
+		//	next_2D[i][j] = next_state_table[i][j]; 
                         fprintf(myfile3 , "%d ", next_state_table[i][j]);
+		}
         }
 
         fclose(myfile3);
 
+	dofile_next(); //num_states, next_state_table); //num_states, next_state_table[256][num_states]); 
+
+
 	// gates bit stream
 
-  //      FILE *myfile3 ;
-  //      myfile3 = fopen("gates_bitstream.txt", "w+") ;
-
-        for(int i=0; i<num_states; i++) {
-        //        fprintf(myfile3, "\n");
-
+	for(int i=0; i<num_states; i++) {
                 for(int j=0; j<max_edges; j++) {
 			int dest = edge_table[i][j]; 
 				gates_2D[i][abs(dest-i)]=1;
-//        	                fprintf(myfile3 , "%d ", gates_2D);
 		}
-		if(report_table[i]) gates_2D[i][109] =1; 
-	
+	if(report_table[i]) gates_2D[i][109] =1; 
         }
 
-    //    fclose(myfile3);
-
+    
 	myfile3 = fopen("gates_bitstream.txt", "w+"); 
 	
-	for(int i=0; i< num_states; i++) {	
+	for(int i=0; i< 1024; i++) {	
 		fprintf(myfile3, "\n"); 
 		for(int j=0; j<110; j++) 
 			fprintf(myfile3, "%d", gates_2D[i][j]); 
 
 	}
+
+
+
 // for(int i=0; i< num_states; i++) 
 //	for(int j=0; j<256; j++) 
 //		printf("next_state_table[%d][%d] = %d\n", i, j, next_state_table[i][j]); 
@@ -259,7 +262,6 @@ int main(int argc, char **argv){
  /* 
   * Find the strongly connected components and optionally dump to file
  */ 
-/*
   find_sccs();
 
 #ifdef DEBUG
@@ -269,8 +271,8 @@ int main(int argc, char **argv){
   node_table[component_list[largest_component][k]]->properties->children->content);
   printf ("\n");
   */
-  //dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component],0);
-//#endif
+  dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component],0);
+#endif
 
 /*
  * validate largest SCC

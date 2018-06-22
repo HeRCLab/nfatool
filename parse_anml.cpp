@@ -185,7 +185,7 @@ void get_props_state (xmlNode *Node,int *id,int *start) {
 			strcpy(symbol_table[*id] , (const char *)attr->children->content);
 //			strcpy(symbol_table[*id],aa); 
 
-//     			printf("State: symbol-set Hash: %s \n", attr->children->content);
+     			printf("State: symbol-set Hash: %s \n", attr->children->content);
 
 			str[1]=0;
 

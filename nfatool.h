@@ -29,11 +29,11 @@ using namespace std;
 #include "allocate_stes.h"
 #include "scc.h"
 #include "allocate_memory.h"
-#include "strong_components_analysis.h"
+//#include "strong_components_analysis.h"
 #include "list.h"
 #include "v2.h" 
 #include "testing.h" 
-
+#include "do_next.h" 
 
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
@@ -42,16 +42,18 @@ using namespace std;
 
 #define ANML_NAME(ste_num)  node_table[ste_num]->properties->children->content
 
-
+extern int **next_2D; 
 extern int **gates_2D; 
+extern int *gates_1D; 
+
 
 extern unsigned char **next_state_table;
+
 extern char **symbol_table; 
 
 extern int total_visited2_size;
 
 extern vector<const char> symb; 
-
 
 extern int **edge_table;
 extern int **orig_edge_table;
@@ -93,6 +95,9 @@ extern int max_loop;
 extern int max_loop_constituent;
 
 extern int num_states,
+    max_stes, 
+    max_fanout,
+    max_fan,
     STEinFile,
     file_state,
     states,/*< counter for state-transition-element used in function "count_states" */
@@ -116,9 +121,7 @@ extern int num_states,
     possible_end_of_cycle,
     max_strong_node,
     color_count[MAX_COLORS], 
-    max_reverse_edges,
-    Hard_fanout, 
-    Hard_STEs;
+    max_reverse_edges;
 
 
 extern xmlNode *rootGlobal, /*< root node of the .ANML file */
