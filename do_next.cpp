@@ -112,6 +112,8 @@ void dofile_next () { // int num , unsigned char **next){ //int states_num, int 
                 printf("Finish time to configure next_state without start reading from it = %d \n", time+125);
 
 
+		do_time = time; 
+
 	fclose(dofile); 
 
 } 

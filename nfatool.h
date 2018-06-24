@@ -34,6 +34,7 @@ using namespace std;
 #include "v2.h" 
 #include "testing.h" 
 #include "do_next.h" 
+#include "do_gates.h" 
 
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
@@ -41,6 +42,8 @@ using namespace std;
 #define MAX_PART_SIZE   1024
 
 #define ANML_NAME(ste_num)  node_table[ste_num]->properties->children->content
+
+extern int do_time; 
 
 extern int **next_2D; 
 extern int **gates_2D; 

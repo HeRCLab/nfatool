@@ -25,8 +25,8 @@ void allocate_memory() {
  
 
  
-  gates_1D = (int *)malloc((sizeof(int*))*max_stes*max_fan); 
-  for(int i=0; i<num_states*max_stes*max_fan;i++) gates_1D[i] = 0; 
+  gates_1D = (int *)malloc((sizeof(int*))*(max_stes*max_fan+max_fan)); 
+  for(int i=0; i<(max_stes*max_fan+max_fan);i++) gates_1D[i] = 0; 
 
   next_state_table= (unsigned char **)malloc((sizeof(char*))*num_states);
   for(int i= 0;i< num_states;i++) next_state_table[i] = (unsigned char *)malloc(sizeof (unsigned char)*256);

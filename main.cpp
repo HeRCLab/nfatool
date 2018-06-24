@@ -67,7 +67,8 @@ int num_states=0,
     Path_compare = 0,
     max_reverse_edges,
     color_count[MAX_COLORS], 
-    max_fan=0;
+    max_fan=0,
+    do_time;
 
 xmlNode *rootGlobal, /*< root node of the .ANML file */
         *start_stes[STATEMAP_SIZE];
@@ -200,34 +201,14 @@ int main(int argc, char **argv){
 
         fclose(myfile3);
 
-	dofile_next(); //num_states, next_state_table); //num_states, next_state_table[256][num_states]); 
+	// configure next_State_table as do file 
+	dofile_next(); 
 
 
-	// gates bit stream
-
-	for(int i=0; i<num_states; i++) {
-                for(int j=0; j<max_edges; j++) {
-			int dest = edge_table[i][j]; 
-				gates_2D[i][abs(dest-i)]=1;
-		}
-	if(report_table[i]) gates_2D[i][109] =1; 
-        }
-
+	// configure gates table as do file 
+	dofile_gates(); 
     
-	myfile3 = fopen("gates_bitstream.txt", "w+"); 
-	
-	for(int i=0; i< 1024; i++) {	
-		fprintf(myfile3, "\n"); 
-		for(int j=0; j<110; j++) 
-			fprintf(myfile3, "%d", gates_2D[i][j]); 
 
-	}
-
-
-
-// for(int i=0; i< num_states; i++) 
-//	for(int j=0; j<256; j++) 
-//		printf("next_state_table[%d][%d] = %d\n", i, j, next_state_table[i][j]); 
 
 /*
  * finds the critical path of tree
