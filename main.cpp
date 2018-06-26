@@ -122,6 +122,9 @@ int main(int argc, char **argv){
 
     int file_spec=0;
 
+// -x to enter the max hardware fanout 
+// -m to enter the max hardware stes 
+
     while ((c=getopt(argc,argv,"i:m:f:p:x:"))!=-1)
       switch (c) {
         case 'i':
@@ -183,7 +186,7 @@ int main(int argc, char **argv){
  */
   fill_in_table(root->children, 0);
 
- 
+ /*
 
 	// Next_state_table bit stream  
 
@@ -200,6 +203,8 @@ int main(int argc, char **argv){
         }
 
         fclose(myfile3);
+*/
+
 
 	// configure next_State_table as do file 
 	dofile_next(); 

@@ -17,6 +17,7 @@ void move_ste (int from, int to) {
 	  }
  
   }
+  }
   
   
   // STEP 2b:  update edge references INTO (FROM,TO]
