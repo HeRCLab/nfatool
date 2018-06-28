@@ -16,7 +16,7 @@ void move_ste (int from, int to) {
 			}
 	  }
  
-  }
+
   }
   
   
