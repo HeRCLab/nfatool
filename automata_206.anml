@@ -1,0 +1,368 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test206_0" symbol-set="[\x0c]" start="all-input">
+	<activate-on-match element="test206_1"/>
+</state-transition-element>
+<state-transition-element id="test206_1" symbol-set="[\x68]" start="none">
+	<activate-on-match element="test206_2"/>
+</state-transition-element>
+<state-transition-element id="test206_2" symbol-set="[\x38]" start="none">
+	<activate-on-match element="test206_3"/>
+</state-transition-element>
+<state-transition-element id="test206_3" symbol-set="[\x38]" start="none">
+	<activate-on-match element="test206_4"/>
+</state-transition-element>
+<state-transition-element id="test206_4" symbol-set="[\x40]" start="none">
+	<activate-on-match element="test206_5"/>
+</state-transition-element>
+<state-transition-element id="test206_5" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_6"/>
+</state-transition-element>
+<state-transition-element id="test206_6" symbol-set="[\x53]" start="none">
+	<activate-on-match element="test206_7"/>
+</state-transition-element>
+<state-transition-element id="test206_7" symbol-set="[\x50]" start="none">
+	<activate-on-match element="test206_8"/>
+</state-transition-element>
+<state-transition-element id="test206_8" symbol-set="[\xe8]" start="none">
+	<activate-on-match element="test206_9"/>
+</state-transition-element>
+<state-transition-element id="test206_9" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test206_10"/>
+</state-transition-element>
+<state-transition-element id="test206_10" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_11"/>
+</state-transition-element>
+<state-transition-element id="test206_11" symbol-set="[\x0c]" start="none">
+	<activate-on-match element="test206_12"/>
+</state-transition-element>
+<state-transition-element id="test206_12" symbol-set="[\xbc]" start="none">
+	<activate-on-match element="test206_13"/>
+</state-transition-element>
+<state-transition-element id="test206_13" symbol-set="[\x8b]" start="none">
+	<activate-on-match element="test206_14"/>
+</state-transition-element>
+<state-transition-element id="test206_14" symbol-set="[\x45]" start="none">
+	<activate-on-match element="test206_15"/>
+</state-transition-element>
+<state-transition-element id="test206_15" symbol-set="[\x08]" start="none">
+	<activate-on-match element="test206_16"/>
+</state-transition-element>
+<state-transition-element id="test206_16" symbol-set="[\x8b]" start="none">
+	<activate-on-match element="test206_17"/>
+</state-transition-element>
+<state-transition-element id="test206_17" symbol-set="[\x4d]" start="none">
+	<activate-on-match element="test206_18"/>
+</state-transition-element>
+<state-transition-element id="test206_18" symbol-set="[\x0c]" start="none">
+	<activate-on-match element="test206_19"/>
+</state-transition-element>
+<state-transition-element id="test206_19" symbol-set="[\x5f]" start="none">
+	<activate-on-match element="test206_20"/>
+</state-transition-element>
+<state-transition-element id="test206_20" symbol-set="[\x5e]" start="none">
+	<activate-on-match element="test206_21"/>
+</state-transition-element>
+<state-transition-element id="test206_21" symbol-set="[\x89]" start="none">
+	<activate-on-match element="test206_22"/>
+</state-transition-element>
+<state-transition-element id="test206_22" symbol-set="[\x08]" start="none">
+	<activate-on-match element="test206_23"/>
+</state-transition-element>
+<state-transition-element id="test206_23" symbol-set="[\x5b]" start="none">
+	<activate-on-match element="test206_24"/>
+</state-transition-element>
+<state-transition-element id="test206_24" symbol-set="[\x5d]" start="none">
+	<activate-on-match element="test206_25"/>
+</state-transition-element>
+<state-transition-element id="test206_25" symbol-set="[\xc2]" start="none">
+	<activate-on-match element="test206_26"/>
+</state-transition-element>
+<state-transition-element id="test206_26" symbol-set="[\x08]" start="none">
+	<activate-on-match element="test206_27"/>
+</state-transition-element>
+<state-transition-element id="test206_27" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_28"/>
+</state-transition-element>
+<state-transition-element id="test206_28" symbol-set="[\xcc]" start="none">
+	<activate-on-match element="test206_29"/>
+</state-transition-element>
+<state-transition-element id="test206_29" symbol-set="[\xff]" start="none">
+	<activate-on-match element="test206_30"/>
+</state-transition-element>
+<state-transition-element id="test206_30" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test206_31"/>
+</state-transition-element>
+<state-transition-element id="test206_31" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test206_32"/>
+</state-transition-element>
+<state-transition-element id="test206_32" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test206_33"/>
+</state-transition-element>
+<state-transition-element id="test206_33" symbol-set="[\x40]" start="none">
+	<activate-on-match element="test206_34"/>
+</state-transition-element>
+<state-transition-element id="test206_34" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_35"/>
+</state-transition-element>
+<state-transition-element id="test206_35" symbol-set="[\xff]" start="none">
+	<activate-on-match element="test206_36"/>
+</state-transition-element>
+<state-transition-element id="test206_36" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test206_37"/>
+</state-transition-element>
+<state-transition-element id="test206_37" symbol-set="[\x60]" start="none">
+	<activate-on-match element="test206_38"/>
+</state-transition-element>
+<state-transition-element id="test206_38" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test206_39"/>
+</state-transition-element>
+<state-transition-element id="test206_39" symbol-set="[\x40]" start="none">
+	<activate-on-match element="test206_40"/>
+</state-transition-element>
+<state-transition-element id="test206_40" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_41"/>
+</state-transition-element>
+<state-transition-element id="test206_41" symbol-set="[\xff]" start="none">
+	<activate-on-match element="test206_42"/>
+</state-transition-element>
+<state-transition-element id="test206_42" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test206_43"/>
+</state-transition-element>
+<state-transition-element id="test206_43" symbol-set="[\x5c]" start="none">
+	<activate-on-match element="test206_44"/>
+</state-transition-element>
+<state-transition-element id="test206_44" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test206_45"/>
+</state-transition-element>
+<state-transition-element id="test206_45" symbol-set="[\x40]" start="none">
+	<activate-on-match element="test206_46"/>
+</state-transition-element>
+<state-transition-element id="test206_46" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_47"/>
+</state-transition-element>
+<state-transition-element id="test206_47" symbol-set="[\xff]" start="none">
+	<activate-on-match element="test206_48"/>
+</state-transition-element>
+<state-transition-element id="test206_48" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test206_49"/>
+</state-transition-element>
+<state-transition-element id="test206_49" symbol-set="[\x58]" start="none">
+	<activate-on-match element="test206_50"/>
+</state-transition-element>
+<state-transition-element id="test206_50" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test206_51"/>
+</state-transition-element>
+<state-transition-element id="test206_51" symbol-set="[\x40]" start="none">
+	<activate-on-match element="test206_52"/>
+</state-transition-element>
+<state-transition-element id="test206_52" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_53"/>
+</state-transition-element>
+<state-transition-element id="test206_53" symbol-set="[\xff]" start="none">
+	<activate-on-match element="test206_54"/>
+</state-transition-element>
+<state-transition-element id="test206_54" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test206_55"/>
+</state-transition-element>
+<state-transition-element id="test206_55" symbol-set="[\x54]" start="none">
+	<activate-on-match element="test206_56"/>
+	<activate-on-match element="test206_57"/>
+</state-transition-element>
+<state-transition-element id="test206_56" symbol-set="*" start="none">
+	<activate-on-match element="test206_57"/>
+</state-transition-element>
+<state-transition-element id="test206_57" symbol-set="[\x72]" start="none">
+	<activate-on-match element="test206_58"/>
+</state-transition-element>
+<state-transition-element id="test206_58" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test206_59"/>
+</state-transition-element>
+<state-transition-element id="test206_59" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test206_60"/>
+</state-transition-element>
+<state-transition-element id="test206_60" symbol-set="[\x2e]" start="none">
+	<activate-on-match element="test206_61"/>
+</state-transition-element>
+<state-transition-element id="test206_61" symbol-set="[\x63]" start="none">
+	<activate-on-match element="test206_62"/>
+</state-transition-element>
+<state-transition-element id="test206_62" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test206_63"/>
+</state-transition-element>
+<state-transition-element id="test206_63" symbol-set="[\x6d]" start="none">
+	<activate-on-match element="test206_64"/>
+</state-transition-element>
+<state-transition-element id="test206_64" symbol-set="[\x22]" start="none">
+	<activate-on-match element="test206_65"/>
+</state-transition-element>
+<state-transition-element id="test206_65" symbol-set="[\x0a]" start="none">
+	<activate-on-match element="test206_66"/>
+</state-transition-element>
+<state-transition-element id="test206_66" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_67"/>
+</state-transition-element>
+<state-transition-element id="test206_67" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_68"/>
+</state-transition-element>
+<state-transition-element id="test206_68" symbol-set="[\x52]" start="none">
+	<activate-on-match element="test206_69"/>
+</state-transition-element>
+<state-transition-element id="test206_69" symbol-set="[\x45]" start="none">
+	<activate-on-match element="test206_70"/>
+</state-transition-element>
+<state-transition-element id="test206_70" symbol-set="[\x47]" start="none">
+	<activate-on-match element="test206_71"/>
+</state-transition-element>
+<state-transition-element id="test206_71" symbol-set="[\x45]" start="none">
+	<activate-on-match element="test206_72"/>
+</state-transition-element>
+<state-transition-element id="test206_72" symbol-set="[\x44]" start="none">
+	<activate-on-match element="test206_73"/>
+</state-transition-element>
+<state-transition-element id="test206_73" symbol-set="[\x49]" start="none">
+	<activate-on-match element="test206_74"/>
+</state-transition-element>
+<state-transition-element id="test206_74" symbol-set="[\x54]" start="none">
+	<activate-on-match element="test206_75"/>
+</state-transition-element>
+<state-transition-element id="test206_75" symbol-set="[\x34]" start="none">
+	<activate-on-match element="test206_76"/>
+</state-transition-element>
+<state-transition-element id="test206_76" symbol-set="[\x0a]" start="none">
+	<activate-on-match element="test206_77"/>
+</state-transition-element>
+<state-transition-element id="test206_77" symbol-set="[\x0a]" start="none">
+	<activate-on-match element="test206_78"/>
+</state-transition-element>
+<state-transition-element id="test206_78" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_79"/>
+</state-transition-element>
+<state-transition-element id="test206_79" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_80"/>
+</state-transition-element>
+<state-transition-element id="test206_80" symbol-set="[\x77]" start="none">
+	<activate-on-match element="test206_81"/>
+</state-transition-element>
+<state-transition-element id="test206_81" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_82"/>
+</state-transition-element>
+<state-transition-element id="test206_82" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_83"/>
+</state-transition-element>
+<state-transition-element id="test206_83" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_84"/>
+</state-transition-element>
+<state-transition-element id="test206_84" symbol-set="[\x72]" start="none">
+	<activate-on-match element="test206_85"/>
+</state-transition-element>
+<state-transition-element id="test206_85" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test206_86"/>
+</state-transition-element>
+<state-transition-element id="test206_86" symbol-set="[\x67]" start="none">
+	<activate-on-match element="test206_87"/>
+</state-transition-element>
+<state-transition-element id="test206_87" symbol-set="[\x5f]" start="none">
+	<activate-on-match element="test206_88"/>
+</state-transition-element>
+<state-transition-element id="test206_88" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_89"/>
+</state-transition-element>
+<state-transition-element id="test206_89" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_90"/>
+</state-transition-element>
+<state-transition-element id="test206_90" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_91"/>
+</state-transition-element>
+<state-transition-element id="test206_91" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_92"/>
+</state-transition-element>
+<state-transition-element id="test206_92" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test206_93"/>
+</state-transition-element>
+<state-transition-element id="test206_93" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test206_94"/>
+</state-transition-element>
+<state-transition-element id="test206_94" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test206_95"/>
+</state-transition-element>
+<state-transition-element id="test206_95" symbol-set="[\x6e]" start="none">
+	<activate-on-match element="test206_96"/>
+</state-transition-element>
+<state-transition-element id="test206_96" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_97"/>
+</state-transition-element>
+<state-transition-element id="test206_97" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_98"/>
+</state-transition-element>
+<state-transition-element id="test206_98" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_99"/>
+</state-transition-element>
+<state-transition-element id="test206_99" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_100"/>
+</state-transition-element>
+<state-transition-element id="test206_100" symbol-set="[\x69]" start="none">
+	<activate-on-match element="test206_101"/>
+</state-transition-element>
+<state-transition-element id="test206_101" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test206_102"/>
+</state-transition-element>
+<state-transition-element id="test206_102" symbol-set="[\x78]" start="none">
+	<activate-on-match element="test206_103"/>
+</state-transition-element>
+<state-transition-element id="test206_103" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test206_104"/>
+</state-transition-element>
+<state-transition-element id="test206_104" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test206_105"/>
+</state-transition-element>
+<state-transition-element id="test206_105" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test206_106"/>
+</state-transition-element>
+<state-transition-element id="test206_106" symbol-set="[\x72]" start="none">
+	<activate-on-match element="test206_107"/>
+</state-transition-element>
+<state-transition-element id="test206_107" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test206_108"/>
+</state-transition-element>
+<state-transition-element id="test206_108" symbol-set="[\x2e]" start="none">
+	<activate-on-match element="test206_109"/>
+</state-transition-element>
+<state-transition-element id="test206_109" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test206_110"/>
+</state-transition-element>
+<state-transition-element id="test206_110" symbol-set="[\x78]" start="none">
+	<activate-on-match element="test206_111"/>
+</state-transition-element>
+<state-transition-element id="test206_111" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test206_112"/>
+</state-transition-element>
+<state-transition-element id="test206_112" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_113"/>
+</state-transition-element>
+<state-transition-element id="test206_113" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_114"/>
+</state-transition-element>
+<state-transition-element id="test206_114" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_115"/>
+</state-transition-element>
+<state-transition-element id="test206_115" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_116"/>
+</state-transition-element>
+<state-transition-element id="test206_116" symbol-set="[\x68]" start="none">
+	<activate-on-match element="test206_117"/>
+</state-transition-element>
+<state-transition-element id="test206_117" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_118"/>
+</state-transition-element>
+<state-transition-element id="test206_118" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test206_119"/>
+</state-transition-element>
+<state-transition-element id="test206_119" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test206_120"/>
+</state-transition-element>
+<state-transition-element id="test206_120" symbol-set="[\x74]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

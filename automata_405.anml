@@ -1,0 +1,155 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test405_0" symbol-set="[\x24]" start="all-input">
+	<activate-on-match element="test405_1"/>
+</state-transition-element>
+<state-transition-element id="test405_1" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test405_2"/>
+</state-transition-element>
+<state-transition-element id="test405_2" symbol-set="[\x6d]" start="none">
+	<activate-on-match element="test405_3"/>
+</state-transition-element>
+<state-transition-element id="test405_3" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test405_4"/>
+</state-transition-element>
+<state-transition-element id="test405_4" symbol-set="[\x64]" start="none">
+	<activate-on-match element="test405_5"/>
+</state-transition-element>
+<state-transition-element id="test405_5" symbol-set="[\x69]" start="none">
+	<activate-on-match element="test405_6"/>
+</state-transition-element>
+<state-transition-element id="test405_6" symbol-set="[\x72]" start="none">
+	<activate-on-match element="test405_7"/>
+</state-transition-element>
+<state-transition-element id="test405_7" symbol-set="[\x2f]" start="none">
+	<activate-on-match element="test405_8"/>
+</state-transition-element>
+<state-transition-element id="test405_8" symbol-set="[\x73]" start="none">
+	<activate-on-match element="test405_9"/>
+</state-transition-element>
+<state-transition-element id="test405_9" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test405_10"/>
+</state-transition-element>
+<state-transition-element id="test405_10" symbol-set="[\x73]" start="none">
+	<activate-on-match element="test405_11"/>
+</state-transition-element>
+<state-transition-element id="test405_11" symbol-set="[\x68]" start="none">
+	<activate-on-match element="test405_12"/>
+</state-transition-element>
+<state-transition-element id="test405_12" symbol-set="[\x69]" start="none">
+	<activate-on-match element="test405_13"/>
+	<activate-on-match element="test405_14"/>
+</state-transition-element>
+<state-transition-element id="test405_13" symbol-set="*" start="none">
+	<activate-on-match element="test405_14"/>
+</state-transition-element>
+<state-transition-element id="test405_14" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test405_15"/>
+</state-transition-element>
+<state-transition-element id="test405_15" symbol-set="[\x3d]" start="none">
+	<activate-on-match element="test405_16"/>
+</state-transition-element>
+<state-transition-element id="test405_16" symbol-set="[\x24]" start="none">
+	<activate-on-match element="test405_17"/>
+</state-transition-element>
+<state-transition-element id="test405_17" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test405_18"/>
+</state-transition-element>
+<state-transition-element id="test405_18" symbol-set="[\x78]" start="none">
+	<activate-on-match element="test405_19"/>
+</state-transition-element>
+<state-transition-element id="test405_19" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test405_20"/>
+</state-transition-element>
+<state-transition-element id="test405_20" symbol-set="[\x63]" start="none">
+	<activate-on-match element="test405_21"/>
+</state-transition-element>
+<state-transition-element id="test405_21" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test405_22"/>
+</state-transition-element>
+<state-transition-element id="test405_22" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test405_23"/>
+</state-transition-element>
+<state-transition-element id="test405_23" symbol-set="[\x61]" start="none">
+	<activate-on-match element="test405_24"/>
+</state-transition-element>
+<state-transition-element id="test405_24" symbol-set="[\x62]" start="none">
+	<activate-on-match element="test405_25"/>
+</state-transition-element>
+<state-transition-element id="test405_25" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test405_26"/>
+</state-transition-element>
+<state-transition-element id="test405_26" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test405_27"/>
+</state-transition-element>
+<state-transition-element id="test405_27" symbol-set="[\x2c]" start="none">
+	<activate-on-match element="test405_28"/>
+</state-transition-element>
+<state-transition-element id="test405_28" symbol-set="[\x20]" start="none">
+	<activate-on-match element="test405_29"/>
+</state-transition-element>
+<state-transition-element id="test405_29" symbol-set="[\x66]" start="none">
+	<activate-on-match element="test405_30"/>
+</state-transition-element>
+<state-transition-element id="test405_30" symbol-set="[\x3d]" start="none">
+	<activate-on-match element="test405_31"/>
+</state-transition-element>
+<state-transition-element id="test405_31" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test405_32"/>
+</state-transition-element>
+<state-transition-element id="test405_32" symbol-set="[\x73]" start="none">
+	<activate-on-match element="test405_33"/>
+</state-transition-element>
+<state-transition-element id="test405_33" symbol-set="[\x64]" start="none">
+	<activate-on-match element="test405_34"/>
+</state-transition-element>
+<state-transition-element id="test405_34" symbol-set="[\x66]" start="none">
+	<activate-on-match element="test405_35"/>
+</state-transition-element>
+<state-transition-element id="test405_35" symbol-set="[\x6d]" start="none">
+	<activate-on-match element="test405_36"/>
+</state-transition-element>
+<state-transition-element id="test405_36" symbol-set="[\x61]" start="none">
+	<activate-on-match element="test405_37"/>
+</state-transition-element>
+<state-transition-element id="test405_37" symbol-set="[\x77]" start="none">
+	<activate-on-match element="test405_38"/>
+</state-transition-element>
+<state-transition-element id="test405_38" symbol-set="[\x35]" start="none">
+	<activate-on-match element="test405_39"/>
+</state-transition-element>
+<state-transition-element id="test405_39" symbol-set="[\x3a]" start="none">
+	<activate-on-match element="test405_40"/>
+</state-transition-element>
+<state-transition-element id="test405_40" symbol-set="[\x2f]" start="none">
+	<activate-on-match element="test405_41"/>
+</state-transition-element>
+<state-transition-element id="test405_41" symbol-set="[\x7c]" start="none">
+	<activate-on-match element="test405_42"/>
+</state-transition-element>
+<state-transition-element id="test405_42" symbol-set="[\x40]" start="none">
+	<activate-on-match element="test405_43"/>
+</state-transition-element>
+<state-transition-element id="test405_43" symbol-set="[\x71]" start="none">
+	<activate-on-match element="test405_44"/>
+</state-transition-element>
+<state-transition-element id="test405_44" symbol-set="[\x73]" start="none">
+	<activate-on-match element="test405_45"/>
+</state-transition-element>
+<state-transition-element id="test405_45" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test405_46"/>
+</state-transition-element>
+<state-transition-element id="test405_46" symbol-set="[\x66]" start="none">
+	<activate-on-match element="test405_47"/>
+</state-transition-element>
+<state-transition-element id="test405_47" symbol-set="[\x68]" start="none">
+	<activate-on-match element="test405_48"/>
+</state-transition-element>
+<state-transition-element id="test405_48" symbol-set="[\x6e]" start="none">
+	<activate-on-match element="test405_49"/>
+</state-transition-element>
+<state-transition-element id="test405_49" symbol-set="[\x39]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

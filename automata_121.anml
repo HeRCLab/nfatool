@@ -1,0 +1,70 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test121_0" symbol-set="[\x01]" start="all-input">
+	<activate-on-match element="test121_1"/>
+</state-transition-element>
+<state-transition-element id="test121_1" symbol-set="[\x66]" start="none">
+	<activate-on-match element="test121_2"/>
+</state-transition-element>
+<state-transition-element id="test121_2" symbol-set="[\xa0]" start="none">
+	<activate-on-match element="test121_3"/>
+</state-transition-element>
+<state-transition-element id="test121_3" symbol-set="[\x0a]" start="none">
+	<activate-on-match element="test121_4"/>
+</state-transition-element>
+<state-transition-element id="test121_4" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test121_5"/>
+</state-transition-element>
+<state-transition-element id="test121_5" symbol-set="[\x3c]" start="none">
+	<activate-on-match element="test121_6"/>
+</state-transition-element>
+<state-transition-element id="test121_6" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test121_7"/>
+</state-transition-element>
+<state-transition-element id="test121_7" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test121_8"/>
+</state-transition-element>
+<state-transition-element id="test121_8" symbol-set="[\x0c]" start="none">
+	<activate-on-match element="test121_9"/>
+</state-transition-element>
+<state-transition-element id="test121_9" symbol-set="[\x66]" start="none">
+	<activate-on-match element="test121_10"/>
+</state-transition-element>
+<state-transition-element id="test121_10" symbol-set="[\x30]" start="none">
+	<activate-on-match element="test121_11"/>
+</state-transition-element>
+<state-transition-element id="test121_11" symbol-set="[\x07]" start="none">
+	<activate-on-match element="test121_12"/>
+</state-transition-element>
+<state-transition-element id="test121_12" symbol-set="[\x43]" start="none">
+	<activate-on-match element="test121_13"/>
+</state-transition-element>
+<state-transition-element id="test121_13" symbol-set="*" start="none">
+	<activate-on-match element="test121_14"/>
+</state-transition-element>
+<state-transition-element id="test121_14" symbol-set="*" start="none">
+	<activate-on-match element="test121_15"/>
+</state-transition-element>
+<state-transition-element id="test121_15" symbol-set="*" start="none">
+	<activate-on-match element="test121_16"/>
+</state-transition-element>
+<state-transition-element id="test121_16" symbol-set="*" start="none">
+	<activate-on-match element="test121_17"/>
+</state-transition-element>
+<state-transition-element id="test121_17" symbol-set="*" start="none">
+	<activate-on-match element="test121_18"/>
+</state-transition-element>
+<state-transition-element id="test121_18" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test121_19"/>
+</state-transition-element>
+<state-transition-element id="test121_19" symbol-set="[\x7e]" start="none">
+	<activate-on-match element="test121_20"/>
+</state-transition-element>
+<state-transition-element id="test121_20" symbol-set="[\xf4]" start="none">
+	<activate-on-match element="test121_21"/>
+</state-transition-element>
+<state-transition-element id="test121_21" symbol-set="[\xc3]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

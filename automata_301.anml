@@ -1,0 +1,309 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test301_0" symbol-set="[\x1d]" start="all-input">
+	<activate-on-match element="test301_1"/>
+</state-transition-element>
+<state-transition-element id="test301_1" symbol-set="[\x69]" start="none">
+	<activate-on-match element="test301_2"/>
+</state-transition-element>
+<state-transition-element id="test301_2" symbol-set="[\x0a]" start="none">
+	<activate-on-match element="test301_3"/>
+</state-transition-element>
+<state-transition-element id="test301_3" symbol-set="[\x56]" start="none">
+	<activate-on-match element="test301_4"/>
+</state-transition-element>
+<state-transition-element id="test301_4" symbol-set="[\x49]" start="none">
+	<activate-on-match element="test301_5"/>
+</state-transition-element>
+<state-transition-element id="test301_5" symbol-set="[\x6e]" start="none">
+	<activate-on-match element="test301_6"/>
+</state-transition-element>
+<state-transition-element id="test301_6" symbol-set="[\x73]" start="none">
+	<activate-on-match element="test301_7"/>
+</state-transition-element>
+<state-transition-element id="test301_7" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test301_8"/>
+</state-transition-element>
+<state-transition-element id="test301_8" symbol-set="[\x61]" start="none">
+	<activate-on-match element="test301_9"/>
+</state-transition-element>
+<state-transition-element id="test301_9" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test301_10"/>
+</state-transition-element>
+<state-transition-element id="test301_10" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test301_11"/>
+</state-transition-element>
+<state-transition-element id="test301_11" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test301_12"/>
+</state-transition-element>
+<state-transition-element id="test301_12" symbol-set="[\x64]" start="none">
+	<activate-on-match element="test301_13"/>
+</state-transition-element>
+<state-transition-element id="test301_13" symbol-set="[\x0c]" start="none">
+	<activate-on-match element="test301_14"/>
+</state-transition-element>
+<state-transition-element id="test301_14" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test301_15"/>
+</state-transition-element>
+<state-transition-element id="test301_15" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test301_16"/>
+</state-transition-element>
+<state-transition-element id="test301_16" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test301_17"/>
+</state-transition-element>
+<state-transition-element id="test301_17" symbol-set="[\x1e]" start="none">
+	<activate-on-match element="test301_18"/>
+</state-transition-element>
+<state-transition-element id="test301_18" symbol-set="[\x64]" start="none">
+	<activate-on-match element="test301_19"/>
+	<activate-on-match element="test301_20"/>
+</state-transition-element>
+<state-transition-element id="test301_19" symbol-set="*" start="none">
+	<activate-on-match element="test301_20"/>
+</state-transition-element>
+<state-transition-element id="test301_20" symbol-set="[\x52]" start="none">
+	<activate-on-match element="test301_21"/>
+</state-transition-element>
+<state-transition-element id="test301_21" symbol-set="[\x67]" start="none">
+	<activate-on-match element="test301_22"/>
+</state-transition-element>
+<state-transition-element id="test301_22" symbol-set="[\xc2]" start="none">
+	<activate-on-match element="test301_23"/>
+</state-transition-element>
+<state-transition-element id="test301_23" symbol-set="[\x80]" start="none">
+	<activate-on-match element="test301_24"/>
+</state-transition-element>
+<state-transition-element id="test301_24" symbol-set="[\x6a]" start="none">
+	<activate-on-match element="test301_25"/>
+</state-transition-element>
+<state-transition-element id="test301_25" symbol-set="[\x0f]" start="none">
+	<activate-on-match element="test301_26"/>
+</state-transition-element>
+<state-transition-element id="test301_26" symbol-set="[\x47]" start="none">
+	<activate-on-match element="test301_27"/>
+</state-transition-element>
+<state-transition-element id="test301_27" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test301_28"/>
+</state-transition-element>
+<state-transition-element id="test301_28" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test301_29"/>
+</state-transition-element>
+<state-transition-element id="test301_29" symbol-set="[\x62]" start="none">
+	<activate-on-match element="test301_30"/>
+</state-transition-element>
+<state-transition-element id="test301_30" symbol-set="[\x61]" start="none">
+	<activate-on-match element="test301_31"/>
+</state-transition-element>
+<state-transition-element id="test301_31" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test301_32"/>
+</state-transition-element>
+<state-transition-element id="test301_32" symbol-set="[\x3a]" start="none">
+	<activate-on-match element="test301_33"/>
+</state-transition-element>
+<state-transition-element id="test301_33" symbol-set="[\x41]" start="none">
+	<activate-on-match element="test301_34"/>
+</state-transition-element>
+<state-transition-element id="test301_34" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test301_35"/>
+</state-transition-element>
+<state-transition-element id="test301_35" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test301_36"/>
+</state-transition-element>
+<state-transition-element id="test301_36" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test301_37"/>
+</state-transition-element>
+<state-transition-element id="test301_37" symbol-set="[\x4f]" start="none">
+	<activate-on-match element="test301_38"/>
+</state-transition-element>
+<state-transition-element id="test301_38" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test301_39"/>
+</state-transition-element>
+<state-transition-element id="test301_39" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test301_40"/>
+</state-transition-element>
+<state-transition-element id="test301_40" symbol-set="[\x6e]" start="none">
+	<activate-on-match element="test301_41"/>
+</state-transition-element>
+<state-transition-element id="test301_41" symbol-set="[\x12]" start="none">
+	<activate-on-match element="test301_42"/>
+</state-transition-element>
+<state-transition-element id="test301_42" symbol-set="[\x67]" start="none">
+	<activate-on-match element="test301_43"/>
+</state-transition-element>
+<state-transition-element id="test301_43" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test301_44"/>
+</state-transition-element>
+<state-transition-element id="test301_44" symbol-set="[\x80]" start="none">
+	<activate-on-match element="test301_45"/>
+</state-transition-element>
+<state-transition-element id="test301_45" symbol-set="[\x05]" start="none">
+	<activate-on-match element="test301_46"/>
+</state-transition-element>
+<state-transition-element id="test301_46" symbol-set="[\x06]" start="none">
+	<activate-on-match element="test301_47"/>
+</state-transition-element>
+<state-transition-element id="test301_47" symbol-set="[\x07]" start="none">
+	<activate-on-match element="test301_48"/>
+</state-transition-element>
+<state-transition-element id="test301_48" symbol-set="[\x6a]" start="none">
+	<activate-on-match element="test301_49"/>
+</state-transition-element>
+<state-transition-element id="test301_49" symbol-set="[\x09]" start="none">
+	<activate-on-match element="test301_50"/>
+</state-transition-element>
+<state-transition-element id="test301_50" symbol-set="[\x3a]" start="none">
+	<activate-on-match element="test301_51"/>
+</state-transition-element>
+<state-transition-element id="test301_51" symbol-set="[\x41]" start="none">
+	<activate-on-match element="test301_52"/>
+</state-transition-element>
+<state-transition-element id="test301_52" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test301_53"/>
+</state-transition-element>
+<state-transition-element id="test301_53" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test301_54"/>
+</state-transition-element>
+<state-transition-element id="test301_54" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test301_55"/>
+</state-transition-element>
+<state-transition-element id="test301_55" symbol-set="[\x4f]" start="none">
+	<activate-on-match element="test301_56"/>
+</state-transition-element>
+<state-transition-element id="test301_56" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test301_57"/>
+</state-transition-element>
+<state-transition-element id="test301_57" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test301_58"/>
+</state-transition-element>
+<state-transition-element id="test301_58" symbol-set="[\x6e]" start="none">
+	<activate-on-match element="test301_59"/>
+</state-transition-element>
+<state-transition-element id="test301_59" symbol-set="[\x64]" start="none">
+	<activate-on-match element="test301_60"/>
+	<activate-on-match element="test301_61"/>
+</state-transition-element>
+<state-transition-element id="test301_60" symbol-set="*" start="none">
+	<activate-on-match element="test301_61"/>
+</state-transition-element>
+<state-transition-element id="test301_61" symbol-set="[\x52]" start="none">
+	<activate-on-match element="test301_62"/>
+</state-transition-element>
+<state-transition-element id="test301_62" symbol-set="[\x67]" start="none">
+	<activate-on-match element="test301_63"/>
+</state-transition-element>
+<state-transition-element id="test301_63" symbol-set="[\xc2]" start="none">
+	<activate-on-match element="test301_64"/>
+</state-transition-element>
+<state-transition-element id="test301_64" symbol-set="[\x80]" start="none">
+	<activate-on-match element="test301_65"/>
+</state-transition-element>
+<state-transition-element id="test301_65" symbol-set="[\x6a]" start="none">
+	<activate-on-match element="test301_66"/>
+</state-transition-element>
+<state-transition-element id="test301_66" symbol-set="[\x0f]" start="none">
+	<activate-on-match element="test301_67"/>
+</state-transition-element>
+<state-transition-element id="test301_67" symbol-set="[\x47]" start="none">
+	<activate-on-match element="test301_68"/>
+</state-transition-element>
+<state-transition-element id="test301_68" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test301_69"/>
+</state-transition-element>
+<state-transition-element id="test301_69" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test301_70"/>
+</state-transition-element>
+<state-transition-element id="test301_70" symbol-set="[\x62]" start="none">
+	<activate-on-match element="test301_71"/>
+</state-transition-element>
+<state-transition-element id="test301_71" symbol-set="[\x61]" start="none">
+	<activate-on-match element="test301_72"/>
+</state-transition-element>
+<state-transition-element id="test301_72" symbol-set="[\x6c]" start="none">
+	<activate-on-match element="test301_73"/>
+</state-transition-element>
+<state-transition-element id="test301_73" symbol-set="[\x3a]" start="none">
+	<activate-on-match element="test301_74"/>
+</state-transition-element>
+<state-transition-element id="test301_74" symbol-set="[\x41]" start="none">
+	<activate-on-match element="test301_75"/>
+</state-transition-element>
+<state-transition-element id="test301_75" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test301_76"/>
+</state-transition-element>
+<state-transition-element id="test301_76" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test301_77"/>
+</state-transition-element>
+<state-transition-element id="test301_77" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test301_78"/>
+</state-transition-element>
+<state-transition-element id="test301_78" symbol-set="[\x45]" start="none">
+	<activate-on-match element="test301_79"/>
+</state-transition-element>
+<state-transition-element id="test301_79" symbol-set="[\x78]" start="none">
+	<activate-on-match element="test301_80"/>
+</state-transition-element>
+<state-transition-element id="test301_80" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test301_81"/>
+</state-transition-element>
+<state-transition-element id="test301_81" symbol-set="[\x63]" start="none">
+	<activate-on-match element="test301_82"/>
+</state-transition-element>
+<state-transition-element id="test301_82" symbol-set="[\x12]" start="none">
+	<activate-on-match element="test301_83"/>
+</state-transition-element>
+<state-transition-element id="test301_83" symbol-set="[\x67]" start="none">
+	<activate-on-match element="test301_84"/>
+</state-transition-element>
+<state-transition-element id="test301_84" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test301_85"/>
+</state-transition-element>
+<state-transition-element id="test301_85" symbol-set="[\x80]" start="none">
+	<activate-on-match element="test301_86"/>
+</state-transition-element>
+<state-transition-element id="test301_86" symbol-set="[\x05]" start="none">
+	<activate-on-match element="test301_87"/>
+</state-transition-element>
+<state-transition-element id="test301_87" symbol-set="[\x06]" start="none">
+	<activate-on-match element="test301_88"/>
+</state-transition-element>
+<state-transition-element id="test301_88" symbol-set="[\x07]" start="none">
+	<activate-on-match element="test301_89"/>
+</state-transition-element>
+<state-transition-element id="test301_89" symbol-set="[\x6a]" start="none">
+	<activate-on-match element="test301_90"/>
+</state-transition-element>
+<state-transition-element id="test301_90" symbol-set="[\x09]" start="none">
+	<activate-on-match element="test301_91"/>
+</state-transition-element>
+<state-transition-element id="test301_91" symbol-set="[\x3a]" start="none">
+	<activate-on-match element="test301_92"/>
+</state-transition-element>
+<state-transition-element id="test301_92" symbol-set="[\x41]" start="none">
+	<activate-on-match element="test301_93"/>
+</state-transition-element>
+<state-transition-element id="test301_93" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test301_94"/>
+</state-transition-element>
+<state-transition-element id="test301_94" symbol-set="[\x74]" start="none">
+	<activate-on-match element="test301_95"/>
+</state-transition-element>
+<state-transition-element id="test301_95" symbol-set="[\x6f]" start="none">
+	<activate-on-match element="test301_96"/>
+</state-transition-element>
+<state-transition-element id="test301_96" symbol-set="[\x45]" start="none">
+	<activate-on-match element="test301_97"/>
+</state-transition-element>
+<state-transition-element id="test301_97" symbol-set="[\x78]" start="none">
+	<activate-on-match element="test301_98"/>
+</state-transition-element>
+<state-transition-element id="test301_98" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test301_99"/>
+</state-transition-element>
+<state-transition-element id="test301_99" symbol-set="[\x63]" start="none">
+	<activate-on-match element="test301_100"/>
+</state-transition-element>
+<state-transition-element id="test301_100" symbol-set="[\x64]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

@@ -1,0 +1,76 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test303_0" symbol-set="[\x1e]" start="all-input">
+	<activate-on-match element="test303_1"/>
+</state-transition-element>
+<state-transition-element id="test303_1" symbol-set="[\x06]" start="none">
+	<activate-on-match element="test303_2"/>
+</state-transition-element>
+<state-transition-element id="test303_2" symbol-set="[\x8c]" start="none">
+	<activate-on-match element="test303_3"/>
+</state-transition-element>
+<state-transition-element id="test303_3" symbol-set="[\xc3]" start="none">
+	<activate-on-match element="test303_4"/>
+</state-transition-element>
+<state-transition-element id="test303_4" symbol-set="[\x83]" start="none">
+	<activate-on-match element="test303_5"/>
+</state-transition-element>
+<state-transition-element id="test303_5" symbol-set="*" start="none">
+	<activate-on-match element="test303_6"/>
+</state-transition-element>
+<state-transition-element id="test303_6" symbol-set="*" start="none">
+	<activate-on-match element="test303_7"/>
+</state-transition-element>
+<state-transition-element id="test303_7" symbol-set="[\x2e]" start="none">
+	<activate-on-match element="test303_8"/>
+</state-transition-element>
+<state-transition-element id="test303_8" symbol-set="*" start="none">
+	<activate-on-match element="test303_9"/>
+</state-transition-element>
+<state-transition-element id="test303_9" symbol-set="*" start="none">
+	<activate-on-match element="test303_10"/>
+</state-transition-element>
+<state-transition-element id="test303_10" symbol-set="*" start="none">
+	<activate-on-match element="test303_11"/>
+</state-transition-element>
+<state-transition-element id="test303_11" symbol-set="*" start="none">
+	<activate-on-match element="test303_12"/>
+</state-transition-element>
+<state-transition-element id="test303_12" symbol-set="[\xb9]" start="none">
+	<activate-on-match element="test303_13"/>
+</state-transition-element>
+<state-transition-element id="test303_13" symbol-set="*" start="none">
+	<activate-on-match element="test303_14"/>
+</state-transition-element>
+<state-transition-element id="test303_14" symbol-set="*" start="none">
+	<activate-on-match element="test303_15"/>
+</state-transition-element>
+<state-transition-element id="test303_15" symbol-set="[\x8c]" start="none">
+	<activate-on-match element="test303_16"/>
+</state-transition-element>
+<state-transition-element id="test303_16" symbol-set="[\xc8]" start="none">
+	<activate-on-match element="test303_17"/>
+</state-transition-element>
+<state-transition-element id="test303_17" symbol-set="[\x8e]" start="none">
+	<activate-on-match element="test303_18"/>
+</state-transition-element>
+<state-transition-element id="test303_18" symbol-set="[\xd8]" start="none">
+	<activate-on-match element="test303_19"/>
+</state-transition-element>
+<state-transition-element id="test303_19" symbol-set="[\x8b]" start="none">
+	<activate-on-match element="test303_20"/>
+</state-transition-element>
+<state-transition-element id="test303_20" symbol-set="[\xf1]" start="none">
+	<activate-on-match element="test303_21"/>
+</state-transition-element>
+<state-transition-element id="test303_21" symbol-set="[\x4e]" start="none">
+	<activate-on-match element="test303_22"/>
+</state-transition-element>
+<state-transition-element id="test303_22" symbol-set="[\x8b]" start="none">
+	<activate-on-match element="test303_23"/>
+</state-transition-element>
+<state-transition-element id="test303_23" symbol-set="[\xfe]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

@@ -1,0 +1,116 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test233_0" symbol-set="[\x0e]" start="all-input">
+	<activate-on-match element="test233_1"/>
+</state-transition-element>
+<state-transition-element id="test233_1" symbol-set="[\x1f]" start="none">
+	<activate-on-match element="test233_2"/>
+</state-transition-element>
+<state-transition-element id="test233_2" symbol-set="[\xb8]" start="none">
+	<activate-on-match element="test233_3"/>
+</state-transition-element>
+<state-transition-element id="test233_3" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test233_4"/>
+</state-transition-element>
+<state-transition-element id="test233_4" symbol-set="[\x35]" start="none">
+	<activate-on-match element="test233_5"/>
+</state-transition-element>
+<state-transition-element id="test233_5" symbol-set="[\xcd]" start="none">
+	<activate-on-match element="test233_6"/>
+</state-transition-element>
+<state-transition-element id="test233_6" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test233_7"/>
+</state-transition-element>
+<state-transition-element id="test233_7" symbol-set="[\x89]" start="none">
+	<activate-on-match element="test233_8"/>
+</state-transition-element>
+<state-transition-element id="test233_8" symbol-set="[\x5c]" start="none">
+	<activate-on-match element="test233_9"/>
+</state-transition-element>
+<state-transition-element id="test233_9" symbol-set="*" start="none">
+	<activate-on-match element="test233_10"/>
+</state-transition-element>
+<state-transition-element id="test233_10" symbol-set="[\x8c]" start="none">
+	<activate-on-match element="test233_11"/>
+</state-transition-element>
+<state-transition-element id="test233_11" symbol-set="[\x44]" start="none">
+	<activate-on-match element="test233_12"/>
+</state-transition-element>
+<state-transition-element id="test233_12" symbol-set="*" start="none">
+	<activate-on-match element="test233_13"/>
+</state-transition-element>
+<state-transition-element id="test233_13" symbol-set="[\x07]" start="none">
+	<activate-on-match element="test233_14"/>
+</state-transition-element>
+<state-transition-element id="test233_14" symbol-set="[\x33]" start="none">
+	<activate-on-match element="test233_15"/>
+</state-transition-element>
+<state-transition-element id="test233_15" symbol-set="[\xff]" start="none">
+	<activate-on-match element="test233_16"/>
+</state-transition-element>
+<state-transition-element id="test233_16" symbol-set="[\xb9]" start="none">
+	<activate-on-match element="test233_17"/>
+</state-transition-element>
+<state-transition-element id="test233_17" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test233_18"/>
+</state-transition-element>
+<state-transition-element id="test233_18" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test233_19_0"/>
+	<activate-on-match element="test233_20"/>
+</state-transition-element>
+<state-transition-element id="test233_19_0" symbol-set="*" start="none">
+	<activate-on-match element="test233_20"/>
+</state-transition-element>
+<state-transition-element id="test233_20" symbol-set="[\x56]" start="none">
+	<activate-on-match element="test233_21"/>
+</state-transition-element>
+<state-transition-element id="test233_21" symbol-set="[\xfc]" start="none">
+	<activate-on-match element="test233_22"/>
+</state-transition-element>
+<state-transition-element id="test233_22" symbol-set="[\xf3]" start="none">
+	<activate-on-match element="test233_23"/>
+</state-transition-element>
+<state-transition-element id="test233_23" symbol-set="[\xa4]" start="none">
+	<activate-on-match element="test233_24"/>
+</state-transition-element>
+<state-transition-element id="test233_24" symbol-set="[\x5e]" start="none">
+	<activate-on-match element="test233_25"/>
+</state-transition-element>
+<state-transition-element id="test233_25" symbol-set="[\x06]" start="none">
+	<activate-on-match element="test233_26"/>
+</state-transition-element>
+<state-transition-element id="test233_26" symbol-set="[\x1f]" start="none">
+	<activate-on-match element="test233_27"/>
+</state-transition-element>
+<state-transition-element id="test233_27" symbol-set="[\xb8]" start="none">
+	<activate-on-match element="test233_28"/>
+</state-transition-element>
+<state-transition-element id="test233_28" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test233_29"/>
+</state-transition-element>
+<state-transition-element id="test233_29" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test233_30"/>
+</state-transition-element>
+<state-transition-element id="test233_30" symbol-set="[\xba]" start="none">
+	<activate-on-match element="test233_31"/>
+</state-transition-element>
+<state-transition-element id="test233_31" symbol-set="*" start="none">
+	<activate-on-match element="test233_32"/>
+</state-transition-element>
+<state-transition-element id="test233_32" symbol-set="*" start="none">
+	<activate-on-match element="test233_33"/>
+</state-transition-element>
+<state-transition-element id="test233_33" symbol-set="[\xcd]" start="none">
+	<activate-on-match element="test233_34"/>
+</state-transition-element>
+<state-transition-element id="test233_34" symbol-set="[\x21]" start="none">
+	<activate-on-match element="test233_35"/>
+</state-transition-element>
+<state-transition-element id="test233_35" symbol-set="[\x0e]" start="none">
+	<activate-on-match element="test233_36"/>
+</state-transition-element>
+<state-transition-element id="test233_36" symbol-set="[\x1f]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

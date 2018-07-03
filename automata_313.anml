@@ -1,0 +1,88 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test313_0" symbol-set="[\x1e]" start="all-input">
+	<activate-on-match element="test313_1"/>
+</state-transition-element>
+<state-transition-element id="test313_1" symbol-set="[\x8c]" start="none">
+	<activate-on-match element="test313_2"/>
+</state-transition-element>
+<state-transition-element id="test313_2" symbol-set="*" start="none">
+	<activate-on-match element="test313_3"/>
+</state-transition-element>
+<state-transition-element id="test313_3" symbol-set="*" start="none">
+	<activate-on-match element="test313_4"/>
+</state-transition-element>
+<state-transition-element id="test313_4" symbol-set="*" start="none">
+	<activate-on-match element="test313_5"/>
+</state-transition-element>
+<state-transition-element id="test313_5" symbol-set="*" start="none">
+	<activate-on-match element="test313_6"/>
+</state-transition-element>
+<state-transition-element id="test313_6" symbol-set="[\x8e]" start="none">
+	<activate-on-match element="test313_7"/>
+</state-transition-element>
+<state-transition-element id="test313_7" symbol-set="[\xd8]" start="none">
+	<activate-on-match element="test313_8"/>
+</state-transition-element>
+<state-transition-element id="test313_8" symbol-set="[\xa0]" start="none">
+	<activate-on-match element="test313_9"/>
+</state-transition-element>
+<state-transition-element id="test313_9" symbol-set="*" start="none">
+	<activate-on-match element="test313_10"/>
+</state-transition-element>
+<state-transition-element id="test313_10" symbol-set="*" start="none">
+	<activate-on-match element="test313_11"/>
+</state-transition-element>
+<state-transition-element id="test313_11" symbol-set="[\x2e]" start="none">
+	<activate-on-match element="test313_12"/>
+</state-transition-element>
+<state-transition-element id="test313_12" symbol-set="[\xa2]" start="none">
+	<activate-on-match element="test313_13"/>
+</state-transition-element>
+<state-transition-element id="test313_13" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test313_14"/>
+</state-transition-element>
+<state-transition-element id="test313_14" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test313_15"/>
+</state-transition-element>
+<state-transition-element id="test313_15" symbol-set="[\xa0]" start="none">
+	<activate-on-match element="test313_16"/>
+</state-transition-element>
+<state-transition-element id="test313_16" symbol-set="*" start="none">
+	<activate-on-match element="test313_17"/>
+</state-transition-element>
+<state-transition-element id="test313_17" symbol-set="*" start="none">
+	<activate-on-match element="test313_18"/>
+</state-transition-element>
+<state-transition-element id="test313_18" symbol-set="[\x2e]" start="none">
+	<activate-on-match element="test313_19"/>
+</state-transition-element>
+<state-transition-element id="test313_19" symbol-set="[\xa2]" start="none">
+	<activate-on-match element="test313_20"/>
+</state-transition-element>
+<state-transition-element id="test313_20" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test313_21"/>
+</state-transition-element>
+<state-transition-element id="test313_21" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test313_22"/>
+</state-transition-element>
+<state-transition-element id="test313_22" symbol-set="[\xa0]" start="none">
+	<activate-on-match element="test313_23"/>
+</state-transition-element>
+<state-transition-element id="test313_23" symbol-set="*" start="none">
+	<activate-on-match element="test313_24"/>
+</state-transition-element>
+<state-transition-element id="test313_24" symbol-set="*" start="none">
+	<activate-on-match element="test313_25"/>
+</state-transition-element>
+<state-transition-element id="test313_25" symbol-set="[\x2e]" start="none">
+	<activate-on-match element="test313_26"/>
+</state-transition-element>
+<state-transition-element id="test313_26" symbol-set="[\xa2]" start="none">
+	<activate-on-match element="test313_27"/>
+</state-transition-element>
+<state-transition-element id="test313_27" symbol-set="[\x02]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

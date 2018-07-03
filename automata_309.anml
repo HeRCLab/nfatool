@@ -1,0 +1,97 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test309_0" symbol-set="[\x1e]" start="all-input">
+	<activate-on-match element="test309_1"/>
+</state-transition-element>
+<state-transition-element id="test309_1" symbol-set="[\x0e]" start="none">
+	<activate-on-match element="test309_2"/>
+</state-transition-element>
+<state-transition-element id="test309_2" symbol-set="[\x0e]" start="none">
+	<activate-on-match element="test309_3"/>
+</state-transition-element>
+<state-transition-element id="test309_3" symbol-set="[\x1f]" start="none">
+	<activate-on-match element="test309_4"/>
+</state-transition-element>
+<state-transition-element id="test309_4" symbol-set="[\x07]" start="none">
+	<activate-on-match element="test309_5"/>
+</state-transition-element>
+<state-transition-element id="test309_5" symbol-set="[\xb1]" start="none">
+	<activate-on-match element="test309_6"/>
+</state-transition-element>
+<state-transition-element id="test309_6" symbol-set="[\x10]" start="none">
+	<activate-on-match element="test309_7"/>
+</state-transition-element>
+<state-transition-element id="test309_7" symbol-set="[\xbf]" start="none">
+	<activate-on-match element="test309_8"/>
+</state-transition-element>
+<state-transition-element id="test309_8" symbol-set="*" start="none">
+	<activate-on-match element="test309_9"/>
+</state-transition-element>
+<state-transition-element id="test309_9" symbol-set="*" start="none">
+	<activate-on-match element="test309_10"/>
+</state-transition-element>
+<state-transition-element id="test309_10" symbol-set="*" start="none">
+	<activate-on-match element="test309_11"/>
+</state-transition-element>
+<state-transition-element id="test309_11" symbol-set="*" start="none">
+	<activate-on-match element="test309_12"/>
+</state-transition-element>
+<state-transition-element id="test309_12" symbol-set="*" start="none">
+	<activate-on-match element="test309_13"/>
+</state-transition-element>
+<state-transition-element id="test309_13" symbol-set="[\x03]" start="none">
+	<activate-on-match element="test309_14"/>
+</state-transition-element>
+<state-transition-element id="test309_14" symbol-set="[\xfd]" start="none">
+	<activate-on-match element="test309_15"/>
+</state-transition-element>
+<state-transition-element id="test309_15" symbol-set="[\x03]" start="none">
+	<activate-on-match element="test309_16"/>
+</state-transition-element>
+<state-transition-element id="test309_16" symbol-set="[\xf5]" start="none">
+	<activate-on-match element="test309_17"/>
+</state-transition-element>
+<state-transition-element id="test309_17" symbol-set="[\xac]" start="none">
+	<activate-on-match element="test309_18"/>
+</state-transition-element>
+<state-transition-element id="test309_18" symbol-set="[\x86]" start="none">
+	<activate-on-match element="test309_19"/>
+</state-transition-element>
+<state-transition-element id="test309_19" symbol-set="[\xc4]" start="none">
+	<activate-on-match element="test309_20"/>
+</state-transition-element>
+<state-transition-element id="test309_20" symbol-set="[\xe4]" start="none">
+	<activate-on-match element="test309_21"/>
+</state-transition-element>
+<state-transition-element id="test309_21" symbol-set="[\x40]" start="none">
+	<activate-on-match element="test309_22"/>
+</state-transition-element>
+<state-transition-element id="test309_22" symbol-set="[\x50]" start="none">
+	<activate-on-match element="test309_23"/>
+</state-transition-element>
+<state-transition-element id="test309_23" symbol-set="[\x32]" start="none">
+	<activate-on-match element="test309_24"/>
+</state-transition-element>
+<state-transition-element id="test309_24" symbol-set="[\xe0]" start="none">
+	<activate-on-match element="test309_25"/>
+</state-transition-element>
+<state-transition-element id="test309_25" symbol-set="[\x80]" start="none">
+	<activate-on-match element="test309_26"/>
+</state-transition-element>
+<state-transition-element id="test309_26" symbol-set="[\xfc]" start="none">
+	<activate-on-match element="test309_27"/>
+</state-transition-element>
+<state-transition-element id="test309_27" symbol-set="[\x90]" start="none">
+	<activate-on-match element="test309_28"/>
+</state-transition-element>
+<state-transition-element id="test309_28" symbol-set="[\x58]" start="none">
+	<activate-on-match element="test309_29"/>
+</state-transition-element>
+<state-transition-element id="test309_29" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test309_30"/>
+</state-transition-element>
+<state-transition-element id="test309_30" symbol-set="[\xf5]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

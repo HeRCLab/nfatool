@@ -1,0 +1,60 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test452_0" symbol-set="[\x25]" start="all-input">
+	<activate-on-match element="test452_1"/>
+</state-transition-element>
+<state-transition-element id="test452_1" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test452_2"/>
+</state-transition-element>
+<state-transition-element id="test452_2" symbol-set="[\x39]" start="none">
+	<activate-on-match element="test452_3"/>
+</state-transition-element>
+<state-transition-element id="test452_3" symbol-set="[\x30]" start="none">
+	<activate-on-match element="test452_4"/>
+	<activate-on-match element="test452_5"/>
+</state-transition-element>
+<state-transition-element id="test452_4" symbol-set="*" start="none">
+	<activate-on-match element="test452_5"/>
+</state-transition-element>
+<state-transition-element id="test452_5" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test452_6"/>
+</state-transition-element>
+<state-transition-element id="test452_6" symbol-set="[\x6e]" start="none">
+	<activate-on-match element="test452_7"/>
+</state-transition-element>
+<state-transition-element id="test452_7" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test452_8"/>
+</state-transition-element>
+<state-transition-element id="test452_8" symbol-set="[\x73]" start="none">
+	<activate-on-match element="test452_9"/>
+</state-transition-element>
+<state-transition-element id="test452_9" symbol-set="[\x63]" start="none">
+	<activate-on-match element="test452_10"/>
+</state-transition-element>
+<state-transition-element id="test452_10" symbol-set="[\x61]" start="none">
+	<activate-on-match element="test452_11"/>
+</state-transition-element>
+<state-transition-element id="test452_11" symbol-set="[\x70]" start="none">
+	<activate-on-match element="test452_12"/>
+</state-transition-element>
+<state-transition-element id="test452_12" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test452_13"/>
+	<activate-on-match element="test452_14"/>
+</state-transition-element>
+<state-transition-element id="test452_13" symbol-set="*" start="none">
+	<activate-on-match element="test452_14"/>
+</state-transition-element>
+<state-transition-element id="test452_14" symbol-set="[\x25]" start="none">
+	<activate-on-match element="test452_15"/>
+</state-transition-element>
+<state-transition-element id="test452_15" symbol-set="[\x75]" start="none">
+	<activate-on-match element="test452_16"/>
+</state-transition-element>
+<state-transition-element id="test452_16" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test452_17"/>
+</state-transition-element>
+<state-transition-element id="test452_17" symbol-set="[\x38]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

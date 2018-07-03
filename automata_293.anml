@@ -1,0 +1,259 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test293_0" symbol-set="[\x1b]" start="all-input">
+	<activate-on-match element="test293_1"/>
+</state-transition-element>
+<state-transition-element id="test293_1" symbol-set="[\xdb]" start="none">
+	<activate-on-match element="test293_2"/>
+</state-transition-element>
+<state-transition-element id="test293_2" symbol-set="[\xe8]" start="none">
+	<activate-on-match element="test293_3"/>
+</state-transition-element>
+<state-transition-element id="test293_3" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test293_4"/>
+</state-transition-element>
+<state-transition-element id="test293_4" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_5"/>
+</state-transition-element>
+<state-transition-element id="test293_5" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_6"/>
+</state-transition-element>
+<state-transition-element id="test293_6" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_7"/>
+</state-transition-element>
+<state-transition-element id="test293_7" symbol-set="[\x1a]" start="none">
+	<activate-on-match element="test293_8"/>
+</state-transition-element>
+<state-transition-element id="test293_8" symbol-set="[\x0d]" start="none">
+	<activate-on-match element="test293_9"/>
+</state-transition-element>
+<state-transition-element id="test293_9" symbol-set="[\x5b]" start="none">
+	<activate-on-match element="test293_10"/>
+</state-transition-element>
+<state-transition-element id="test293_10" symbol-set="[\x68]" start="none">
+	<activate-on-match element="test293_11"/>
+</state-transition-element>
+<state-transition-element id="test293_11" symbol-set="[\x80]" start="none">
+	<activate-on-match element="test293_12_0"/>
+</state-transition-element>
+<state-transition-element id="test293_12_0" symbol-set="*" start="none">
+	<activate-on-match element="test293_12_1"/>
+</state-transition-element>
+<state-transition-element id="test293_12_1" symbol-set="*" start="none">
+	<activate-on-match element="test293_13"/>
+</state-transition-element>
+<state-transition-element id="test293_13" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_14"/>
+</state-transition-element>
+<state-transition-element id="test293_14" symbol-set="[\xe8]" start="none">
+	<activate-on-match element="test293_15"/>
+</state-transition-element>
+<state-transition-element id="test293_15" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test293_16"/>
+</state-transition-element>
+<state-transition-element id="test293_16" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_17"/>
+</state-transition-element>
+<state-transition-element id="test293_17" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_18"/>
+</state-transition-element>
+<state-transition-element id="test293_18" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_19"/>
+</state-transition-element>
+<state-transition-element id="test293_19" symbol-set="[\xea]" start="none">
+	<activate-on-match element="test293_20"/>
+</state-transition-element>
+<state-transition-element id="test293_20" symbol-set="[\x5a]" start="none">
+	<activate-on-match element="test293_21"/>
+</state-transition-element>
+<state-transition-element id="test293_21" symbol-set="[\x58]" start="none">
+	<activate-on-match element="test293_22"/>
+</state-transition-element>
+<state-transition-element id="test293_22" symbol-set="[\xeb]" start="none">
+	<activate-on-match element="test293_23"/>
+</state-transition-element>
+<state-transition-element id="test293_23" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test293_24"/>
+</state-transition-element>
+<state-transition-element id="test293_24" symbol-set="[\xcd]" start="none">
+	<activate-on-match element="test293_25"/>
+</state-transition-element>
+<state-transition-element id="test293_25" symbol-set="[\x20]" start="none">
+	<activate-on-match element="test293_26"/>
+</state-transition-element>
+<state-transition-element id="test293_26" symbol-set="[\x68]" start="none">
+	<activate-on-match element="test293_27"/>
+</state-transition-element>
+<state-transition-element id="test293_27" symbol-set="[\xf4]" start="none">
+	<activate-on-match element="test293_28"/>
+</state-transition-element>
+<state-transition-element id="test293_28" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_29"/>
+</state-transition-element>
+<state-transition-element id="test293_29" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_30"/>
+</state-transition-element>
+<state-transition-element id="test293_30" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_31"/>
+</state-transition-element>
+<state-transition-element id="test293_31" symbol-set="[\xeb]" start="none">
+	<activate-on-match element="test293_32"/>
+</state-transition-element>
+<state-transition-element id="test293_32" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test293_33"/>
+</state-transition-element>
+<state-transition-element id="test293_33" symbol-set="[\xcd]" start="none">
+	<activate-on-match element="test293_34"/>
+</state-transition-element>
+<state-transition-element id="test293_34" symbol-set="[\x20]" start="none">
+	<activate-on-match element="test293_35"/>
+</state-transition-element>
+<state-transition-element id="test293_35" symbol-set="[\x5e]" start="none">
+	<activate-on-match element="test293_36"/>
+</state-transition-element>
+<state-transition-element id="test293_36" symbol-set="[\x0f]" start="none">
+	<activate-on-match element="test293_37"/>
+</state-transition-element>
+<state-transition-element id="test293_37" symbol-set="[\xb6]" start="none">
+	<activate-on-match element="test293_38"/>
+</state-transition-element>
+<state-transition-element id="test293_38" symbol-set="[\xd0]" start="none">
+	<activate-on-match element="test293_39"/>
+</state-transition-element>
+<state-transition-element id="test293_39" symbol-set="[\x80]" start="none">
+	<activate-on-match element="test293_40"/>
+</state-transition-element>
+<state-transition-element id="test293_40" symbol-set="[\xca]" start="none">
+	<activate-on-match element="test293_41"/>
+</state-transition-element>
+<state-transition-element id="test293_41" symbol-set="[\x5c]" start="none">
+	<activate-on-match element="test293_42"/>
+</state-transition-element>
+<state-transition-element id="test293_42" symbol-set="[\x8b]" start="none">
+	<activate-on-match element="test293_43"/>
+</state-transition-element>
+<state-transition-element id="test293_43" symbol-set="[\x38]" start="none">
+	<activate-on-match element="test293_44"/>
+</state-transition-element>
+<state-transition-element id="test293_44" symbol-set="[\xeb]" start="none">
+	<activate-on-match element="test293_45"/>
+</state-transition-element>
+<state-transition-element id="test293_45" symbol-set="[\x01]" start="none">
+	<activate-on-match element="test293_46"/>
+</state-transition-element>
+<state-transition-element id="test293_46" symbol-set="[\x35]" start="none">
+	<activate-on-match element="test293_47"/>
+</state-transition-element>
+<state-transition-element id="test293_47" symbol-set="[\xeb]" start="none">
+	<activate-on-match element="test293_48"/>
+</state-transition-element>
+<state-transition-element id="test293_48" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test293_49"/>
+</state-transition-element>
+<state-transition-element id="test293_49" symbol-set="[\xdc]" start="none">
+	<activate-on-match element="test293_50"/>
+</state-transition-element>
+<state-transition-element id="test293_50" symbol-set="[\x97]" start="none">
+	<activate-on-match element="test293_51"/>
+</state-transition-element>
+<state-transition-element id="test293_51" symbol-set="[\x81]" start="none">
+	<activate-on-match element="test293_52"/>
+</state-transition-element>
+<state-transition-element id="test293_52" symbol-set="[\xef]" start="none">
+	<activate-on-match element="test293_53"/>
+</state-transition-element>
+<state-transition-element id="test293_53" symbol-set="[\xf7]" start="none">
+	<activate-on-match element="test293_54"/>
+</state-transition-element>
+<state-transition-element id="test293_54" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test293_55"/>
+</state-transition-element>
+<state-transition-element id="test293_55" symbol-set="[\x17]" start="none">
+	<activate-on-match element="test293_56"/>
+</state-transition-element>
+<state-transition-element id="test293_56" symbol-set="[\x43]" start="none">
+	<activate-on-match element="test293_57"/>
+</state-transition-element>
+<state-transition-element id="test293_57" symbol-set="[\xe8]" start="none">
+	<activate-on-match element="test293_58"/>
+</state-transition-element>
+<state-transition-element id="test293_58" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test293_59"/>
+</state-transition-element>
+<state-transition-element id="test293_59" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_60"/>
+</state-transition-element>
+<state-transition-element id="test293_60" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_61"/>
+</state-transition-element>
+<state-transition-element id="test293_61" symbol-set="[\x00]" start="none">
+	<activate-on-match element="test293_62"/>
+</state-transition-element>
+<state-transition-element id="test293_62" symbol-set="[\x97]" start="none">
+	<activate-on-match element="test293_63"/>
+</state-transition-element>
+<state-transition-element id="test293_63" symbol-set="[\xcb]" start="none">
+	<activate-on-match element="test293_64"/>
+</state-transition-element>
+<state-transition-element id="test293_64" symbol-set="[\x5b]" start="none">
+	<activate-on-match element="test293_65"/>
+</state-transition-element>
+<state-transition-element id="test293_65" symbol-set="[\x81]" start="none">
+	<activate-on-match element="test293_66"/>
+</state-transition-element>
+<state-transition-element id="test293_66" symbol-set="[\xc7]" start="none">
+	<activate-on-match element="test293_67"/>
+</state-transition-element>
+<state-transition-element id="test293_67" symbol-set="[\xb2]" start="none">
+	<activate-on-match element="test293_68"/>
+</state-transition-element>
+<state-transition-element id="test293_68" symbol-set="[\x8b]" start="none">
+	<activate-on-match element="test293_69"/>
+</state-transition-element>
+<state-transition-element id="test293_69" symbol-set="[\xa1]" start="none">
+	<activate-on-match element="test293_70"/>
+</state-transition-element>
+<state-transition-element id="test293_70" symbol-set="[\x0c]" start="none">
+	<activate-on-match element="test293_71"/>
+</state-transition-element>
+<state-transition-element id="test293_71" symbol-set="[\x8b]" start="none">
+	<activate-on-match element="test293_72"/>
+</state-transition-element>
+<state-transition-element id="test293_72" symbol-set="[\xd1]" start="none">
+	<activate-on-match element="test293_73"/>
+</state-transition-element>
+<state-transition-element id="test293_73" symbol-set="[\x83]" start="none">
+	<activate-on-match element="test293_74"/>
+</state-transition-element>
+<state-transition-element id="test293_74" symbol-set="[\xef]" start="none">
+	<activate-on-match element="test293_75"/>
+</state-transition-element>
+<state-transition-element id="test293_75" symbol-set="[\x17]" start="none">
+	<activate-on-match element="test293_76"/>
+</state-transition-element>
+<state-transition-element id="test293_76" symbol-set="[\xeb]" start="none">
+	<activate-on-match element="test293_77"/>
+</state-transition-element>
+<state-transition-element id="test293_77" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test293_78"/>
+</state-transition-element>
+<state-transition-element id="test293_78" symbol-set="[\x0c]" start="none">
+	<activate-on-match element="test293_79"/>
+</state-transition-element>
+<state-transition-element id="test293_79" symbol-set="[\x65]" start="none">
+	<activate-on-match element="test293_80"/>
+</state-transition-element>
+<state-transition-element id="test293_80" symbol-set="[\x83]" start="none">
+	<activate-on-match element="test293_81"/>
+</state-transition-element>
+<state-transition-element id="test293_81" symbol-set="[\xef]" start="none">
+	<activate-on-match element="test293_82"/>
+</state-transition-element>
+<state-transition-element id="test293_82" symbol-set="[\x43]" start="none">
+	<activate-on-match element="test293_83"/>
+</state-transition-element>
+<state-transition-element id="test293_83" symbol-set="[\x13]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>

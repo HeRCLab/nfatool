@@ -1,0 +1,28 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="nfatool">
+<state-transition-element id="test2_0" symbol-set="[\x8a\x86]" start="all-input">
+	<activate-on-match element="test2_1"/>
+</state-transition-element>
+<state-transition-element id="test2_1" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test2_2"/>
+</state-transition-element>
+<state-transition-element id="test2_2" symbol-set="[\x66]" start="none">
+	<activate-on-match element="test2_3"/>
+</state-transition-element>
+<state-transition-element id="test2_3" symbol-set="[\x29\x31]" start="none">
+	<activate-on-match element="test2_4"/>
+</state-transition-element>
+<state-transition-element id="test2_4" symbol-set="[\xc8\xd8\xe8\xf0\xf8]" start="none">
+	<activate-on-match element="test2_5"/>
+</state-transition-element>
+<state-transition-element id="test2_5" symbol-set="[\x86\x88]" start="none">
+	<activate-on-match element="test2_6"/>
+</state-transition-element>
+<state-transition-element id="test2_6" symbol-set="[\x02]" start="none">
+	<activate-on-match element="test2_7"/>
+</state-transition-element>
+<state-transition-element id="test2_7" symbol-set="[\x42]" start="none">
+	<report-on-match reportcode="1"/>
+</state-transition-element>
+</automata-network>
+</anml>
