@@ -1,0 +1,43 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__5121__"  symbol-set="[\x70]"  start="all-input">
+	<activate-on-match element="__5122__"/>
+</state-transition-element>
+<state-transition-element id="__5122__"  symbol-set="[\x36]"  start="none">
+	<activate-on-match element="__5123__"/>
+</state-transition-element>
+<state-transition-element id="__5123__"  symbol-set="[\x43]"  start="none">
+	<activate-on-match element="__5124__"/>
+</state-transition-element>
+<state-transition-element id="__5124__"  symbol-set="[\x67]"  start="none">
+	<activate-on-match element="__5125__"/>
+</state-transition-element>
+<state-transition-element id="__5125__"  symbol-set="[\x6c]"  start="none">
+	<activate-on-match element="__5126__"/>
+</state-transition-element>
+<state-transition-element id="__5126__"  symbol-set="[\x36]"  start="none">
+	<activate-on-match element="__5127__"/>
+</state-transition-element>
+<state-transition-element id="__5127__"  symbol-set="[\x65]"  start="none">
+	<activate-on-match element="__5128__"/>
+</state-transition-element>
+<state-transition-element id="__5128__"  symbol-set="[\x35]"  start="none">
+	<activate-on-match element="__5129__"/>
+</state-transition-element>
+<state-transition-element id="__5129__"  symbol-set="[\x4c]"  start="none">
+	<activate-on-match element="__5130__"/>
+</state-transition-element>
+<state-transition-element id="__5130__"  symbol-set="[\x30]"  start="none">
+	<activate-on-match element="__5131__"/>
+</state-transition-element>
+<state-transition-element id="__5131__"  symbol-set="[\x59]"  start="none">
+	<activate-on-match element="__5132__"/>
+</state-transition-element>
+<state-transition-element id="__5132__"  symbol-set="[\x61-\x7a]"  start="none">
+	<activate-on-match element="__5133__"/>
+</state-transition-element>
+<state-transition-element id="__5133__"  symbol-set="[\x32]"  start="none">
+	<report-on-match reportcode="173"/>
+</state-transition-element>
+</automata-network>
+</anml>

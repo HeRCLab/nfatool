@@ -1,0 +1,44 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__32215__"  symbol-set="[\x56]"  start="all-input">
+	<activate-on-match element="__32216__"/>
+</state-transition-element>
+<state-transition-element id="__32216__"  symbol-set="[\x62]"  start="none">
+	<activate-on-match element="__32217__"/>
+</state-transition-element>
+<state-transition-element id="__32217__"  symbol-set="[\x6e]"  start="none">
+	<activate-on-match element="__32218__"/>
+</state-transition-element>
+<state-transition-element id="__32218__"  symbol-set="[\x55]"  start="none">
+	<activate-on-match element="__32219__"/>
+</state-transition-element>
+<state-transition-element id="__32219__"  symbol-set="[\x64]"  start="none">
+	<activate-on-match element="__32220__"/>
+</state-transition-element>
+<state-transition-element id="__32220__"  symbol-set="[\x66]"  start="none">
+	<activate-on-match element="__32221__"/>
+</state-transition-element>
+<state-transition-element id="__32221__"  symbol-set="[\x78]"  start="none">
+	<activate-on-match element="__32222__"/>
+</state-transition-element>
+<state-transition-element id="__32222__"  symbol-set="[\x63]"  start="none">
+	<activate-on-match element="__32223__"/>
+</state-transition-element>
+<state-transition-element id="__32223__"  symbol-set="[\x68]"  start="none">
+	<activate-on-match element="__32224__"/>
+</state-transition-element>
+<state-transition-element id="__32224__"  symbol-set="[\x52]"  start="none">
+	<activate-on-match element="__32225__"/>
+	<activate-on-match element="__32227__"/>
+</state-transition-element>
+<state-transition-element id="__32225__"  symbol-set="[\x52]"  start="none">
+	<activate-on-match element="__32226__"/>
+</state-transition-element>
+<state-transition-element id="__32226__"  symbol-set="[\x6e]"  start="none">
+	<activate-on-match element="__32227__"/>
+</state-transition-element>
+<or id="__32227__">
+	<report-on-high reportcode="1119"/>
+</or>
+</automata-network>
+</anml>

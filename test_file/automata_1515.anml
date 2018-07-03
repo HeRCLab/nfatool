@@ -1,0 +1,42 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__43688__"  symbol-set="[\x68]"  start="all-input">
+	<activate-on-match element="__43689__"/>
+</state-transition-element>
+<state-transition-element id="__43689__"  symbol-set="[\x65]"  start="none">
+	<activate-on-match element="__43690__"/>
+</state-transition-element>
+<state-transition-element id="__43690__"  symbol-set="[\x38]"  start="none">
+	<activate-on-match element="__43691__"/>
+</state-transition-element>
+<state-transition-element id="__43691__"  symbol-set="[\x41-\x5a]"  start="none">
+	<activate-on-match element="__43692__"/>
+</state-transition-element>
+<state-transition-element id="__43692__"  symbol-set="[\x53]"  start="none">
+	<activate-on-match element="__43693__"/>
+	<activate-on-match element="__43694__"/>
+</state-transition-element>
+<state-transition-element id="__43693__"  symbol-set="[\x00-\x09\x0b-\xff]"  start="none">
+	<activate-on-match element="__43693__"/>
+	<activate-on-match element="__43694__"/>
+</state-transition-element>
+<state-transition-element id="__43694__"  symbol-set="[\x55]"  start="none">
+	<activate-on-match element="__43695__"/>
+</state-transition-element>
+<state-transition-element id="__43695__"  symbol-set="[\x4a]"  start="none">
+	<activate-on-match element="__43696__"/>
+</state-transition-element>
+<state-transition-element id="__43696__"  symbol-set="[\x64]"  start="none">
+	<activate-on-match element="__43697__"/>
+</state-transition-element>
+<state-transition-element id="__43697__"  symbol-set="[\x51]"  start="none">
+	<activate-on-match element="__43698__"/>
+</state-transition-element>
+<state-transition-element id="__43698__"  symbol-set="[\x45]"  start="none">
+	<activate-on-match element="__43699__"/>
+</state-transition-element>
+<state-transition-element id="__43699__"  symbol-set="[\x64]"  start="none">
+	<report-on-match reportcode="1518"/>
+</state-transition-element>
+</automata-network>
+</anml>

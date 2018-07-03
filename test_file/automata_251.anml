@@ -1,0 +1,43 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__7439__"  symbol-set="[\x6b]"  start="all-input">
+	<activate-on-match element="__7440__"/>
+</state-transition-element>
+<state-transition-element id="__7440__"  symbol-set="[\x59]"  start="none">
+	<activate-on-match element="__7441__"/>
+</state-transition-element>
+<state-transition-element id="__7441__"  symbol-set="[\x62]"  start="none">
+	<activate-on-match element="__7442__"/>
+</state-transition-element>
+<state-transition-element id="__7442__"  symbol-set="[\x32]"  start="none">
+	<activate-on-match element="__7443__"/>
+</state-transition-element>
+<state-transition-element id="__7443__"  symbol-set="[\x66]"  start="none">
+	<activate-on-match element="__7444__"/>
+</state-transition-element>
+<state-transition-element id="__7444__"  symbol-set="[\x77]"  start="none">
+	<activate-on-match element="__7445__"/>
+</state-transition-element>
+<state-transition-element id="__7445__"  symbol-set="[\x47]"  start="none">
+	<activate-on-match element="__7446__"/>
+</state-transition-element>
+<state-transition-element id="__7446__"  symbol-set="[\x69]"  start="none">
+	<activate-on-match element="__7447__"/>
+</state-transition-element>
+<state-transition-element id="__7447__"  symbol-set="[\x66]"  start="none">
+	<activate-on-match element="__7448__"/>
+</state-transition-element>
+<state-transition-element id="__7448__"  symbol-set="[\x53]"  start="none">
+	<activate-on-match element="__7449__"/>
+</state-transition-element>
+<state-transition-element id="__7449__"  symbol-set="[\x35]"  start="none">
+	<activate-on-match element="__7450__"/>
+</state-transition-element>
+<state-transition-element id="__7450__"  symbol-set="[\x72]"  start="none">
+	<activate-on-match element="__7451__"/>
+</state-transition-element>
+<state-transition-element id="__7451__"  symbol-set="[\x58]"  start="none">
+	<report-on-match reportcode="253"/>
+</state-transition-element>
+</automata-network>
+</anml>

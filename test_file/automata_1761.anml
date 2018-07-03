@@ -1,0 +1,49 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__50713__"  symbol-set="[\x4c]"  start="all-input">
+	<activate-on-match element="__50714__"/>
+</state-transition-element>
+<state-transition-element id="__50714__"  symbol-set="[\x45]"  start="none">
+	<activate-on-match element="__50715__"/>
+</state-transition-element>
+<state-transition-element id="__50715__"  symbol-set="[\x45]"  start="none">
+	<activate-on-match element="__50716__"/>
+</state-transition-element>
+<state-transition-element id="__50716__"  symbol-set="[\x38]"  start="none">
+	<activate-on-match element="__50717__"/>
+</state-transition-element>
+<state-transition-element id="__50717__"  symbol-set="[\x53]"  start="none">
+	<activate-on-match element="__50718__"/>
+</state-transition-element>
+<state-transition-element id="__50718__"  symbol-set="[\x49]"  start="none">
+	<activate-on-match element="__50719__"/>
+</state-transition-element>
+<state-transition-element id="__50719__"  symbol-set="[\x30-\x39]"  start="none">
+	<activate-on-match element="__50720__"/>
+</state-transition-element>
+<state-transition-element id="__50720__"  symbol-set="[\x6b]"  start="none">
+	<activate-on-match element="__50721__"/>
+</state-transition-element>
+<state-transition-element id="__50721__"  symbol-set="[\x42]"  start="none">
+	<activate-on-match element="__50722__"/>
+</state-transition-element>
+<state-transition-element id="__50722__"  symbol-set="[\x67]"  start="none">
+	<activate-on-match element="__50723__"/>
+</state-transition-element>
+<state-transition-element id="__50723__"  symbol-set="[\x38]"  start="none">
+	<activate-on-match element="__50724__"/>
+</state-transition-element>
+<state-transition-element id="__50724__"  symbol-set="[\x34]"  start="none">
+	<activate-on-match element="__50725__"/>
+</state-transition-element>
+<state-transition-element id="__50725__"  symbol-set="[\x55]"  start="none">
+	<activate-on-match element="__50726__"/>
+</state-transition-element>
+<state-transition-element id="__50726__"  symbol-set="[\x79]"  start="none">
+	<activate-on-match element="__50727__"/>
+</state-transition-element>
+<state-transition-element id="__50727__"  symbol-set="[\x63]"  start="none">
+	<report-on-match reportcode="1764"/>
+</state-transition-element>
+</automata-network>
+</anml>

@@ -1,0 +1,44 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__66082__"  symbol-set="[\x62]"  start="all-input">
+	<activate-on-match element="__66083__"/>
+</state-transition-element>
+<state-transition-element id="__66083__"  symbol-set="[\x39]"  start="none">
+	<activate-on-match element="__66084__"/>
+</state-transition-element>
+<state-transition-element id="__66084__"  symbol-set="[\x74]"  start="none">
+	<activate-on-match element="__66085__"/>
+</state-transition-element>
+<state-transition-element id="__66085__"  symbol-set="[\x4f]"  start="none">
+	<activate-on-match element="__66086__"/>
+</state-transition-element>
+<state-transition-element id="__66086__"  symbol-set="[\x76]"  start="none">
+	<activate-on-match element="__66087__"/>
+	<activate-on-match element="__66088__"/>
+	<activate-on-match element="__66089__"/>
+</state-transition-element>
+<state-transition-element id="__66087__"  symbol-set="[\x43]"  start="none">
+	<activate-on-match element="__66088__"/>
+	<activate-on-match element="__66089__"/>
+</state-transition-element>
+<state-transition-element id="__66088__"  symbol-set="[\x00-\x09\x0b-\xff]"  start="none">
+	<activate-on-match element="__66088__"/>
+	<activate-on-match element="__66089__"/>
+</state-transition-element>
+<state-transition-element id="__66089__"  symbol-set="[\x34]"  start="none">
+	<activate-on-match element="__66090__"/>
+</state-transition-element>
+<state-transition-element id="__66090__"  symbol-set="[\x42]"  start="none">
+	<activate-on-match element="__66091__"/>
+</state-transition-element>
+<state-transition-element id="__66091__"  symbol-set="[\x77]"  start="none">
+	<activate-on-match element="__66092__"/>
+</state-transition-element>
+<state-transition-element id="__66092__"  symbol-set="[\x44]"  start="none">
+	<activate-on-match element="__66093__"/>
+</state-transition-element>
+<state-transition-element id="__66093__"  symbol-set="[\x66]"  start="none">
+	<report-on-match reportcode="2299"/>
+</state-transition-element>
+</automata-network>
+</anml>

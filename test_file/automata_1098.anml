@@ -1,0 +1,45 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__31619__"  symbol-set="[\x70]"  start="all-input">
+	<activate-on-match element="__31620__"/>
+</state-transition-element>
+<state-transition-element id="__31620__"  symbol-set="[\x34]"  start="none">
+	<activate-on-match element="__31621__"/>
+</state-transition-element>
+<state-transition-element id="__31621__"  symbol-set="[\x48]"  start="none">
+	<activate-on-match element="__31622__"/>
+</state-transition-element>
+<state-transition-element id="__31622__"  symbol-set="[\x56]"  start="none">
+	<activate-on-match element="__31623__"/>
+</state-transition-element>
+<state-transition-element id="__31623__"  symbol-set="[\x43]"  start="none">
+	<activate-on-match element="__31624__"/>
+</state-transition-element>
+<state-transition-element id="__31624__"  symbol-set="[\x63]"  start="none">
+	<activate-on-match element="__31625__"/>
+	<activate-on-match element="__31627__"/>
+	<activate-on-match element="__31629__"/>
+</state-transition-element>
+<state-transition-element id="__31625__"  symbol-set="[\x72]"  start="none">
+	<activate-on-match element="__31626__"/>
+</state-transition-element>
+<state-transition-element id="__31626__"  symbol-set="[\x65]"  start="none">
+	<activate-on-match element="__31631__"/>
+</state-transition-element>
+<state-transition-element id="__31627__"  symbol-set="[\x77]"  start="none">
+	<activate-on-match element="__31628__"/>
+</state-transition-element>
+<state-transition-element id="__31628__"  symbol-set="[\x47]"  start="none">
+	<activate-on-match element="__31631__"/>
+</state-transition-element>
+<state-transition-element id="__31629__"  symbol-set="[\x42]"  start="none">
+	<activate-on-match element="__31630__"/>
+</state-transition-element>
+<state-transition-element id="__31630__"  symbol-set="[\x57]"  start="none">
+	<activate-on-match element="__31631__"/>
+</state-transition-element>
+<or id="__31631__">
+	<report-on-high reportcode="1101"/>
+</or>
+</automata-network>
+</anml>

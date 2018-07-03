@@ -1,0 +1,42 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__59248__"  symbol-set="[\x4c]"  start="all-input">
+	<activate-on-match element="__59249__"/>
+</state-transition-element>
+<state-transition-element id="__59249__"  symbol-set="[\x59]"  start="none">
+	<activate-on-match element="__59250__"/>
+</state-transition-element>
+<state-transition-element id="__59250__"  symbol-set="[\x37]"  start="none">
+	<activate-on-match element="__59251__"/>
+</state-transition-element>
+<state-transition-element id="__59251__"  symbol-set="[\x69]"  start="none">
+	<activate-on-match element="__59252__"/>
+</state-transition-element>
+<state-transition-element id="__59252__"  symbol-set="[\x37]"  start="none">
+	<activate-on-match element="__59253__"/>
+	<activate-on-match element="__59254__"/>
+</state-transition-element>
+<state-transition-element id="__59253__"  symbol-set="[\x00-\x09\x0b-\xff]"  start="none">
+	<activate-on-match element="__59253__"/>
+	<activate-on-match element="__59254__"/>
+</state-transition-element>
+<state-transition-element id="__59254__"  symbol-set="[\x64]"  start="none">
+	<activate-on-match element="__59255__"/>
+</state-transition-element>
+<state-transition-element id="__59255__"  symbol-set="[\x73]"  start="none">
+	<activate-on-match element="__59256__"/>
+</state-transition-element>
+<state-transition-element id="__59256__"  symbol-set="[\x67]"  start="none">
+	<activate-on-match element="__59257__"/>
+</state-transition-element>
+<state-transition-element id="__59257__"  symbol-set="[\x71]"  start="none">
+	<activate-on-match element="__59258__"/>
+</state-transition-element>
+<state-transition-element id="__59258__"  symbol-set="[\x6f]"  start="none">
+	<activate-on-match element="__59259__"/>
+</state-transition-element>
+<state-transition-element id="__59259__"  symbol-set="[\x4e]"  start="none">
+	<report-on-match reportcode="2065"/>
+</state-transition-element>
+</automata-network>
+</anml>

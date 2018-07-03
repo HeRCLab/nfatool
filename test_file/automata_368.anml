@@ -1,0 +1,46 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__10739__"  symbol-set="[\x51]"  start="all-input">
+	<activate-on-match element="__10740__"/>
+</state-transition-element>
+<state-transition-element id="__10740__"  symbol-set="[\x6e]"  start="none">
+	<activate-on-match element="__10741__"/>
+</state-transition-element>
+<state-transition-element id="__10741__"  symbol-set="[\x76]"  start="none">
+	<activate-on-match element="__10742__"/>
+</state-transition-element>
+<state-transition-element id="__10742__"  symbol-set="[\x7a]"  start="none">
+	<activate-on-match element="__10743__"/>
+</state-transition-element>
+<state-transition-element id="__10743__"  symbol-set="[\x52]"  start="none">
+	<activate-on-match element="__10744__"/>
+	<activate-on-match element="__10745__"/>
+</state-transition-element>
+<state-transition-element id="__10744__"  symbol-set="[\x00-\x09\x0b-\xff]"  start="none">
+	<activate-on-match element="__10744__"/>
+	<activate-on-match element="__10745__"/>
+</state-transition-element>
+<state-transition-element id="__10745__"  symbol-set="[\x33]"  start="none">
+	<activate-on-match element="__10746__"/>
+</state-transition-element>
+<state-transition-element id="__10746__"  symbol-set="[\x4e]"  start="none">
+	<activate-on-match element="__10747__"/>
+</state-transition-element>
+<state-transition-element id="__10747__"  symbol-set="[\x73]"  start="none">
+	<activate-on-match element="__10748__"/>
+	<activate-on-match element="__10751__"/>
+</state-transition-element>
+<state-transition-element id="__10748__"  symbol-set="[\x43]"  start="none">
+	<activate-on-match element="__10749__"/>
+</state-transition-element>
+<state-transition-element id="__10749__"  symbol-set="[\x50]"  start="none">
+	<activate-on-match element="__10750__"/>
+</state-transition-element>
+<state-transition-element id="__10750__"  symbol-set="[\x44]"  start="none">
+	<activate-on-match element="__10751__"/>
+</state-transition-element>
+<or id="__10751__">
+	<report-on-high reportcode="370"/>
+</or>
+</automata-network>
+</anml>

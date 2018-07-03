@@ -1,0 +1,43 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__59915__"  symbol-set="[\x65]"  start="all-input">
+	<activate-on-match element="__59916__"/>
+</state-transition-element>
+<state-transition-element id="__59916__"  symbol-set="[\x77]"  start="none">
+	<activate-on-match element="__59917__"/>
+</state-transition-element>
+<state-transition-element id="__59917__"  symbol-set="[\x6d]"  start="none">
+	<activate-on-match element="__59918__"/>
+</state-transition-element>
+<state-transition-element id="__59918__"  symbol-set="[\x6c]"  start="none">
+	<activate-on-match element="__59919__"/>
+</state-transition-element>
+<state-transition-element id="__59919__"  symbol-set="[\x54]"  start="none">
+	<activate-on-match element="__59920__"/>
+</state-transition-element>
+<state-transition-element id="__59920__"  symbol-set="[\x48]"  start="none">
+	<activate-on-match element="__59921__"/>
+</state-transition-element>
+<state-transition-element id="__59921__"  symbol-set="[\x64]"  start="none">
+	<activate-on-match element="__59922__"/>
+</state-transition-element>
+<state-transition-element id="__59922__"  symbol-set="[\x54]"  start="none">
+	<activate-on-match element="__59923__"/>
+</state-transition-element>
+<state-transition-element id="__59923__"  symbol-set="[\x51]"  start="none">
+	<activate-on-match element="__59924__"/>
+</state-transition-element>
+<state-transition-element id="__59924__"  symbol-set="[\x56]"  start="none">
+	<activate-on-match element="__59925__"/>
+</state-transition-element>
+<state-transition-element id="__59925__"  symbol-set="[\x39]"  start="none">
+	<activate-on-match element="__59926__"/>
+</state-transition-element>
+<state-transition-element id="__59926__"  symbol-set="[\x7a]"  start="none">
+	<activate-on-match element="__59927__"/>
+</state-transition-element>
+<state-transition-element id="__59927__"  symbol-set="[\x67]"  start="none">
+	<report-on-match reportcode="2088"/>
+</state-transition-element>
+</automata-network>
+</anml>

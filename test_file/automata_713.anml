@@ -1,0 +1,29 @@
+<anml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<automata-network id="vasim">
+<state-transition-element id="__20372__"  symbol-set="[\x71]"  start="all-input">
+	<activate-on-match element="__20373__"/>
+</state-transition-element>
+<state-transition-element id="__20373__"  symbol-set="[\x32]"  start="none">
+	<activate-on-match element="__20374__"/>
+</state-transition-element>
+<state-transition-element id="__20374__"  symbol-set="[\x53]"  start="none">
+	<activate-on-match element="__20375__"/>
+</state-transition-element>
+<state-transition-element id="__20375__"  symbol-set="[\x4a]"  start="none">
+	<activate-on-match element="__20376__"/>
+	<activate-on-match element="__20379__"/>
+</state-transition-element>
+<state-transition-element id="__20376__"  symbol-set="[\x65]"  start="none">
+	<activate-on-match element="__20377__"/>
+</state-transition-element>
+<state-transition-element id="__20377__"  symbol-set="[\x4f]"  start="none">
+	<activate-on-match element="__20378__"/>
+</state-transition-element>
+<state-transition-element id="__20378__"  symbol-set="[\x6e]"  start="none">
+	<activate-on-match element="__20379__"/>
+</state-transition-element>
+<or id="__20379__">
+	<report-on-high reportcode="715"/>
+</or>
+</automata-network>
+</anml>
