@@ -122,9 +122,6 @@ int main(int argc, char **argv){
 
     int file_spec=0;
 
-// -x to enter the max hardware fanout 
-// -m to enter the max hardware stes 
-
     while ((c=getopt(argc,argv,"i:m:f:p:x:"))!=-1)
       switch (c) {
         case 'i':
@@ -186,10 +183,10 @@ int main(int argc, char **argv){
  */
   fill_in_table(root->children, 0);
 
- /*
+ 
 
 	// Next_state_table bit stream  
-
+/*
   	FILE *myfile3 ;
         myfile3 = fopen("ns_bitstream.txt", "w+") ;
 
@@ -203,8 +200,6 @@ int main(int argc, char **argv){
         }
 
         fclose(myfile3);
-*/
-
 
 	// configure next_State_table as do file 
 	dofile_next(); 
@@ -212,7 +207,7 @@ int main(int argc, char **argv){
 
 	// configure gates table as do file 
 	dofile_gates(); 
-    
+  */  
 
 
 /*
@@ -332,7 +327,7 @@ int main(int argc, char **argv){
 /*
  * save the original state of the graph, since we'll be changing it significantly
  */
-//  for (int i=0;i<num_states;i++) for (int j=0;j<max_edges;j++) orig_edge_table[i][j]=edge_table[i][j];
+  for (int i=0;i<num_states;i++) for (int j=0;j<max_edges;j++) orig_edge_table[i][j]=edge_table[i][j];
 
 /*
  * partition graph into sub-NFAs, if the user specified a maximum number of STEs per graph

@@ -19,7 +19,6 @@ void move_ste (int from, int to) {
 
   }
   
-  
   // STEP 2b:  update edge references INTO (FROM,TO]
   else {
   
@@ -42,9 +41,9 @@ void move_ste (int from, int to) {
 	temp3=movement_map[from];
 	
 	for (i=from;i<to;i++) {
-/* 		for (j=0;j<max_fan_in;j++) {
+		for (j=0;j<max_fan_in;j++) {
 			reverse_table[i][j]=reverse_table[i+1][j];
-		} */
+		}
 		for (j=0;j<max_edges;j++) {
 			edge_table[i][j]=edge_table[i+1][j];
 		}
@@ -59,9 +58,9 @@ void move_ste (int from, int to) {
 	temp3=movement_map[from];
 	
 	for (i=from;i>to;i--) {
-/* 		for (j=0;j<max_fan_in;j++) {
+		for (j=0;j<max_fan_in;j++) {
 			reverse_table[i][j]=reverse_table[i-1][j];
-		} */
+		}
 		for (j=0;j<max_edges;j++) {
 			edge_table[i][j]=edge_table[i-1][j];
 		}
@@ -138,9 +137,9 @@ int reverse_movement_map (int n) {
 
 void check_graphs () {
 	int i,j,k;
- 	for (i=0;i<num_states;i++) 
-                for (j=0;j<max_edges;j++) 
-                      printf("edge_table[%d][%d]= %d\n", i, j, edge_table[i][j]);
+ 	// for (i=0;i<num_states;i++) 
+                // for (j=0;j<max_edges;j++) 
+                      // printf("edge_table[%d][%d]= %d\n", i, j, edge_table[i][j]);
 	
 	//#pragma omp parallel for
 	for (i=0;i<num_states;i++) {
@@ -168,11 +167,11 @@ void check_graphs () {
 
 int dump_edges () {
 	int k,l;
-/*   for (int i=0;i<6;i++) {
+  for (int i=0;i<6;i++) {
     printf ("[%d]",i);
     for (int j=0;j<max_edges;j++) if (edge_table[i][j]!=-1) printf (" ->%d",edge_table[i][j]);
     printf ("\n");
-  } */
+  }
   
    		// debug
 		for (k=0;k<20;k++) {
@@ -191,7 +190,7 @@ int validate_interconnection() {
     max_differential_score = 0,
     best_from,best_to = 0,
     differential_score = 0,i,j,k;
-
+	
   for(i = 0; i < num_states; i++) {
   
   //if (i%100==0) printf ("%0.2f%% scan complete, v=%d\n",(float)i/(float)num_states*100.0f,violations);
@@ -254,9 +253,17 @@ int validate_interconnection() {
         }
       
 	    //if (max_differential_score>0) {
-			//printf ("moved STE in position %d to position %d due to bad edge %d->%d, best score = %d\n",best_from,best_to,i,edge_table[i][j],min_differential_score);
+			printf ("moving STE in position %d to position %d due to bad edge %d (\"%s\")->%d (\"%s\"), best score = %d\n",
+							best_from,
+							best_to,
+							i,
+							ANML_NAME(orig_edge_table[movement_map[i]][j]),
+							edge_table[i][j],
+							ANML_NAME(orig_edge_table[movement_map[edge_table[i][j]]][j]),
+							max_differential_score);
+
 			move_ste(best_from,best_to);
-//			printf("----------moving %d to %d\n",best_from,best_to);
+			//printf("----------moving %d to %d\n",best_from,best_to);
 		//}
         violations++;
 		

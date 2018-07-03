@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -I/usr/include/libxml2 -fopenmp -g -DDEBUG
 LIBS = -lxml2 -lpcre
-MODULES = allocate_memory.o scc.o visualization.o allocate_stes.o parse_anml.o partition.o strong_components_analysis.o list.o
+MODULES = allocate_memory.o scc.o visualization.o allocate_stes.o parse_anml.o partition.o list.o  do_next.o do_gates.o
 
 all: nfatool 
 
@@ -23,10 +23,17 @@ parse_anml.o: parse_anml.cpp parse_anml.h nfatool.h
 partition.o: partition.cpp partition.h nfatool.h
 	$(CC) $(CFLAGS) -c $<
 
-strong_components_analysis.o: strong_components_analysis.cpp strong_components_analysis.h nfatool.h
-	$(CC) $(CFLAGS) -c $<
 
 list.o:  list.cpp nfatool.h
+	$(CC) $(CFLAGS) -c $<
+
+testing.o: testing.cpp testing.h nfatoo.h 
+	$(CC) $(CFLAGS) -c $< 
+
+do_next.o: do_next.cpp do_next.h nfatool.h 
+	$(CC) $(CFLAGS) -c $<
+
+do_gates.o: do_gates.cpp do_gates.h nfatool.h 
 	$(CC) $(CFLAGS) -c $<
 
 nfatool: main.cpp nfatool.h $(MODULES)
