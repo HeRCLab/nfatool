@@ -32,13 +32,13 @@ void dofile_next () { // int num , unsigned char **next){ //int states_num, int 
 
         fprintf(dofile, "add wave shift_next_state_in\n");
         fprintf(dofile, "add wave shifting_enable\n");
-//        fprintf(dofile, "add wave next_state_serial\n");
-//        fprintf(dofile, "add wave Config_in_symbol\n");
+        fprintf(dofile, "add wave next_state_serial\n");
+        fprintf(dofile, "add wave Config_in_symbol\n");
 
         fprintf(dofile, "add wave update_next_state\n");
         fprintf(dofile, "add wave count_start\n");
-//        fprintf(dofile, "add wave counter\n");
-//        fprintf(dofile, "add wave Charles_in_symbol\n");
+        fprintf(dofile, "add wave counter\n");
+        fprintf(dofile, "add wave Charles_in_symbol\n");
         fprintf(dofile, "add wave next_state_out\n");
         fprintf(dofile, "add wave incre_config_in_symbol\n");
 
@@ -117,5 +117,4 @@ void dofile_next () { // int num , unsigned char **next){ //int states_num, int 
 	fclose(dofile); 
 
 } 
-
 

@@ -186,7 +186,9 @@ void partition (int max_partition_size) {
 
 	int min_real=10000;
 	char c = '"'; 
-	printf("Number of Natural Partitions =%d\n", np); 
+
+	printf("\n\nNatural Partitions \n-----------------------\n\n"); 
+	printf("Number of Natural Partitions =%d\n",natural_partition_num);
 
 
 
@@ -194,24 +196,24 @@ void partition (int max_partition_size) {
 
 	myFile2 = fopen("countstates.txt","w+");
 
-	for (i = 0; i < np; i++) { //natural_partition_num; i++){
+	for (i = 0; i < natural_partition_num; i++){
 		sprintf(filename, "automata_%d.anml", i);
 		sprintf(filename3, "subautomata%d.anml",i); 
                 myFile = fopen(filename, "w+");
 
 		  fprintf(myFile, "<anml version=%c1.0%c xmlns:xsi=%chttp://www.w3.org/2001/XMLSchema-instance%c>\n<automata-network id=%cnfatool%c>\n",c,c,c,c,c,c);
 		   
-		    for (j = 0; j < natural_partitions_real[i].size(); j++){
+		    for (j = 0; j < natural_partitions[i].size(); j++){
 
-			if(report_table[natural_partitions_real[i][j]]) { // j==natural_partitions[i].size()-1){
+			if(report_table[natural_partitions[i][j]]) { // j==natural_partitions[i].size()-1){
 				cnt++; 
 
  				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%s%c start=%cnone%c>\n",c,
                                                                                                 //natural_partitions_real[i][j], 
-												node_table[natural_partitions_real[i][j]]->properties->children->content,
+												node_table[natural_partitions[i][j]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,
-												symbol_table[natural_partitions_real[i][j]],
+												symbol_table[natural_partitions[i][j]],
                                                                                                 c,
                                                                                                 c,c);
 						
@@ -219,20 +221,20 @@ void partition (int max_partition_size) {
 				  fprintf(myFile, "	<report-on-match reportcode=%c1%c/>\n", c,c);//->properties->children->content, c); 
 				  fprintf(myFile,"</state-transition-element>\n");
 			
-			}else if (start_state[natural_partitions_real[i][j]]){ // j==0){
+			}else if (start_state[natural_partitions[i][j]]){ // j==0){
   				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%s%c start=%call-input%c>\n",c,
                                                                                                 //natural_partitions_real[i][j], 
-												node_table[natural_partitions_real[i][j]]->properties->children->content,
+												node_table[natural_partitions[i][j]]->properties->children->content,
                                                                                                 c,
                                                                                                 c,
-												symbol_table[natural_partitions_real[i][j]],
+												symbol_table[natural_partitions[i][j]],
 
                                                                                                 c,
                                                                                                 c,c);
 				for(int k=0;k<max_edges;k++) {
-					if(edge_table[natural_partitions_real[i][j]][k]==-1) break; 	
+					if(edge_table[natural_partitions[i][j]][k]==-1) break; 	
                                 	fprintf(myFile,"	<activate-on-match element=%c%s%c/>\n", c,
-                                                                                node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content,
+                                                                                node_table[edge_table[natural_partitions[i][j]][k]]->properties->children->content,
                                                                                 c);
  				}
                                 fprintf(myFile, "</state-transition-element>\n");
@@ -241,19 +243,19 @@ void partition (int max_partition_size) {
 			}else {
 				
 				fprintf(myFile, "<state-transition-element id=%c%s%c symbol-set=%c%s%c start=%cnone%c>\n",c,
-												node_table[natural_partitions_real[i][j]]->properties->children->content,
+												node_table[natural_partitions[i][j]]->properties->children->content,
 												c,
 												c,
-												symbol_table[natural_partitions_real[i][j]],
+												symbol_table[natural_partitions[i][j]],
 
 												c,
 												c,c);	
   				for(int k=0; k<max_edges;k++) {
                                 
-					if(edge_table[natural_partitions_real[i][j]][k]==-1) break;
+					if(edge_table[natural_partitions[i][j]][k]==-1) break;
 
 		                	fprintf(myFile,"	<activate-on-match element=%c%s%c/>\n", c, 
-										node_table[edge_table[natural_partitions_real[i][j]][k]]->properties->children->content,
+										node_table[edge_table[natural_partitions[i][j]][k]]->properties->children->content,
 										c);
 
 				}fprintf(myFile, "</state-transition-element>\n");
@@ -275,7 +277,7 @@ void partition (int max_partition_size) {
 	    fprintf(myFile2, "max_Edges = %d, %d\n", max_edges, cnt);
             cnt=0;
 
-	    printf(" Min natural partition = %d, i = %d \n", min_real, i);
+//	    printf(" Min natural partition = %d, i = %d \n", min_real, i);
 
 	    fclose(myFile); 
 	}	
@@ -287,7 +289,8 @@ void partition (int max_partition_size) {
  printf("Min partition =%d \n", min_partition);
  printf("Max partition = %d\n", max_partition);  
  
-
+ printf("\n\nMichela's Partitions \n-----------------------\n\n");
+ 
 
 for (i = 0; i < np; i++) { //natural_partition_num; i++){
      sprintf(filename, "automata%d.dot", i);
@@ -764,4 +767,3 @@ void max_color_size (int &max_color_size,int &max_color) {
     max_color=i;
   }
 }
-
