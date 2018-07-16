@@ -264,9 +264,11 @@ void partition (int max_partition_size) {
 				cnt++; 
 
 			}	
+	//	fprintf(myFile2, "size of natural partition %d = %ld\n", i, natural_partitions[i].size()); 
 
 }	 
 
+fprintf(myFile2, "%ld\n", natural_partitions[i].size());
 
 
                         fprintf(myFile, "</automata-network>\n");
@@ -274,7 +276,7 @@ void partition (int max_partition_size) {
 
 	    if(cnt<min_real) min_real=cnt;
 
-	    fprintf(myFile2, "max_Edges = %d, %d\n", max_edges, cnt);
+	//    fprintf(myFile2, "max_Edges = %d, %d\n", max_edges, cnt);
             cnt=0;
 
 //	    printf(" Min natural partition = %d, i = %d \n", min_real, i);
@@ -340,6 +342,37 @@ for (i = 0; i < np; i++) { //natural_partition_num; i++){
 	}	
 
 
+	
+	// Mapping Natural Partitions on FPGA based on offset 
+		int offset=0;
+		int num_config =1; 
+		int num_partition_per_reconfig =0; 
+
+//		int hardware_size = 1024; 
+		
+		for (i = 0; i < natural_partition_num; i++){
+					printf("Partitions number = %d, Partition Size = %ld, Offset = %d\n", i, natural_partitions[i].size(), offset); 
+					
+					offset = offset + natural_partitions[i].size();
+			
+					if (offset < max_stes) { ++num_partition_per_reconfig;  continue; }
+			
+					else {
+						printf("\nPercentage waste per %d configuration = %d\n", num_config, max_stes-offset); 
+						printf("Num of partitions in reconfiguration %d = %d\n", num_config, num_partition_per_reconfig); 
+						offset =0; 
+						num_partition_per_reconfig =0; 
+						num_config++; 
+					}
+		} 
+
+		printf("Percentage waste per %d configuration = %d\n", num_config, max_stes-offset); 
+		printf("Num of reconfig required when AP overlay size %d = %d\n", max_stes, num_config); 
+
+		
+		
+
+			
 /*
       myFile3 = fopen("countstates_extra.txt","w+");
       int cnt2=0;

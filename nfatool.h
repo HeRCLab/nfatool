@@ -32,7 +32,7 @@ using namespace std;
 //#include "strong_components_analysis.h"
 #include "list.h"
 #include "v2.h" 
-#include "testing.h" 
+ 
 #include "do_next.h" 
 #include "do_gates.h" 
 
