@@ -18,6 +18,8 @@ void dofile_gates()
         
 			
 
+ // Add the reports 
+
 	for(int i=0; i<num_states; i++) 
 		if(report_table[i]) gates_2D[i][max_fan-1] =1 ; 
 
@@ -30,17 +32,25 @@ void dofile_gates()
 	int time =do_time; 
 
 	FILE *gatesdo; 
+	FILE *gatesfile; 
+
 	gatesdo = fopen("gates_dofile.do", "w+");  
+	gatesfile = fopen("gates_bit.txt", "w+"); 
+
 
  	for(int row=max_stes*max_fan+max_fan; row>=0 ; row--)
         {
 
 	        fprintf(gatesdo, "force configure_interconnect 1 %d\n", time);
         	fprintf(gatesdo, "force gates_serial_in %d %d\n", gates_1D[row], time);
+		fprintf(gatesfile, "%d", gates_1D[row]); 
+
 	        time=time+100;
         }
 
         fprintf(gatesdo, "force configure_interconnect 0 %d\n", time);
+	fprintf(gatesfile, "\n"); 
+
 
 
         // Set to start read from M20k, and enable reading from next_state_table
@@ -49,6 +59,9 @@ void dofile_gates()
         fprintf(gatesdo, "force update_next_state 0 %d\n", time);
 
         printf("Finish gatesin configuration time = %d \n", time);
+
+	fclose(gatesdo); 
+	fclose(gatesfile); 
 
 }
 

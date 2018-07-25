@@ -201,14 +201,14 @@ int main(int argc, char **argv){
         }
 
         fclose(myfile3);
-
+*/
 	// configure next_State_table as do file 
 	dofile_next(); 
 
 
 	// configure gates table as do file 
 	dofile_gates(); 
-  */  
+    
 
 
 /*

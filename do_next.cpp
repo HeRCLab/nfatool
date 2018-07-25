@@ -5,10 +5,12 @@ void dofile_next () { // int num , unsigned char **next){ //int states_num, int 
 
 
 	FILE *dofile; 
+	FILE *nsfile; 
 
 	int time=0; 
 
 	dofile = fopen("ns_dofile.do", "w+"); 
+	nsfile = fopen("ns_bit.txt", "w+"); 
 
 	printf("Initialize signals in do file next state \n"); 
 
@@ -74,12 +76,16 @@ void dofile_next () { // int num , unsigned char **next){ //int states_num, int 
 
                         if(col>0){
                                 fprintf(dofile, " %d  %d,", tmp[row][col],time);
+//				fprintf(nsfile, "%d ", tmp[row][col]); 
+				 
 //				printf("tmp[%d][%ld]=%d\n", row, col, tmp[row][col]); 
 
 			}else
 
                         if(col==0){
                                 fprintf(dofile, " %d  %d", tmp[row][col],time);
+//				fprintf(nsfile, "%d ", tmp[row][col]);  
+				
 //				printf("tmp[%d][%ld]=%d\n", row, col, tmp[row][col]);
 
 			}
@@ -89,6 +95,7 @@ void dofile_next () { // int num , unsigned char **next){ //int states_num, int 
                 } // End reading cols
 
 
+//		fprintf(nsfile, "\n"); 
                 // Start write to Next_state_table
                 fprintf(dofile, "\nforce shifting_enable 0 %d", time);
 
@@ -115,6 +122,19 @@ void dofile_next () { // int num , unsigned char **next){ //int states_num, int 
 		do_time = time; 
 
 	fclose(dofile); 
+//	fclose(nsfile); 
+
+
+	for(int row=0; row<256; row++){
+               for(int col=0; col<num_states; col++)
+                        fprintf(nsfile, "%d", tmp[row][col]); 
+
+
+		fprintf(nsfile, "\n"); 
+	}
+
+	fclose(nsfile);
+
 
 } 
 
