@@ -377,7 +377,7 @@ int main(int argc, char **argv){
       
 
        i++;
-	if (violations >= old_violations) cycles_without_forward_progress++;
+	if (violations >= old_violations) cycles_without_forward_progress++; else cycles_without_forward_progress=0;
         old_violations = violations;
 
         if (cycles_without_forward_progress > 10) mix_it_up(1000);
