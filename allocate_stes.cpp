@@ -1,5 +1,11 @@
 #include "nfatool.h"
 
+void mix_it_up (int n) {
+  int i;
+
+  for (i=0;i<n;i++) move_ste(rand()%num_states,rand()%num_states);
+}
+
 void move_ste (int from, int to) {
   int temp[max_edges],temp2[max_fan_in],i,j,k,rev,forward,temp3;
   int rev_edge_count[num_states];

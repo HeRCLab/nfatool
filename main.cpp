@@ -352,7 +352,7 @@ int main(int argc, char **argv){
   start = clock();
 
 
-
+ int old_violations=0,cycles_without_forward_progress=0;
  if (max_fanout)
          while (violations=validate_interconnection())
          {
@@ -377,6 +377,11 @@ int main(int argc, char **argv){
       
 
        i++;
+	if (violations >= old_violations) cycles_without_forward_progress++;
+        old_violations = violations;
+
+        if (cycles_without_forward_progress > 10) mix_it_up(1000);
+  	
      }
 
 //     printf("variable total: %d\n", variable);

@@ -8,5 +8,6 @@ void check_graphs ();
 int dump_edges ();
 int validate_interconnection();
 void critical_path(int node);
+void mix_it_up(int n);
 
 #endif
