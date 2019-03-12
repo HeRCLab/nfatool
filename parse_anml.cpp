@@ -1,26 +1,49 @@
 #include "nfatool.h"
 #include <string.h> 
 
-void traverse_graph (int i) {
-  int j=0;
+int read_anml_file (char *filename,
+					nfa *my_nfa) {
+
+/*
+ * parse ANML file
+ */
+    my_nfa->document = xmlReadFile(filename, NULL, 0);
+    if (!my_nfa->document) {
+      fprintf(stderr,"Error: could not open ANML file\n");
+      return 0;
+    }
+	
+    my_nfa->root = xmlDocGetRootElement(my_nfa->document);
+
+/*
+ * find number of STEs in the ANML file
+ */
+    count_states(my_nfa);
+    printf ("number of states = %d\n",my_nfa->num_states);
+
+/*
+ * allocate memory for graph data structures
+ */
+  allocate_memory(my_nfa);
+
+/*
+ * traverse ANML and transfer graph into tables
+ */
+  fill_in_table(my_nfa);
   
-  if (visited[i]) return;
+/*
+ * calculate transpose graph
+ */
+  reverse_edge_table();
   
-  subnfa_size++;
+/*
+ * save the original state of the graph
+ */
+  for (int i=0;i<my_nfa->num_states;i++)
+	  for (int j=0;j<my_nfa->max_edges;j++)
+		  my_nfa->orig_edge_table[i][j]=my_nfa->edge_table[i][j];
   
-  visited[i]=1;
-  
-  while (edge_table[i][j]!=-1) {
-    
-    if (subnfa[i]!=-1)
-      duplicate_states++;
-    else
-      subnfa[i]=subnfa_num;
-    
-    traverse_graph(edge_table[i][j]);
-    
-    j++;
-  }
+  return 1;
 }
 
 int reverse_edge_table () {
@@ -79,17 +102,6 @@ int extract_number (const char *str) {
   return atoi(str2);
 }
 
-int Hash(const char *key){
-  int hash = 0;
-
-  return extract_number(key);
-
-  for(int i = 0 ; i < strlen(key); i++){
-    hash = hash + (key[i]<<(8*(i%3)));
-  }
-  return hash % (1<<24);
-}
-
 int extract_string (char *str) {
   int i,
       j=0,
@@ -115,113 +127,51 @@ int extract_string (char *str) {
   return atoi(str2);
 }
 
-int count_states (xmlNode *anode) {
-  int tmp;
-  xmlAttr *attr;
-
-  for (anode = anode->children; anode; anode = anode->next) {
-    count_states(anode);
-    if (anode->type==XML_ELEMENT_NODE && !strcmp((const char *)anode->name,"state-transition-element")){
-      if (edges > max_edges) {
-        max_edges = edges;
-        }
-
-        edges = 0;
-
-      for (attr = anode->properties; attr; attr = attr->next){
-        if (!strcmp((const char *)attr->name,"id")) {
-          tmp = Hash((const char *)attr->children->content);
-          /*
-          if(state_map[tmp] != -1){
-            printf("collision");
-          }
-	  if (state_map[std::string(attr->children->content)] != -1) {
-		fprintf(stderr,"hash collision detection, hash %d (id=\"%s\") is already occupied by entry %d\n",tmp,attr->children->content,state_map[tmp]);
-		exit(1);
-	  }*/
-          state_map[(const char *)attr->children->content]=states;
-          state_map2[states] = tmp;
-	  
-        }
-      }
-    states++;
-    }
-    if (anode->type==XML_ELEMENT_NODE && !strcmp((const char *)anode->name,"activate-on-match")){
-      edges++;
-    }
-  }
-  return states;
-}
-
-void get_props_state (xmlNode *Node,int *id,int *start) {
-	static char str[1024],
-              *str2=str+2;
-	pcre *re;
-
-	const char *error;
-
-	int erroroff = 0,
-	    erroffset = 0,
-      rc = 0,
-      ovector[OVECCOUNT];
-
+int count_states (nfa *my_nfa) {
+	int tmp;
 	xmlAttr *attr;
+	int states=0;
+	int max_edges=0;
+	int edges;
+	xmlNode *bnode;
+	xmlNode *anode;
 
-	*start = 0;
-//	int k=0; 
-
-	char * aa; 
-
-	for (attr = Node->properties; attr; attr = attr->next){
-		if(!strcmp((const char *)attr->name,"id")){
-
-			*id =state_map[(const char *)attr->children->content];
-
-		}else if (!strcmp((const char *)attr->name,"symbol-set")){
-
-//			int idd = *id; 
-			re = pcre_compile((const char *)attr->children->content,0,&error,&erroffset,NULL);
-
-			strcpy(symbol_table[*id] , (const char *)attr->children->content);
-//			strcpy(symbol_table[*id],aa); 
-
-//     			printf("State: symbol-set Hash: %s \n", attr->children->content);
-
-			str[1]=0;
-
-			for (int i=0;i<256;i++){
-				str[0]=i;
-				rc = pcre_exec(re,NULL,str,1,0,0,ovector,OVECCOUNT);
-
-				if (rc == PCRE_ERROR_NOMATCH){
-					next_state_table[*id][i]= 0;
-				}else{
-					next_state_table[*id][i]= 1;
-//					symbol_table[*id] = i; 
+	// check if the root XML node is the tag "automata-network"
+	// if not, then it's probably "anml", in which case we need
+	// iterate through its childen to find "automata-network"
+	if (my_nfa->root->type==XML_ELEMENT_NODE && strcmp((const char *)my_nfa->root->name,"automata-network"))
+		for (anode = my_nfa->root->children; anode; anode = anode->next)
+			if (anode->type==XML_ELEMENT_NODE && !strcmp((const char *)anode->name,"automata-network")) break;
+	
+	for (anode = anode->children; anode; anode = anode->next) {
+		if (anode->type==XML_ELEMENT_NODE && !strcmp((const char *)anode->name,"state-transition-element")) {
+			
+			edges=0;
+			for (bnode = anode->children; bnode; bnode = bnode->next)
+				if (bnode->type==XML_ELEMENT_NODE && !strcmp((const char *)bnode->name,"activate-on-match")) edges++;
+			if (edges>max_edges) max_edges=edges;
+		
+			for (attr = anode->properties; attr; attr = attr->next) {
+				if (!strcmp((const char *)attr->name,"id")) {
+					my_nfa->state_map[(const char *)attr->children->content]=states;
+					my_nfa->state_map2[states]=(const char *)attr->children->content;
 				}
 			}
-			pcre_free(re);
-		}else if (!strcmp((const char *)attr->name,"start") && strcmp((const char *)attr->children->content,"none")) {
-      *start = 1;
-    }
-	}
-}
-
-void get_props_edge (xmlNode *aNode,int *id,int *areport) {
-	xmlAttr *attr;
-
-	for(attr = aNode->properties; attr; attr = attr->next){
-		if(!strcmp((const char *)attr->name,"element")){
-			*id = state_map[(const char *)attr->children->content];
-
-		}else if(!strcmp((const char *)aNode->name,"report-on-match")){
-			 *areport = state_map[(const char *)attr->children->content];
+			states++;
 		}
 	}
+	
+    my_nfa->num_states = states;
+	my_nfa->max_edges = max_edges;
+		
+	return 1;
 }
 
-int fill_in_table (xmlNode *aNode,int current_state) {
-
+int fill_in_table (nfa *my_nfa) {
+	xmlNode *bnode;
+	xmlNode *anode;
+	xmlAttr *attr;
+	pcre *re;
 	int state_id,
       edge_id,
       shift = 0,
@@ -229,57 +179,62 @@ int fill_in_table (xmlNode *aNode,int current_state) {
       report,
       fan,
       **my_table,
-      num_stes_since_last_start;
-
-  char str[1024];
-
-	for (aNode = aNode; aNode; aNode = aNode->next){
-
-
-		if(aNode->type==XML_ELEMENT_NODE && !strcmp((const char *)aNode->name,"state-transition-element")){
-
-			get_props_state(aNode,&state_id,&start);
-			start_state[current_state]=start;
-			node_table[current_state]=aNode;
-
-      if(start == 1){
-        start_stes[starts++] = aNode;
-        Change_of_start = current_state;
-      }
-
-      if(shift == max_stes-1){
-        node_table[Change_of_start]->prev->next = NULL;
-//        sprintf(str, "subautomata%d.anml", files_generated++);
-//        Destination = fopen(str, "w+");
-//        xmlDocDump(Destination, document);
-//        fclose(Destination);
-        rootGlobal->children = node_table[Change_of_start];
-        shift = 0;
-      }
-
-		  edge_num = 0;
-		  current_state++;
-      file_state++;
-      shift++;
-
-		}else if(aNode->type==XML_ELEMENT_NODE && !strcmp((const char *)aNode->name,"activate-on-match")){
-			get_props_edge(aNode,&edge_id,&report);
-			edge_table[current_state-1][edge_num]=edge_id;
-			//test_edge[current_state-1] = edge_num;
-      //fan = edge_id - current_state;
-      //FanoutTable[current_state-1][edge_num] = fan;
-
-      //fprintf(fanFile, "the fanout is equal to: %d\n", FanoutTable[current_state-1][edge_num]);
-
-
-      edge_num++;
-		}else if(aNode->type==XML_ELEMENT_NODE && !strcmp((const char *)aNode->name,"report-on-match")){
-			get_props_edge(aNode, &edge_id, &report);
-			num_reports++;
-			report_table[current_state-1] = 1;
-
-		}if (aNode->children){
-      fill_in_table(aNode->children, current_state);
-    }
+      num_stes_since_last_start,current_state=0;
+	const char *error;
+	char str[1024];
+	int erroffset=0,rc=0,ovector[OVECCOUNT];
+		
+	// drill down (up to one level) to get to the "automata-network" tag,
+	// which is sometimes inside of an "anml" tag, but other times not (why?)
+  	if (my_nfa->root->type==XML_ELEMENT_NODE && strcmp((const char *)my_nfa->root->name,"automata-network"))
+		for (anode = my_nfa->root->children; anode; anode = anode->next)
+			if (anode->type==XML_ELEMENT_NODE && !strcmp((const char *)anode->name,"automata-network")) break;
+	
+	// states are found among the children of the "automata" network tag
+	for (anode = anode->children; anode; anode = anode->next) {
+		if (anode->type==XML_ELEMENT_NODE && !strcmp((const char *)anode->name,"state-transition-element")) {
+			my_nfa->node_table[current_state]=anode;
+			
+			// get state properties, namely the symbol set (through PCRE) and if it is a start state
+			for (attr = anode->properties; attr; attr = attr->next) {
+				if (!strcmp((const char *)attr->name,"symbol-set")) {
+					re = pcre_compile((const char *)attr->children->content,0,&error,&erroffset,NULL);
+					strcpy(my_nfa->symbol_table[current_state], (const char *)attr->children->content);
+					str[1]=0;
+					for (int i=0;i<256;i++) {
+						str[0]=i;
+						rc = pcre_exec(re,NULL,str,1,0,0,ovector,OVECCOUNT);
+						if (rc == PCRE_ERROR_NOMATCH){
+							my_nfa->next_state_table[current_state][i]= 0;
+						} else {
+							my_nfa->next_state_table[current_state][i]= 1;
+						}
+					}
+					pcre_free(re);
+				} else if (!strcmp((const char *)attr->name,"start")) {
+					my_nfa->start_state[current_state]=start;
+				}
+			}
+			
+			// get the state's predecessors and reports among the children of the state tage
+			edge_num=0;
+			for (bnode = anode->children; bnode; bnode = bnode->next) {
+				if (bnode->type==XML_ELEMENT_NODE && !strcmp((const char *)bnode->name,"activate-on-match")) {
+					for(attr = bnode->properties; attr; attr = attr->next) {
+						if ( !strcmp((const char *)attr->name,"element")) {
+							//	WARNING:  this line requires the state map to be working!
+							my_nfa->edge_table[current_state][edge_num++]=my_nfa->state_map[(const char *)attr->children->content];
+			
+						}
+					}
+				} else if(bnode->type==XML_ELEMENT_NODE && !strncmp((const char *)bnode->name,"report-on-",10)) {
+					my_nfa->num_reports++;
+					my_nfa->report_table[current_state] = 1;
+				}
+			}
+			
+			my_nfa->edge_table[current_state][edge_num++]=-1; // maybe don't need to do this...
+			current_state++;
+		}
 	}
 }

@@ -1,5 +1,78 @@
  #include "nfatool.h"
 
+int perform_graph_analysis (xmlNode *root) {
+	int i,k;
+	
+	// initialize visited array
+	for (int i = 0; i < num_states; i++) visited[i] = 0;
+	
+	/*
+	 * find critical path
+	 */
+	critical_path(0);
+    printf("critical path is: %d\n", path_compare);
+	
+	/* 
+	 * Find the strongly connected components and optionally dump to file
+	 */ 
+	find_sccs();
+  
+    printf ("largest component is %d (size=%d)\n",largest_component,largest_component_size);
+	for (k=0;k<largest_component_size;k++) printf("%d (%s) ",component_list[largest_component][k],
+	node_table[component_list[largest_component][k]]->properties->children->content);
+	printf ("\n");
+	dump_dot_file((char *)"largest_component",rootGlobal,component_list[largest_component],0);
+  
+	/*
+	 * validate largest SCC
+	 */
+	vector<int> path;
+	int component_ok = 1;
+
+	for (int i=0;i<component_list[largest_component].size();i++) {
+		for (int j=i;j<component_list[largest_component].size();j++) {
+			if (!find_loop_path(i,j,path,0)) {
+				component_ok=0;
+				fprintf(stderr,"error:  component %d has unreachable path %d (\"%s\") -> %d (\"%s\")\n",
+																largest_component,i,ANML_NAME(i),j,ANML_NAME(j));
+			}
+		}
+	}
+
+	/*
+	 * find maximum loop
+	 */
+	printf ("max loop size = %d, constituent = %d\n",max_loop,max_loop_constituent);
+
+	if (max_loop != 0) {
+		// reset the visited array since we will recycle it
+		vector<int> max_loop_path;
+		int ste = 0;
+		for (int i=0;i<num_states;i++) visited[i]=0;
+		find_loop_path(max_loop_constituent,max_loop_constituent,max_loop_path,1);
+		dump_dot_file((char *)"max_loop",root,max_loop_path,0);
+	}
+
+	/* 
+	 * Find the critical path (again???), longest path in the tree 
+	 */ 
+	find_critical_path(); 
+  
+	printf ("deepest path = %d\n",deepest);
+  
+	for (int i=0;i<deepest_path.size();i++) printf ("%d (%s)->",
+                          deepest_path[i],
+                          node_table[deepest_path[i]]->properties->children->content);
+	printf ("\n");
+  
+	/*
+	 * Partition the graph
+	 */
+	if (max_stes) partition(max_stes);
+  
+	return 1;
+}
+ 
 void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset, int colors) {
   FILE *myFile;
   int found,found2;
@@ -10,7 +83,7 @@ void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset, int colo
   int *id; 
   xmlAttr *attr; 
 
-  pcre *re; 
+  pcre *re;
   int rc=0; 
 
   int erroroff = 0,

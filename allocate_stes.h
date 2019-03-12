@@ -1,6 +1,8 @@
 #ifndef ALLOCATE_STES_H
 #define ALLOCATE_STES_H
 
+int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename);
+int perform_state_mapping (char *filename);
 void move_ste (int from, int to);
 int Score(int a, int b);
 int reverse_movement_map (int n);

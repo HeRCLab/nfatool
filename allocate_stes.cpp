@@ -1,5 +1,131 @@
 #include "nfatool.h"
 
+#define TO_LITERAL(STATE,SE)    STATE*F+SE+1
+
+int state_to_se_literal (int state,int se,int num_states) {
+	return state * num_states + se + 1;
+}
+
+int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
+	int i,j,k,l,n=0,m;
+	int literal;
+	FILE *mycnf;
+	char str[1024];
+	
+	int num_states = my_nfa->num_states;
+	int max_edges = my_nfa->max_edges;
+	int **edge_table = my_nfa->edge_table;
+	int max_fanout = my_nfa->max_fanout;
+	
+	// NOTE:  this function generates 2*num_states^2 + num_states CNF clauses
+	// maximum clause width = num_states
+	
+	if (filename) {
+		mycnf = fopen(filename,"w+");
+		if (!mycnf) {
+			sprintf(str,"ERROR:  cannot open CNF file for writing (\"%s\")",filename);
+			perror(str);
+			return 0;
+		}
+		fprintf(mycnf, "%s","c RUN: %solver --onlyindep --indep 1 --presimp 1 --varelim 1 --verb=0 %s | %OutputCheck %s\n");
+	}
+	
+	// fan-out constraint:  at most 'num_states^2' clauses
+	for (i=0;i<num_states;i++) { // for each predecessor state
+		if (edge_table[i][0]!=-1) { // don't bother with states that don't have outgoing edges
+			for (j=0;j<num_states;j++) { // for each possible se placement (assume number of SEs == number of states)
+				literal=-state_to_se_literal(i,j,num_states);
+				clauses[n][0]=literal;
+				if (filename) fprintf(mycnf,"%d ",literal);
+				for (k=0;k<max_edges;k++) { // for each successor
+					if (edge_table[i][k]==-1) break;
+					if (edge_table[i][k]!=i) { // don't worry about self-loops
+						for (l=-(max_fanout-1)/2;l<=max_fanout/2;l++) { // for each possible placement of the successor
+							if ((l!=0) && (j+l)>=0 && (j+l)<num_states && l) { // disregard self-loop and avoid breach of array boundaries
+								literal=state_to_se_literal(edge_table[i][k],j+l,num_states);
+								clauses[n][l+(max_fanout-1)/2+1]=literal;
+								if (filename) fprintf(mycnf,"%d ",literal);
+							}
+						}
+					}
+				}
+				if (filename) fprintf(mycnf,"0\n");
+				n++;
+			}
+		}
+	}
+	
+	// force a mapping of every state:  'num_states^2' clauses
+	for (i=0;i<num_states;i++) {
+		for (j=0;j<num_states;j++) {
+			literal=state_to_se_literal(i,j,num_states);
+			clauses[n++][j]=literal;
+			if (filename) fprintf(mycnf,"%d ",literal);
+		}
+		if (filename) fprintf(mycnf,"0\n");
+	}
+	
+	// don't double map se constaint:  'num_states^2' clauses
+	for (i=0;i<num_states;i++) {// i is the state
+		for (j=0;j<num_states;j++) { // j is the SE
+			literal=-state_to_se_literal(i,j,num_states);
+			clauses[n][0]=literal;
+			if (filename) fprintf(mycnf,"%d ",literal);
+			m=1;
+			for (k=0;k<num_states;k++) {
+				if (i!=k) { // k is the state
+					literal=-state_to_se_literal(k,j,num_states);
+					clauses[n][m++]=literal;
+					if (filename) fprintf(mycnf,"%d ",literal);
+				}
+			}
+			if (filename) fprintf(mycnf,"0\n");
+			n++;
+		}
+	}
+	
+	if (filename) {
+		fprintf(mycnf, "%s", "c CHECK-NEXT: ^v .*1$\n");
+		fclose(mycnf);
+	}
+}
+
+int perform_state_mapping (char *filename) {
+	
+	clock_t start,end;
+	char filename3[1024];
+	int violations;
+	int old_violations=0;
+	int cycles_without_forward_progress=0;
+	FILE *myFile;
+	
+	start = clock();
+	
+	while (violations=validate_interconnection()) {
+		printf ("*********************scan complete, violations = %d\n",violations);
+		end = clock();
+		if((end-start)>100000) { //milisecond
+			printf("\n*******************higher fanout than %d required\n\n", max_fanout);
+			sprintf(filename3, "%s.txt", filename);
+			myFile = fopen(filename3,"w+"); //filename3, "w+");
+			fprintf(myFile, "Filename = %s\nnum_states= %d\n violation in max_fanout=%d\n",
+																	filename,
+																	num_states,
+																	max_fanout);
+			fclose(myFile);
+			break;
+		}
+		if (violations >= old_violations)
+			cycles_without_forward_progress++;
+		else
+			cycles_without_forward_progress=0;
+		
+		old_violations = violations;
+		
+		if (cycles_without_forward_progress > 10) mix_it_up(1000);
+	}
+}
+
 void mix_it_up (int n) {
   int i;
 
