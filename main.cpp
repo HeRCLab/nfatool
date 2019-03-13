@@ -7,9 +7,6 @@
 /*
  * NFA data (used in multiple places)
  */
- 
-
- 
 int						**edge_table;
 int						**orig_edge_table;
 int						**reverse_table;
@@ -127,7 +124,7 @@ void print_help (char **argv) {
 	printf("%14s\tPrint this help and exit\n","-h");
 	printf("%14s\tUse partitioning to limit maximum SEs to <num>\n","-m <num>");
 	printf("%14s\tSet maximum fan-out to <num>\n","-f <num>");
-	printf("%14s\tWrite CNF file to <filename>\n","-c <filename>");
+	printf("%14s\tPerform mapping with MINISAT solver\n","-c");
 	printf("%14s\tPerform NFA graph analysis\n","-g");
 	printf("%14s\tGenerate NAPOLY configuration files\n","-n");
 }
@@ -142,16 +139,15 @@ int main(int argc, char **argv){
 	
 	// FLAGS
 	int graph_analysis=0;
-	int write_cnf_file=0;
+	int use_sat_solver=0;
     int file_spec=0;
 	int gen_config=0;
 	
 	// OPTIONS
     char filename[1024];
-	char cnf_filename[1024];
 	int max_fanout=0;
 
-    while ((c=getopt(argc,argv,"hi:m:f:c:g"))!=-1)
+    while ((c=getopt(argc,argv,"hi:m:f:cg"))!=-1)
       switch (c) {
 		case 'h':
 			print_help(argv);
@@ -170,9 +166,7 @@ int main(int argc, char **argv){
 			printf("setting max fanout to %d\n",max_fanout);
 			break;
 		case 'c':
-			strcpy(cnf_filename,optarg);
-			printf("writing CNF file to \"%s\"\n",cnf_filename);
-			write_cnf_file=1;
+			use_sat_solver=1;
 			break;
 		case 'g':
 			graph_analysis=1;
@@ -209,9 +203,12 @@ int main(int argc, char **argv){
 		perform_graph_analysis(my_nfa->root);
 	}
 
-	if (max_fanout && !write_cnf_file) {
+	if (max_fanout) {
 		my_nfa->max_fanout = max_fanout;
-		perform_state_mapping(filename);
+	}
+	
+	if (max_fanout && !use_sat_solver) {
+		perform_state_mapping(filename,my_nfa);
 	}
 	
 	if (gen_config) {
@@ -221,21 +218,8 @@ int main(int argc, char **argv){
 		dofile_gates(); 
     }
 	
-	int **clauses;
-	int num_states = my_nfa->num_states;
-	int num_clauses = 3*num_states*num_states*num_states;
-	clauses = (int **)malloc(num_clauses*sizeof(int *));
-	for (i=0;i<num_clauses;i++) clauses[i]=(int *)malloc(num_states*sizeof(int));
-	
-	if (write_cnf_file) {
-		if (!max_fanout) {
-			fprintf(stderr,"ERROR:  cannot generate CNF files without a specified maximum fanout.\n");
-			return 0;
-		}
-		my_nfa->max_fanout = max_fanout;
-		perform_cnf_translation(clauses,
-								my_nfa,
-								write_cnf_file ? cnf_filename : 0);
+	if (use_sat_solver) {
+		if (map_states_with_sat_solver(filename,my_nfa)==0) return 0;
 	}
 
   return 0;
