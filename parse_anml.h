@@ -6,7 +6,7 @@ int read_anml_file (char *filename,
 			
 int count_states (nfa *my_nfa);
 				  
-int reverse_edge_table ();
+int reverse_edge_table (nfa *my_nfa);
 int extract_number (const char *str);
 int Hash(const char *key);
 int extract_string (char *str);

@@ -27,7 +27,7 @@ using namespace std;
 #define MAX_COLORS      10000
 #define MAX_PART_SIZE   1024
 
-#define	SAT_SOLVER_COMMAND	"/usr/bin/docker/docker run --rm -i msoos/cryptominisat"
+#define	SAT_SOLVER_COMMAND	"/usr/bin/docker run --rm -i msoos/cryptominisat"
 #define ANML_NAME(ste_num)  node_table[ste_num]->properties->children->content
 
 // NFA graph

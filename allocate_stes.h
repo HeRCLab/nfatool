@@ -30,7 +30,7 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename);
 int validate_interconnection(nfa *my_nfa);
 
 // move a state in the array
-void move_ste (int from, int to);
+void move_ste (nfa *my_nfa,int from, int to);
 
 // mapping score function for the heuristic
 int Score(int a, int b);
@@ -39,7 +39,8 @@ int Score(int a, int b);
 int reverse_movement_map (nfa *my_nfa,int n);
 int dump_edges ();
 void critical_path(int node);
-void mix_it_up(int n);
+void mix_it_up(nfa *my_nfa,int n);
+char *anml_name (nfa *my_nfa,int se);
 
 // validation
 void check_graphs (nfa *my_nfa);

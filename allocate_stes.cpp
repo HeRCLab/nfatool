@@ -1,17 +1,12 @@
 #include "nfatool.h"
 
-#define TO_LITERAL(STATE,SE)    STATE*F+SE+1
+char *anml_name (nfa *my_nfa,int se) {
+	return (char *)my_nfa->node_table[se]->properties->children->content;
+}
 
 int map_states_with_sat_solver (char *filename,nfa *my_nfa) {
 	char cnf_filename[1024],str[2048];
-	int i,violations;
-	
-	// check for fanout constraint
-	// if none then there is no reason to proceed
-	if (!max_fanout) {
-		fprintf(stderr,"ERROR:  cannot generate CNF files without a specified maximum fanout.\n");
-		return 0;
-	}
+	int i,violations,ret;
 	
 	// auto-generate CNF filename
 	sprintf(cnf_filename,"%s.cnf",filename);
@@ -20,6 +15,9 @@ int map_states_with_sat_solver (char *filename,nfa *my_nfa) {
 	int **clauses;
 	int num_states = my_nfa->num_states;
 	int num_clauses = 3*num_states*num_states*num_states;
+	char *line,*tok;
+	int nchars,literal,state,se;
+	
 	clauses = (int **)malloc(num_clauses*sizeof(int *));
 	int columns = max_fanout > num_states ? max_fanout : num_states;
 	for (i=0;i<num_clauses;i++) clauses[i]=(int *)malloc(columns*sizeof(int));
@@ -31,10 +29,14 @@ int map_states_with_sat_solver (char *filename,nfa *my_nfa) {
 	
 	char cmd[2048];
 	char sat_output_filename[1024];
-	sprintf(sat_output_filename,"%s.cnf.out",cnf_filename);
+	sprintf(sat_output_filename,"%s.out",cnf_filename);
 	sprintf(cmd,"cat %s | %s > %s",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
 	
-	system(cmd);
+	ret=system(cmd);
+	if (ret==-1) {
+		fprintf (stderr,"ERROR:  could not invoke the SAT solver using command \"%s\"\n",SAT_SOLVER_COMMAND);
+		return 0;
+	}
 
 	wait();
 	FILE *myFile;
@@ -45,11 +47,8 @@ int map_states_with_sat_solver (char *filename,nfa *my_nfa) {
 		return 0;
 	}
 
-	char *line,*tok;
-	int nchars,literal,state,se;
-	while (feof(myFile)) {
-		getline(&line,(size_t *)&nchars,myFile);
-		if (line[0]=='s' && strncmp(line+1,"SATISFIABLE",11)) {
+	while (getline(&line,(size_t *)&nchars,myFile) > 3) {
+		if (line[0]=='s' && strncmp(line+2,"SATISFIABLE",11)) {
 			fprintf (stderr,"ERROR:  SAT solver failed to find valid mapping.\n");
 			return 0;
 		}
@@ -61,30 +60,35 @@ int map_states_with_sat_solver (char *filename,nfa *my_nfa) {
 				if (literal>0) sat_solution.push_back(literal);
 				tok=strtok(0," ");
 			}
-			printf ("INFO:  Valid mapping found with SAT solver.\n");
-			
-			for (i=0;i<sat_solution.size();i++) {
-				literal = sat_solution[i];
-				literal_to_mapping(literal,&state,&se,my_nfa->num_states);
-				my_nfa->movement_map[se]=state;
-			}
-			
-			// apply the new mapping to the NFA
-			apply_movement_map(my_nfa);
-			
-			// validate that the new mapping is consistant with the original NFA graph
-			check_graphs(my_nfa);
-			
-			// validate that no fanout violations exist
-			violations=validate_interconnection(my_nfa);
-			if (violations) {
-				fprintf(stderr,"ERROR:  SAT solver produced mapping solutions with fanout violations!\n");
-				return 0;
-			}
-			
-			break;
 		}
 	}
+	
+	printf ("INFO:  Mapping solution found with SAT solver.\n");
+			
+	for (i=0;i<sat_solution.size();i++) {
+		literal = sat_solution[i];
+		literal_to_mapping(literal,&state,&se,my_nfa->num_states);
+		my_nfa->movement_map[se]=state;
+	}
+			
+	// apply the new mapping to the NFA
+	apply_movement_map(my_nfa);
+	
+	// reverse the edge table, since this is needed by validate_interconnection()
+	reverse_edge_table(my_nfa);
+  
+	// validate that the new mapping is consistant with the original NFA graph
+	check_graphs(my_nfa);
+	
+	// validate that no fanout violations exist
+	violations=validate_interconnection(my_nfa);
+	if (violations) {
+		fprintf(stderr,"ERROR:  SAT solver produced mapping solutions with fanout violations!\n");
+		return 0;
+	}
+			
+	
+	return 1;
 }
 
 void apply_movement_map (nfa *my_nfa) {
@@ -109,7 +113,10 @@ void apply_movement_map (nfa *my_nfa) {
 	for (i=0;i<num_states;i++) {
 		new_state = movement_map[i];
 		for (j=0;j<max_edges;j++) {
-			edge_table[i][j]=orig_edge_table[new_state][j];
+			if (orig_edge_table[i][j]!=-1)
+				edge_table[new_state][j]=movement_map[orig_edge_table[i][j]];
+			else
+				edge_table[new_state][j]=-1;
 		}
 	}
 			
@@ -127,7 +134,7 @@ void literal_to_mapping (int literal,int *state, int *se,int num_states) {
 
 int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 	int i,j,k,l,n=0,m;
-	int literal;
+	int literal,literal2;
 	FILE *mycnf;
 	char str[1024];
 	
@@ -153,23 +160,30 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 	for (i=0;i<num_states;i++) { // for each predecessor state
 		if (edge_table[i][0]!=-1) { // don't bother with states that don't have outgoing edges
 			for (j=0;j<num_states;j++) { // for each possible se placement (assume number of SEs == number of states)
-				literal=-state_to_se_literal(i,j,num_states);
-				clauses[n][0]=literal;
-				if (filename) fprintf(mycnf,"%d ",literal);
+				
+				
 				for (k=0;k<max_edges;k++) { // for each successor
+				
 					if (edge_table[i][k]==-1) break;
-					if (edge_table[i][k]!=i) { // don't worry about self-loops
+					literal=-state_to_se_literal(i,j,num_states);
+					if (filename) fprintf(mycnf,"%d ",literal);
+					clauses[n][0]=literal;
+					
+					if (edge_table[i][k]!=i) {
+					 // don't worry about self-loops
 						for (l=-(max_fanout-1)/2;l<=max_fanout/2;l++) { // for each possible placement of the successor
-							if ((l!=0) && (j+l)>=0 && (j+l)<num_states && l) { // disregard self-loop and avoid breach of array boundaries
+							if ((l!=0) && (j+l)>=0 && (j+l)<num_states) { // disregard self-loop and avoid breach of array boundaries
 								literal=state_to_se_literal(edge_table[i][k],j+l,num_states);
 								clauses[n][l+(max_fanout-1)/2+1]=literal;
 								if (filename) fprintf(mycnf,"%d ",literal);
 							}
 						}
 					}
+					if (filename) fprintf(mycnf,"0\n");
+					n++;
+					
+					
 				}
-				if (filename) fprintf(mycnf,"0\n");
-				n++;
 			}
 		}
 	}
@@ -185,21 +199,20 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 	}
 	
 	// don't double map se constaint:  'num_states^2' clauses
-	for (i=0;i<num_states;i++) {// i is the state
-		for (j=0;j<num_states;j++) { // j is the SE
-			literal=-state_to_se_literal(i,j,num_states);
-			clauses[n][0]=literal;
-			if (filename) fprintf(mycnf,"%d ",literal);
-			m=1;
-			for (k=0;k<num_states;k++) {
-				if (i!=k) { // k is the state
-					literal=-state_to_se_literal(k,j,num_states);
-					clauses[n][m++]=literal;
+	for (i=0;i<num_states;i++) {// i is the SE
+		for (j=0;j<num_states;j++) { // j is state 1
+			for (k=j+1;k<num_states;k++) { // k is state 2
+				if (j!=k) {
+					literal=-state_to_se_literal(j,i,num_states);
+					clauses[n][0]=literal;
 					if (filename) fprintf(mycnf,"%d ",literal);
+					literal2=-state_to_se_literal(k,i,num_states);
+					clauses[n++][1]=literal2;
+					if (filename) fprintf(mycnf,"%d ",literal2);
+					fprintf(mycnf,"0\n");
 				}
 			}
-			if (filename) fprintf(mycnf,"0\n");
-			n++;
+			
 		}
 	}
 	
@@ -240,19 +253,27 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 		
 		old_violations = violations;
 		
-		if (cycles_without_forward_progress > 10) mix_it_up(1000);
+		if (cycles_without_forward_progress > 10) mix_it_up(my_nfa,1000);
 	}
 }
 
-void mix_it_up (int n) {
+void mix_it_up (nfa *my_nfa,int n) {
   int i;
 
-  for (i=0;i<n;i++) move_ste(rand()%num_states,rand()%num_states);
+  for (i=0;i<n;i++) move_ste(my_nfa,
+							 rand()%my_nfa->num_states,
+							 rand()%my_nfa->num_states);
 }
 
-void move_ste (int from, int to) {
-  int temp[max_edges],temp2[max_fan_in],i,j,k,rev,forward,temp3;
-  int rev_edge_count[num_states];
+void move_ste (nfa *my_nfa,int from, int to) {
+	int temp[my_nfa->max_edges],i,j,k,rev,forward,temp3;
+	int rev_edge_count[my_nfa->num_states];
+	int num_states = my_nfa->num_states;
+	int max_edges = my_nfa->max_edges;
+	int **edge_table = my_nfa->edge_table;
+	int *movement_map = my_nfa->movement_map;
+	int **reverse_table = my_nfa->reverse_table;
+	int max_fan_in = my_nfa->max_fan_in;
 
   if (from<to) {
   
@@ -384,14 +405,16 @@ int reverse_movement_map (nfa *my_nfa,int n) {
 	
 	int *movement_map = my_nfa->movement_map;
 	
-	for (i=0;i<num_states;i++) if (movement_map[i]==n) return i;
+	for (i=0;i<my_nfa->num_states;i++) if (movement_map[i]==n) return i;
 }
 
 void check_graphs (nfa *my_nfa) {
-	int i,j,k;
+	int i,j,k,a,b;
 	int num_states = my_nfa->num_states;
 	int max_edges = my_nfa->max_edges;
 	int **edge_table = my_nfa->edge_table;
+	int *movement_map = my_nfa->movement_map;
+	int **orig_edge_table = my_nfa->orig_edge_table;
 	
  	// for (i=0;i<num_states;i++) 
                 // for (j=0;j<max_edges;j++) 
@@ -413,7 +436,9 @@ void check_graphs (nfa *my_nfa) {
 	for (i=0;i<num_states;i++) {
 		for (j=0;j<max_edges;j++) {
 			if (orig_edge_table[i][j]==-1) break;
-			if (reverse_movement_map(my_nfa,orig_edge_table[i][j]) != edge_table[reverse_movement_map(my_nfa,i)][j]) {
+			a=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
+			b=edge_table[reverse_movement_map(my_nfa,i)][j];
+			if (a != b) {
 				fprintf (stderr,"error: original edge %d->%d should map to new edge %d->%d\n",i,orig_edge_table[i][j],reverse_movement_map(my_nfa,i),edge_table[reverse_movement_map(my_nfa,i)][j]);
 				assert(0);
 			}
@@ -451,6 +476,8 @@ int validate_interconnection(nfa *my_nfa) {
 	int num_states=my_nfa->num_states;
 	int max_edges=my_nfa->max_edges;
 	int *movement_map=my_nfa->movement_map;
+	int **orig_edge_table=my_nfa->orig_edge_table;
+	int max_fanout=my_nfa->max_fanout;
 	
   for(i = 0; i < num_states; i++) {
   
@@ -475,11 +502,11 @@ int validate_interconnection(nfa *my_nfa) {
 	  
             differential_score = Score(from,to);
             // make the move
-            move_ste(from,to);
+            move_ste(my_nfa,from,to);
 			//check_graphs();
             differential_score -= Score(from,to);
             // undo the move
-            move_ste(to,from);
+            move_ste(my_nfa,to,from);
 			//check_graphs();
             if (differential_score > max_differential_score) {
               max_differential_score=differential_score;
@@ -499,11 +526,11 @@ int validate_interconnection(nfa *my_nfa) {
 
             differential_score = Score(from,to);
             // make the move
-            move_ste(from,to);
+            move_ste(my_nfa,from,to);
 			//check_graphs();
             differential_score -= Score(from,to);
             // undo the move
-            move_ste(to,from);
+            move_ste(my_nfa,to,from);
 			//check_graphs();
             if (differential_score > max_differential_score) {
               max_differential_score=differential_score;
@@ -519,12 +546,12 @@ int validate_interconnection(nfa *my_nfa) {
 							best_from,
 							best_to,
 							i,
-							ANML_NAME(movement_map[i]),  //ANML_NAME(i),
+							anml_name(my_nfa,movement_map[i]),  //ANML_NAME(i),
 							edge_table[i][j],
-							ANML_NAME(orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
+							anml_name(my_nfa,orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
 							max_differential_score);
 
-			move_ste(best_from,best_to);
+			move_ste(my_nfa,best_from,best_to);
 			//printf("----------moving %d to %d\n",best_from,best_to);
 		//}
         violations++;

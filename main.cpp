@@ -208,6 +208,10 @@ int main(int argc, char **argv){
 	}
 	
 	if (max_fanout && !use_sat_solver) {
+		// reverse the edge table; needed by the heuristic solver validate_interconnection()
+		reverse_edge_table(my_nfa);
+		
+		// perform mapping heuristic
 		perform_state_mapping(filename,my_nfa);
 	}
 	
@@ -219,6 +223,12 @@ int main(int argc, char **argv){
     }
 	
 	if (use_sat_solver) {
+		// check for fanout constraint
+		// if none then there is no reason to proceed
+		if (!max_fanout) {
+			fprintf(stderr,"ERROR:  cannot generate CNF files without a specified maximum fanout.\n");
+			return 0;
+		}
 		if (map_states_with_sat_solver(filename,my_nfa)==0) return 0;
 	}
 

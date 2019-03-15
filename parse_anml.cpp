@@ -32,11 +32,6 @@ int read_anml_file (char *filename,
   fill_in_table(my_nfa);
   
 /*
- * calculate transpose graph
- */
-  reverse_edge_table();
-  
-/*
  * save the original state of the graph
  */
   for (int i=0;i<my_nfa->num_states;i++)
@@ -46,9 +41,13 @@ int read_anml_file (char *filename,
   return 1;
 }
 
-int reverse_edge_table () {
+int reverse_edge_table (nfa *my_nfa) {
   int change,i,j,k,
     fanin = 0;
+  int num_states = my_nfa->num_states;
+  int max_edges = my_nfa->max_edges;
+  int **edge_table = my_nfa->edge_table;
+  int **reverse_table = my_nfa->reverse_table;
 
   int rev_edge_count[num_states];
   for (i=0;i<num_states;i++) rev_edge_count[i]=0;
@@ -60,15 +59,15 @@ int reverse_edge_table () {
           break;
         }else {
           rev_edge_count[edge_table[i][j]]++;
-          if (rev_edge_count[edge_table[i][j]] > max_fan_in) max_fan_in = rev_edge_count[edge_table[i][j]];
+          if (rev_edge_count[edge_table[i][j]] > my_nfa->max_fan_in) my_nfa->max_fan_in = rev_edge_count[edge_table[i][j]];
         }
     }
   }
 
-  reverse_table = (int **)malloc((sizeof(int*))*num_states);
+	reverse_table = my_nfa->reverse_table = (int **)malloc((sizeof(int*))*num_states);
     for (int i=0;i<num_states;i++){
-      reverse_table[i]=(int *)malloc(sizeof (int)*max_fan_in);
-      for (int j=0;j<max_fan_in;j++) reverse_table[i][j]=-1;
+      reverse_table[i]=(int *)malloc(sizeof (int)*my_nfa->max_fan_in);
+      for (int j=0;j<my_nfa->max_fan_in;j++) reverse_table[i][j]=-1;
     }
 
   for (i=0;i<num_states;i++) rev_edge_count[i]=0;
