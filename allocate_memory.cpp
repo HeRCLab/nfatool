@@ -3,7 +3,14 @@
 void allocate_memory(nfa *my_nfa) {
 	int num_states = my_nfa->num_states;
 	int max_fanout = my_nfa->max_fanout;
-	int max_stes = my_nfa->max_stes;	
+	int max_stes = my_nfa->max_stes;
+	char *visited = my_nfa->visited;
+	int	*dfs_visited = my_nfa->dfs_visited;
+	vector<int> *state_colors = my_nfa->state_colors;
+	int *color_count = my_nfa->color_count;
+	int *root_node = my_nfa->root_node;
+	vector<int> *sccs = my_nfa->sccs;
+	int *components = my_nfa->components;
 	
 	// node table:  maps state numbers back to its original XML node
 	my_nfa->node_table = (xmlNode **)malloc(sizeof (xmlNode *)*num_states);
@@ -29,8 +36,8 @@ void allocate_memory(nfa *my_nfa) {
 		for (int j=0;j<max_fanout;j++) my_nfa->gates_2D[i][j]=0;
 	}
  
-	my_nfa->gates_1D = (int *)malloc((sizeof(int*))*(max_stes*max_fan+max_fanout)); 
-	for(int i=0; i<(max_stes*max_fan+max_fan);i++) my_nfa->gates_1D[i] = 0; 
+	my_nfa->gates_1D = (int *)malloc((sizeof(int*))*(max_stes*max_fanout+max_fanout)); 
+	for(int i=0; i<(max_stes*max_fanout+max_fanout);i++) my_nfa->gates_1D[i] = 0; 
 	//////////////////////////////////////////////////////////////
 	
 	// next state table:  how is this different from symbol table?

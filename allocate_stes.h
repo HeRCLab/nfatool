@@ -33,7 +33,7 @@ int validate_interconnection(nfa *my_nfa);
 void move_ste (nfa *my_nfa,int from, int to);
 
 // mapping score function for the heuristic
-int Score(int a, int b);
+int score(nfa *my_nfa,int a, int b);
 
 // miscellaneous
 int reverse_movement_map (nfa *my_nfa,int n);

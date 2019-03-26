@@ -235,7 +235,7 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 	while (violations=validate_interconnection(my_nfa)) {
 		printf ("*********************scan complete, violations = %d\n",violations);
 		end = clock();
-		if((end-start)>100000) { //milisecond
+		if((end-start)>300000000) { // microseconds
 			printf("\n*******************higher fanout than %d required\n\n", max_fanout);
 			sprintf(filename3, "%s.txt", filename);
 			myFile = fopen(filename3,"w+"); //filename3, "w+");
@@ -246,14 +246,14 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 			fclose(myFile);
 			break;
 		}
-		if (violations >= old_violations)
+		if (violations >= (old_violations-10))
 			cycles_without_forward_progress++;
 		else
 			cycles_without_forward_progress=0;
 		
 		old_violations = violations;
 		
-		if (cycles_without_forward_progress > 10) mix_it_up(my_nfa,1000);
+		if (cycles_without_forward_progress > 1000) mix_it_up(my_nfa,10000);
 	}
 }
 
@@ -362,9 +362,12 @@ void move_ste (nfa *my_nfa,int from, int to) {
   }
 }
 
-int Score(int a, int b){
+int score(nfa *my_nfa,int a, int b) {
 
   int temp,sum = 0, diff;
+  int **edge_table = my_nfa->edge_table;
+  int **reverse_table = my_nfa->reverse_table;
+  int max_edges = my_nfa->max_edges;
 
   if(a > b) {
 	temp=a;
@@ -513,11 +516,11 @@ int validate_interconnection(nfa *my_nfa) {
           to = edge_table[i][j] - max_fanout/2 + k;
           if ((to >= 0) && (to < num_states -1)){
 	  
-            differential_score = Score(from,to);
+            differential_score = score(my_nfa,from,to);
             // make the move
             move_ste(my_nfa,from,to);
 			//check_graphs();
-            differential_score -= Score(from,to);
+            differential_score -= score(my_nfa,from,to);
             // undo the move
             move_ste(my_nfa,to,from);
 			//check_graphs();
@@ -537,11 +540,11 @@ int validate_interconnection(nfa *my_nfa) {
           to = i - (max_fanout-1)/2 + k;
           if ((to >= 0) && (to < num_states -1)) {
 
-            differential_score = Score(from,to);
+            differential_score = score(my_nfa,from,to);
             // make the move
             move_ste(my_nfa,from,to);
 			//check_graphs();
-            differential_score -= Score(from,to);
+            differential_score -= score(my_nfa,from,to);
             // undo the move
             move_ste(my_nfa,to,from);
 			//check_graphs();
@@ -555,16 +558,18 @@ int validate_interconnection(nfa *my_nfa) {
       
 
 	    //if (max_differential_score>0) {
-			printf ("moving STE in position %d to position %d due to bad edge %d (\"%s\")-> %d (\"%s\"), best score = %d\n",
+			
+/*  			printf ("moving STE in position %d to position %d due to bad edge %d (\"%s\")-> %d (\"%s\"), best score = %d\n",
 							best_from,
 							best_to,
 							i,
 							anml_name(my_nfa,movement_map[i]),  //ANML_NAME(i),
 							edge_table[i][j],
 							anml_name(my_nfa,orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
-							max_differential_score);
+							max_differential_score); */
 
 			move_ste(my_nfa,best_from,best_to);
+			
 			//printf("----------moving %d to %d\n",best_from,best_to);
 		//}
         violations++;
