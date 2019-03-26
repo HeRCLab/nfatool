@@ -43,6 +43,6 @@ void mix_it_up(nfa *my_nfa,int n);
 char *anml_name (nfa *my_nfa,int se);
 
 // validation
-void check_graphs (nfa *my_nfa);
+void check_graphs (nfa *my_nfa, int rev);
 
 #endif

@@ -155,6 +155,7 @@ int main(int argc, char **argv){
 			break;
 		case 'i':
 			strcpy(filename,optarg);
+			printf ("Setting input file to \"%s\"\n",filename);
 			file_spec=1;
 			break;
         case 'm':

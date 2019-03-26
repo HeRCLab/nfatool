@@ -78,7 +78,7 @@ int map_states_with_sat_solver (char *filename,nfa *my_nfa) {
 	reverse_edge_table(my_nfa);
   
 	// validate that the new mapping is consistant with the original NFA graph
-	check_graphs(my_nfa);
+	check_graphs(my_nfa,0);
 	
 	// validate that no fanout violations exist
 	violations=validate_interconnection(my_nfa);
@@ -111,10 +111,10 @@ void apply_movement_map (nfa *my_nfa) {
 	// re-write edge_table according to movement_map
 	// movement_map[i] will hold the original state now in SE i
 	for (i=0;i<num_states;i++) {
-		new_state = movement_map[i];
+		new_state = reverse_movement_map(my_nfa,i);
 		for (j=0;j<max_edges;j++) {
 			if (orig_edge_table[i][j]!=-1)
-				edge_table[new_state][j]=movement_map[orig_edge_table[i][j]];
+				edge_table[new_state][j]=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
 			else
 				edge_table[new_state][j]=-1;
 		}
@@ -408,7 +408,7 @@ int reverse_movement_map (nfa *my_nfa,int n) {
 	for (i=0;i<my_nfa->num_states;i++) if (movement_map[i]==n) return i;
 }
 
-void check_graphs (nfa *my_nfa) {
+void check_graphs (nfa *my_nfa, int rev) {
 	int i,j,k,a,b;
 	int num_states = my_nfa->num_states;
 	int max_edges = my_nfa->max_edges;
@@ -423,9 +423,17 @@ void check_graphs (nfa *my_nfa) {
 	//#pragma omp parallel for
 	for (i=0;i<num_states;i++) {
 		for (j=0;j<max_edges;j++) {
-//			printf("edge_table[%d][%d]= %d\n", i, j, edge_table[i][j]); 
+//			printf("edge_table[%d][%d]= %d\n", i, j, edge_table[i][j]);
+
 			if (edge_table[i][j]==-1) break;
-			if (orig_edge_table[movement_map[i]][j] != movement_map[edge_table[i][j]]) {
+			if (!rev) {
+				a=orig_edge_table[movement_map[i]][j];
+				b=movement_map[edge_table[i][j]];
+			} else {
+				a=orig_edge_table[reverse_movement_map(my_nfa,i)][j];
+				b=reverse_movement_map(my_nfa,edge_table[i][j]);
+			}
+			if (a != b) {
 				fprintf (stderr,"error: new edge %d->%d should map to original edge %d->%d\n",i,edge_table[i][j],movement_map[i],orig_edge_table[movement_map[i]][j]);
 				assert(0);
 			}
@@ -436,8 +444,13 @@ void check_graphs (nfa *my_nfa) {
 	for (i=0;i<num_states;i++) {
 		for (j=0;j<max_edges;j++) {
 			if (orig_edge_table[i][j]==-1) break;
-			a=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
-			b=edge_table[reverse_movement_map(my_nfa,i)][j];
+			if (!rev) {
+				a=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
+				b=edge_table[reverse_movement_map(my_nfa,i)][j];
+			} else {
+				a=movement_map[orig_edge_table[i][j]];
+				b=edge_table[movement_map[i]][j];
+			}
 			if (a != b) {
 				fprintf (stderr,"error: original edge %d->%d should map to new edge %d->%d\n",i,orig_edge_table[i][j],reverse_movement_map(my_nfa,i),edge_table[reverse_movement_map(my_nfa,i)][j]);
 				assert(0);
@@ -560,7 +573,7 @@ int validate_interconnection(nfa *my_nfa) {
 	}
   }
   
-  check_graphs(my_nfa);
+  check_graphs(my_nfa,0);
   return violations;
 }
 
