@@ -57,11 +57,11 @@ typedef struct {
 	int						*gates_1D; 
 	int						**next_2D;
 	int						do_time;
-	xmlNode					*start_stes[STATEMAP_SIZE];
+	xmlNode					**start_stes; // formerly [STATEMAP_SIZE]
 	char					*visited;
 	int						*dfs_visited;
 	vector<int>				*state_colors;
-	int						color_count[MAX_COLORS];
+	int						*color_count;
 	int						*root_node;
 	vector<int>				*sccs;
 	map <int,vector<int> >	component_list;

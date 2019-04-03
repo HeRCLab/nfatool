@@ -7,7 +7,6 @@ void allocate_memory(nfa *my_nfa) {
 	char *visited = my_nfa->visited;
 	int	*dfs_visited = my_nfa->dfs_visited;
 	vector<int> *state_colors = my_nfa->state_colors;
-	int *color_count = my_nfa->color_count;
 	int *root_node = my_nfa->root_node;
 	vector<int> *sccs = my_nfa->sccs;
 	int *components = my_nfa->components;
@@ -79,6 +78,8 @@ void allocate_memory(nfa *my_nfa) {
     state_colors = new vector<int>[num_states];
 	root_node = (int *)malloc((sizeof(int))*num_states);
 	for (int i=0;i<num_states;i++) root_node[i]=0;
+	
+	int *color_count = my_nfa->color_count = (int *)malloc(sizeof(int)*MAX_COLORS);
     for (int i=0;i<MAX_COLORS;i++) color_count[i]=0;
     sccs = new vector<int>[num_states];
     components=(int *)malloc(sizeof(int)*num_states);

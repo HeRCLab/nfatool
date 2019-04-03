@@ -229,6 +229,7 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 	int old_violations=0;
 	int cycles_without_forward_progress=0;
 	FILE *myFile;
+	int i;
 	
 	start = clock();
 	
@@ -253,8 +254,15 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 		
 		old_violations = violations;
 		
-		if (cycles_without_forward_progress > 1000) mix_it_up(my_nfa,10000);
+		if (cycles_without_forward_progress > 20) mix_it_up(my_nfa,10000);
 	}
+	
+	// print solution as a logic expression
+	printf ("mapping solution: ");
+	for (i=0;i<my_nfa->num_states;i++) {
+		printf ("%d ",state_to_se_literal(my_nfa->movement_map[i],i,my_nfa->num_states));
+	}
+	printf ("\n");
 }
 
 void mix_it_up (nfa *my_nfa,int n) {

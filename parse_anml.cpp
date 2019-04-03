@@ -133,7 +133,7 @@ int count_states (nfa *my_nfa) {
 	int max_edges=0;
 	int edges;
 	xmlNode *bnode;
-	xmlNode *anode;
+	xmlNode *anode=my_nfa->root;
 
 	// check if the root XML node is the tag "automata-network"
 	// if not, then it's probably "anml", in which case we need
