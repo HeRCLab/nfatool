@@ -44,5 +44,6 @@ char *anml_name (nfa *my_nfa,int se);
 
 // validation
 void check_graphs (nfa *my_nfa, int rev);
+void print_mapping (nfa *my_nfa);
 
 #endif

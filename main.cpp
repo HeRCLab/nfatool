@@ -233,5 +233,7 @@ int main(int argc, char **argv){
 		if (map_states_with_sat_solver(filename,my_nfa)==0) return 0;
 	}
 
+	print_mapping(my_nfa);
+
   return 0;
 }

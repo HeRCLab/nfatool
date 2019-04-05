@@ -132,6 +132,20 @@ void literal_to_mapping (int literal,int *state, int *se,int num_states) {
 	*se = literal % num_states;
 }
 
+void print_mapping (nfa *my_nfa) {
+	int i;
+	
+	printf ("%10s%10s\n","SE","state");
+	for (i=0;i<my_nfa->num_states;i++) {
+		printf ("%10d%10d\n",i,my_nfa->movement_map[i]);
+	}
+	
+	printf ("\n%10s%10s\n","state","SE");
+	for (i=0;i<my_nfa->num_states;i++) {
+		printf ("%10d%10d\n",i,reverse_movement_map(my_nfa,i));
+	}
+}
+
 int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 	int i,j,k,l,n=0,m;
 	int literal,literal2;
