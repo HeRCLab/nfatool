@@ -212,6 +212,17 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 		if (filename) fprintf(mycnf,"0\n");
 	}
 	
+	// force a mapping of every se:  'num_states^2' clauses
+	for (i=0;i<num_states;i++) {
+		for (j=0;j<num_states;j++) {
+			literal=state_to_se_literal(j,i,num_states);
+			clauses[n++][j]=literal;
+			if (filename) fprintf(mycnf,"%d ",literal);
+		}
+		if (filename) fprintf(mycnf,"0\n");
+	}
+	
+	/*
 	// don't double map se constaint:  'num_states^2' clauses
 	for (i=0;i<num_states;i++) {// i is the SE
 		for (j=0;j<num_states;j++) { // j is state 1
@@ -229,6 +240,7 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 			
 		}
 	}
+	*/
 	
 	if (filename) {
 		fprintf(mycnf, "%s", "c CHECK-NEXT: ^v .*1$\n");
