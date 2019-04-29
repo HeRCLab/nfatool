@@ -112,6 +112,10 @@ void apply_movement_map (nfa *my_nfa) {
 	// movement_map[i] will hold the original state now in SE i
 	for (i=0;i<num_states;i++) {
 		new_state = reverse_movement_map(my_nfa,i);
+		if (new_state==-1) {
+			fprintf(stderr,"ERROR: reverse_movement_map() returned error code\n");
+			exit(0);
+		}
 		for (j=0;j<max_edges;j++) {
 			if (orig_edge_table[i][j]!=-1)
 				edge_table[new_state][j]=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
@@ -202,6 +206,7 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 		}
 	}
 	
+	
 	// force a mapping of every state:  'num_states^2' clauses
 	for (i=0;i<num_states;i++) {
 		for (j=0;j<num_states;j++) {
@@ -212,7 +217,8 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 		if (filename) fprintf(mycnf,"0\n");
 	}
 	
-	// force a mapping of every se:  'num_states^2' clauses
+	/*
+ 	// force a mapping of every se:  'num_states^2' clauses
 	for (i=0;i<num_states;i++) {
 		for (j=0;j<num_states;j++) {
 			literal=state_to_se_literal(j,i,num_states);
@@ -221,10 +227,10 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 		}
 		if (filename) fprintf(mycnf,"0\n");
 	}
+	*/
 	
-	/*
 	// don't double map se constaint:  'num_states^2' clauses
-	for (i=0;i<num_states;i++) {// i is the SE
+	for (i=0;i<num_states;i++) {// i is the se
 		for (j=0;j<num_states;j++) { // j is state 1
 			for (k=j+1;k<num_states;k++) { // k is state 2
 				if (j!=k) {
@@ -240,7 +246,25 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 			
 		}
 	}
-	*/
+	
+	// don't double map state constaint:  'num_states^2' clauses
+	for (i=0;i<num_states;i++) {// i is the state
+		for (j=0;j<num_states;j++) { // j is se 1
+			for (k=j+1;k<num_states;k++) { // k is se 2
+				if (j!=k) {
+					literal=-state_to_se_literal(i,j,num_states);
+					clauses[n][0]=literal;
+					if (filename) fprintf(mycnf,"%d ",literal);
+					literal2=-state_to_se_literal(i,k,num_states);
+					clauses[n++][1]=literal2;
+					if (filename) fprintf(mycnf,"%d ",literal2);
+					fprintf(mycnf,"0\n");
+				}
+			}
+			
+		}
+	}
+	
 	
 	if (filename) {
 		fprintf(mycnf, "%s", "c CHECK-NEXT: ^v .*1$\n");
@@ -442,7 +466,10 @@ int reverse_movement_map (nfa *my_nfa,int n) {
 	
 	int *movement_map = my_nfa->movement_map;
 	
-	for (i=0;i<my_nfa->num_states;i++) if (movement_map[i]==n) return i;
+	for (i=0;i<my_nfa->num_states;i++)
+		if (movement_map[i]==n) return i;
+	
+	return -1;
 }
 
 void check_graphs (nfa *my_nfa, int rev) {

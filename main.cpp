@@ -127,6 +127,7 @@ void print_help (char **argv) {
 	printf("%14s\tPerform mapping with MINISAT solver\n","-c");
 	printf("%14s\tPerform NFA graph analysis\n","-g");
 	printf("%14s\tGenerate NAPOLY configuration files\n","-n");
+	printf("%14s\tPrint state-to-SE and SE-to-state mapping\n","-p");
 }
 
 int main(int argc, char **argv){
@@ -142,6 +143,7 @@ int main(int argc, char **argv){
 	int use_sat_solver=0;
     int file_spec=0;
 	int gen_config=0;
+	int print_mapping;
 	
 	// OPTIONS
     char filename[1024];
@@ -175,6 +177,9 @@ int main(int argc, char **argv){
 		case 'n':
 			gen_config=1;
 			printf("generating NAPOLY configuration file\n");
+		case 'p':
+			print_mapping=1;
+			printf("printing mapping result\n");
         case '?':
 			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c'))
 				fprintf (stderr, "Option -%c requires an argument.\n", optopt);
@@ -233,7 +238,7 @@ int main(int argc, char **argv){
 		if (map_states_with_sat_solver(filename,my_nfa)==0) return 0;
 	}
 
-	print_mapping(my_nfa);
+	if (print_mapping) print_mapping(my_nfa);
 
   return 0;
 }
