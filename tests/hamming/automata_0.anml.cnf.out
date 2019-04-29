@@ -1,0 +1,62 @@
+c Outputting solution to console
+c CryptoMiniSat version 5.6.6
+c CMS Copyright Mate Soos (soos.mate@gmail.com)
+c CMS SHA revision 
+c CMS is GPL licensed due to M4RI being linked. Build without M4RI to get MIT version
+c CMS compilation env CMAKE_CXX_COMPILER = /usr/bin/c++ | CMAKE_CXX_FLAGS =  -mtune=native -Wall -Wextra -Wunused -Wsign-compare -fno-omit-frame-pointer -Wtype-limits -Wuninitialized -Wno-deprecated -Wstrict-aliasing -Wpointer-arith -Wpointer-arith -Wformat-nonliteral -Winit-self -Wparentheses -Wunreachable-code -ggdb3 -Wlogical-op -Wdouble-promotion -Wshadow -Wformat=2 -pedantic | COMPILE_DEFINES =  -DUSE_ZLIB -DUSE_M4RI | STATICCOMPILE = ON | ONLY_SIMPLE = OFF | Boost_FOUND = 1 | STATS = OFF | SQLITE3_FOUND =  | ZLIB_FOUND = TRUE | VALGRIND_FOUND = FALSE | ENABLE_TESTING = OFF | M4RI_FOUND = TRUE | NOM4RI = OFF | SLOW_DEBUG = OFF | ENABLE_ASSERTIONS = ON | PYTHON_EXECUTABLE = PYTHON_EXECUTABLE-NOTFOUND | PYTHON_LIBRARY = PYTHON_LIBRARY-NOTFOUND | PYTHON_INCLUDE_DIRS =  | MY_TARGETS =  | LARGEMEM = OFF | LIMITMEM = OFF | compilation date time = Feb 17 2019 19:45:48
+c CMS compiled with gcc version 5.5.0 20171010
+c Executed with command line: /usr/local/bin/cryptominisat5
+c Reading from standard input... Use '-h' or '--help' for help.
+c -- clauses added: 1826340
+c -- xor clauses added: 0
+c -- vars added 14884
+c Parsing time: 0.74 s
+c   type VSIDS  rest  conf freevar  IrrL  IrrB l/longC  l/allC RedL0 RedL1 RedL2  RedB l/longC  l/allC
+c [distill] long cls tried: 0/0 cl-short:0 lit-r:0 T: 0.00 T-out: N T-r: 100.00%
+c [distill] long cls tried: 0/0 cl-short:0 lit-r:0 T: 0.00 T-out: N T-r: 100.00%
+c [distill] long cls tried: 4/0 cl-short:4 lit-r:6 T: 0.00 T-out: N T-r: 99.99%
+c   glue     1    30  8193   14884   25K 1800K   17.84    2.22     1    18  8170     4  204.45  204.35
+c [distill] long cls tried: 9/0 cl-short:9 lit-r:39 T: 0.00 T-out: N T-r: 99.98%
+c   geom     1    65 16386   14884   25K 1800K   17.84    2.22    28   194 16151    13  218.22  218.05
+c [distill] long cls tried: 28/14 cl-short:28 lit-r:198 T: 0.01 T-out: N T-r: 99.92%
+c   glue     1    86   24K   14884   25K 1800K   17.84    2.22    21   218   24K    28  207.34  207.11
+c [distill] long cls tried: 7/16 cl-short:7 lit-r:112 T: 0.00 T-out: N T-r: 99.98%
+c   glue     1   120   32K   14884   25K 1800K   17.84    2.22    76   464   26K    41  203.87  203.57
+c [distill] long cls tried: 60/39 cl-short:60 lit-r:290 T: 0.01 T-out: N T-r: 99.87%
+c   glue     1   146   40K   14884   25K 1800K   17.84    2.22    57   383   35K    79  222.57  222.08
+c [distill] long cls tried: 54/66 cl-short:54 lit-r:221 T: 0.02 T-out: N T-r: 99.84%
+c   glue     1   161   49K   14884   25K 1800K   17.84    2.22    78   551   32K   106  210.10  209.45
+c 
+c ------- FINAL TOTAL SEARCH STATS ---------
+c UIP search time          : 8.78        (91.80     % time)
+c restarts                 : 187         (306.66    confls per restart)
+c blocked restarts         : 62          (0.33      per normal restart)
+c time                     : 8.78        
+c decisions                : 149921      (0.00      % random)
+c propagations             : 22058531    
+c decisions/conflicts      : 2.61        
+c conflicts                : 57345       (6531.32   / sec)
+c conf lits non-minim      : 16520150    (288.08    lit/confl)
+c conf lits final          : 214.95      
+c cache hit re-learnt cl   : 0           (0.00      % of confl)
+c red which0               : 33          (0.06      % of confl)
+c props/decision           : 147.13      
+c props/conflict           : 384.66      
+c 0-depth assigns          : 468         (3.14      % vars)
+c 0-depth assigns by CNF   : 0           (0.00      % vars)
+c reduceDB time            : 0.02        (0.17      % time)
+c OccSimplifier time       : 0.00        (0.00      % time)
+c [occur] 0.00 is overhead
+c [occur] link-in T: 0.00 cleanup T: 0.00
+c [occ-substr] long subBySub: 0 subByStr: 0 lits-rem-str: 0 T: 0.00
+c SCC time                 : 0.00        (0.00      % time)
+c [scc] new: 0 BP 0M  T: 0.00
+c vrep replace time        : 0.00        (0.00      % time)
+c vrep tree roots          : 0           
+c vrep trees' crown        : 0           (0.00      leafs/tree)
+c distill time             : 0.04        (0.46      % time)
+c strength cache-irred time: 0.00        (0.00      % time)
+c strength cache-red time  : 0.00        (0.00      % time)
+c Conflicts in UIP         : 57345       (5995.92   confl/time_this_thread)
+c Mem used                 : 81.65       MB
+c Total time (this thread) : 9.56        
