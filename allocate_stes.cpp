@@ -18,9 +18,10 @@ int map_states_with_sat_solver (char *filename,nfa *my_nfa) {
 	char *line,*tok;
 	int nchars,literal,state,se;
 	
-	clauses = (int **)malloc(num_clauses*sizeof(int *));
+	//clauses = (int **)malloc(num_clauses*sizeof(int *));
+	clauses = 0;
 	int columns = max_fanout > num_states ? max_fanout : num_states;
-	for (i=0;i<num_clauses;i++) clauses[i]=(int *)malloc(columns*sizeof(int));
+	//for (i=0;i<num_clauses;i++) clauses[i]=(int *)malloc(columns*sizeof(int));
 	vector<int> sat_solution;
 	
 	perform_cnf_translation(clauses,
@@ -183,24 +184,22 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 				for (k=0;k<max_edges;k++) { // for each successor
 				
 					if (edge_table[i][k]==-1) break;
-					literal=-state_to_se_literal(i,j,num_states);
-					if (filename) fprintf(mycnf,"%d ",literal);
-					clauses[n][0]=literal;
 					
+					// don't worry about self-loops
 					if (edge_table[i][k]!=i) {
-					 // don't worry about self-loops
+						literal=-state_to_se_literal(i,j,num_states);
+						if (filename) fprintf(mycnf,"%d ",literal);
+						//clauses[n][0]=literal;
 						for (l=-(max_fanout-1)/2;l<=max_fanout/2;l++) { // for each possible placement of the successor
 							if ((l!=0) && (j+l)>=0 && (j+l)<num_states) { // disregard self-loop and avoid breach of array boundaries
 								literal=state_to_se_literal(edge_table[i][k],j+l,num_states);
-								clauses[n][l+(max_fanout-1)/2+1]=literal;
+								//clauses[n][l+(max_fanout-1)/2+1]=literal;
 								if (filename) fprintf(mycnf,"%d ",literal);
 							}
 						}
+						if (filename) fprintf(mycnf,"0\n");
+						n++;
 					}
-					if (filename) fprintf(mycnf,"0\n");
-					n++;
-					
-					
 				}
 			}
 		}
@@ -211,7 +210,7 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 	for (i=0;i<num_states;i++) {
 		for (j=0;j<num_states;j++) {
 			literal=state_to_se_literal(i,j,num_states);
-			clauses[n++][j]=literal;
+			//clauses[n++][j]=literal;
 			if (filename) fprintf(mycnf,"%d ",literal);
 		}
 		if (filename) fprintf(mycnf,"0\n");
@@ -235,10 +234,10 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 			for (k=j+1;k<num_states;k++) { // k is state 2
 				if (j!=k) {
 					literal=-state_to_se_literal(j,i,num_states);
-					clauses[n][0]=literal;
+					//clauses[n][0]=literal;
 					if (filename) fprintf(mycnf,"%d ",literal);
 					literal2=-state_to_se_literal(k,i,num_states);
-					clauses[n++][1]=literal2;
+					//clauses[n++][1]=literal2;
 					if (filename) fprintf(mycnf,"%d ",literal2);
 					fprintf(mycnf,"0\n");
 				}
@@ -253,10 +252,10 @@ int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename) {
 			for (k=j+1;k<num_states;k++) { // k is se 2
 				if (j!=k) {
 					literal=-state_to_se_literal(i,j,num_states);
-					clauses[n][0]=literal;
+					//clauses[n][0]=literal;
 					if (filename) fprintf(mycnf,"%d ",literal);
 					literal2=-state_to_se_literal(i,k,num_states);
-					clauses[n++][1]=literal2;
+					//clauses[n++][1]=literal2;
 					if (filename) fprintf(mycnf,"%d ",literal2);
 					fprintf(mycnf,"0\n");
 				}

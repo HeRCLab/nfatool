@@ -143,7 +143,7 @@ int main(int argc, char **argv){
 	int use_sat_solver=0;
     int file_spec=0;
 	int gen_config=0;
-	int print_mapping;
+	int do_print_mapping=0;
 	
 	// OPTIONS
     char filename[1024];
@@ -178,7 +178,7 @@ int main(int argc, char **argv){
 			gen_config=1;
 			printf("generating NAPOLY configuration file\n");
 		case 'p':
-			print_mapping=1;
+			do_print_mapping=1;
 			printf("printing mapping result\n");
         case '?':
 			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c'))
@@ -238,7 +238,7 @@ int main(int argc, char **argv){
 		if (map_states_with_sat_solver(filename,my_nfa)==0) return 0;
 	}
 
-	if (print_mapping) print_mapping(my_nfa);
+	if (do_print_mapping) print_mapping(my_nfa);
 
   return 0;
 }

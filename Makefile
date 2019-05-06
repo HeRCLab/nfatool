@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -I/usr/include/libxml2 -fopenmp -g -O3 -DDEBUG
+CFLAGS = -I/usr/include/libxml2 -fopenmp -g -DDEBUG
 LIBS = -lxml2 -lpcre
 MODULES = allocate_memory.o scc.o visualization.o allocate_stes.o parse_anml.o partition.o list.o do_next.o do_gates.o
 
