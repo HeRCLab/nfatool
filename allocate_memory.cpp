@@ -29,14 +29,14 @@ void allocate_memory(nfa *my_nfa) {
 	} 
 
 	// Gates_2D size = Hardware max_stes x max_fan 
-	my_nfa->gates_2D = (int **)malloc((sizeof(int *))*max_stes);
-	for (int i=0;i<max_stes;i++) {
-		my_nfa->gates_2D[i]=(int *)malloc(sizeof (int)*max_fanout);
-		for (int j=0;j<max_fanout;j++) my_nfa->gates_2D[i][j]=0;
-	}
+	// my_nfa->gates_2D = (int **)malloc((sizeof(int *))*max_stes);
+	// for (int i=0;i<max_stes;i++) {
+		// my_nfa->gates_2D[i]=(int *)malloc(sizeof (int)*max_fanout);
+		// for (int j=0;j<max_fanout;j++) my_nfa->gates_2D[i][j]=0;
+	// }
  
-	my_nfa->gates_1D = (int *)malloc((sizeof(int*))*(max_stes*max_fanout+max_fanout)); 
-	for(int i=0; i<(max_stes*max_fanout+max_fanout);i++) my_nfa->gates_1D[i] = 0; 
+	// my_nfa->gates_1D = (int *)malloc((sizeof(int*))*(max_stes*max_fanout+max_fanout)); 
+	// for(int i=0; i<(max_stes*max_fanout+max_fanout);i++) my_nfa->gates_1D[i] = 0;
 	//////////////////////////////////////////////////////////////
 	
 	// next state table:  how is this different from symbol table?

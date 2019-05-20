@@ -124,10 +124,11 @@ void print_help (char **argv) {
 	printf("%14s\tPrint this help and exit\n","-h");
 	printf("%14s\tUse partitioning to limit maximum SEs to <num>\n","-m <num>");
 	printf("%14s\tSet maximum fan-out to <num>\n","-f <num>");
-	printf("%14s\tPerform mapping with MINISAT solver\n","-c");
+	printf("%14s\tPerform mapping with MINICRYPTOSAT solver\n","-c");
 	printf("%14s\tPerform NFA graph analysis\n","-g");
 	printf("%14s\tGenerate NAPOLY configuration files\n","-n");
 	printf("%14s\tPrint state-to-SE and SE-to-state mapping\n","-p");
+	printf("%14s\tFind distinct subgraphs\n","-s");
 }
 
 int main(int argc, char **argv){
@@ -144,12 +145,13 @@ int main(int argc, char **argv){
     int file_spec=0;
 	int gen_config=0;
 	int do_print_mapping=0;
+	int subgraphs=0;
 	
 	// OPTIONS
     char filename[1024];
 	int max_fanout=0;
 
-    while ((c=getopt(argc,argv,"hi:m:f:cg"))!=-1)
+    while ((c=getopt(argc,argv,"hi:m:f:cgs"))!=-1)
       switch (c) {
 		case 'h':
 			print_help(argv);
@@ -174,12 +176,19 @@ int main(int argc, char **argv){
 		case 'g':
 			graph_analysis=1;
 			printf("performing graph analysis\n");
+			break;
 		case 'n':
 			gen_config=1;
 			printf("generating NAPOLY configuration file\n");
+			break;
 		case 'p':
 			do_print_mapping=1;
 			printf("printing mapping result\n");
+			break;
+		case 's':
+			subgraphs=1;
+			printf("finding distinct subgraphs\n");
+			break;
         case '?':
 			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c'))
 				fprintf (stderr, "Option -%c requires an argument.\n", optopt);
@@ -191,6 +200,7 @@ int main(int argc, char **argv){
 			}
         }
 
+	// make sure input file is specified
     if (!file_spec) {
       fprintf(stderr, "ERROR:  -i parameter is required (needed to specify input file\n");
 	  print_help(argv);
@@ -205,6 +215,17 @@ int main(int argc, char **argv){
 		return 0;
 	}
 	
+	// reverse the edge table
+	reverse_edge_table(my_nfa,0);
+	
+	// find distinct subgraphs
+	if (subgraphs) {
+		find_subgraphs(my_nfa);
+		// reverse subgraph tables
+		reverse_edge_table(my_nfa,1);
+	}
+	
+	// graph analysis (not working)
 	if (graph_analysis) {
 		perform_graph_analysis(my_nfa->root);
 	}
@@ -214,9 +235,6 @@ int main(int argc, char **argv){
 	}
 	
 	if (max_fanout && !use_sat_solver) {
-		// reverse the edge table; needed by the heuristic solver validate_interconnection()
-		reverse_edge_table(my_nfa);
-		
 		// perform mapping heuristic
 		perform_state_mapping(filename,my_nfa);
 	}
@@ -235,7 +253,7 @@ int main(int argc, char **argv){
 			fprintf(stderr,"ERROR:  cannot generate CNF files without a specified maximum fanout.\n");
 			return 0;
 		}
-		if (map_states_with_sat_solver(filename,my_nfa)==0) return 0;
+		if (map_states_with_sat_solver(filename,my_nfa,subgraphs)==0) return 0;
 	}
 
 	if (do_print_mapping) print_mapping(my_nfa);

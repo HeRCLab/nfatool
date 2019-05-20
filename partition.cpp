@@ -96,6 +96,81 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
     depth--;
 }
 
+void find_subgraphs (nfa *my_nfa) {
+	int i,j,k,subgraph=0,state;
+	
+	// allocate and initialize memory
+	my_nfa->visited = (char *)malloc(my_nfa->num_states*sizeof(char));
+	for (i=0;i<my_nfa->num_states;i++) my_nfa->visited[i]=0;
+	my_nfa->subgraph = (int *)malloc(my_nfa->num_states*sizeof(int));
+	
+	// find and mark subgraphs
+	for (i=0;i<my_nfa->num_states;i++) {
+		if (!my_nfa->visited[i]) {
+			traverse(my_nfa,i,subgraph);
+			subgraph++;
+		}
+	}
+	my_nfa->distinct_subgraphs = subgraph;
+	printf ("%d distinct subgraphs found\n",subgraph);
+	
+	// allocate array to record size of each subgraph
+	my_nfa->subgraph_size=(int *)malloc(subgraph*sizeof(int));
+	for (i=0;i<subgraph;i++) my_nfa->subgraph_size[i]=0;
+	
+	// count states in each subgraph
+	for (i=0;i<my_nfa->num_states;i++) {
+		my_nfa->subgraph_size[my_nfa->subgraph[i]]++;
+	}
+	
+	// allocate and build subgraphs
+	// dimension 1:  subgraph number
+	my_nfa->edge_tables=(int ***)malloc(subgraph * sizeof(int **));
+	my_nfa->orig_edge_tables=(int ***)malloc(subgraph * sizeof(int **));
+	// dimension 2:  states in each subgraph
+	for (i=0;i<subgraph;i++) {
+		my_nfa->edge_tables[i]=(int **)malloc(my_nfa->subgraph_size[i] * sizeof(int *));
+		my_nfa->orig_edge_tables[i]=(int **)malloc(my_nfa->subgraph_size[i] * sizeof(int *));
+		// dimension 3:  edges in each subgraph
+		for (j=0;j<my_nfa->subgraph_size[i];j++) {
+			my_nfa->edge_tables[i][j]=(int *)malloc(my_nfa->max_edges * sizeof(int *));
+			my_nfa->orig_edge_tables[i][j]=(int *)malloc(my_nfa->max_edges * sizeof(int *));
+		}
+		
+		// copy states
+		for (j=0;j<my_nfa->num_states;j++) {
+			if (my_nfa->subgraph[j] == i) {
+				state=0;
+				for (k=0;k<my_nfa->max_edges;k++) my_nfa->edge_tables[i][state][k] = my_nfa->edge_table[j][k];
+				state++;
+			}
+		}
+	}
+	
+	free(my_nfa->visited);
+}
+
+void traverse(nfa *my_nfa,int state,int subgraph) {
+	int i;
+	
+	my_nfa->visited[state]=1;
+	my_nfa->subgraph[state]=subgraph;
+	
+	for (i=0;i<my_nfa->max_edges;i++) {
+		if (my_nfa->edge_table[state][i]==-1) break;
+		if (!my_nfa->visited[my_nfa->edge_table[state][i]]) {
+			traverse(my_nfa,my_nfa->edge_table[state][i],subgraph);
+		}
+	}
+	
+	for (i=0;i<my_nfa->max_fan_in;i++) {
+		if (my_nfa->reverse_table[state][i]==-1) break;
+		if (!my_nfa->visited[my_nfa->reverse_table[state][i]]) {
+			traverse(my_nfa,my_nfa->reverse_table[state][i],subgraph);
+		}
+	}
+}
+
 void partition (int max_partition_size) {
  FILE *myFile;
  FILE *myFile3; 
@@ -125,7 +200,7 @@ void partition (int max_partition_size) {
 		if (root_node[i]) virtual_root_edges.push_back(i); // create outgoing edges from virtual root
 	}
 
-	// find "natural partitions
+	// find "natural partitions"
 	vector <int> natural_partitions[MAX_COLORS];
 	vector <int> ordered_partitions[MAX_COLORS]; 
 
@@ -150,7 +225,7 @@ void partition (int max_partition_size) {
         }
 //*********************/ 
 
-// Find the actual Natural Partitions checking if each NFA has start and leaf  For Snort, ER, Hamming 
+// Find the actual Natural Partitions checking if each NFA has start and leaf For Snort, ER, Hamming 
 	int n=0, np=0, temp; 
 	vector <int> natural_partitions_real[MAX_COLORS];
 

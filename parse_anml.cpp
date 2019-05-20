@@ -41,46 +41,83 @@ int read_anml_file (char *filename,
   return 1;
 }
 
-int reverse_edge_table (nfa *my_nfa) {
-  int change,i,j,k,
-    fanin = 0;
-  int num_states = my_nfa->num_states;
-  int max_edges = my_nfa->max_edges;
-  int **edge_table = my_nfa->edge_table;
-  int **reverse_table = my_nfa->reverse_table;
+void reverse_edges_core (int num_states,
+						 int max_edges,
+						 int **edge_table,
+						 int **reverse_table,
+						 int *rev_edge_count) {
+							 
+	int change,i,j,k,fanin = 0;
+	
+	
+	for (i=0;i<num_states;i++) rev_edge_count[i]=0;
+		my_nfa->max_fan_in = 0;
 
-  int rev_edge_count[num_states];
-  for (i=0;i<num_states;i++) rev_edge_count[i]=0;
+		for (int i = 0; i < num_states; i++) {
+		fanin=0;
+		  for(int j = 0; j < max_edges; j++){
+			if(edge_table[i][j] == -1){
+			  break;
+			}else {
+			  rev_edge_count[edge_table[i][j]]++;
+			  if (rev_edge_count[edge_table[i][j]] > my_nfa->max_fan_in) my_nfa->max_fan_in = rev_edge_count[edge_table[i][j]];
+			}
+		}
+		}
 
-  for (int i = 0; i < num_states; i++) {
-    fanin=0;
-      for(int j = 0; j < max_edges; j++){
-        if(edge_table[i][j] == -1){
-          break;
-        }else {
-          rev_edge_count[edge_table[i][j]]++;
-          if (rev_edge_count[edge_table[i][j]] > my_nfa->max_fan_in) my_nfa->max_fan_in = rev_edge_count[edge_table[i][j]];
-        }
-    }
-  }
+		reverse_table = my_nfa->reverse_table = (int **)malloc((sizeof(int*))*num_states);
+		for (int i=0;i<num_states;i++){
+		  reverse_table[i]=(int *)malloc(sizeof (int)*my_nfa->max_fan_in);
+		  for (int j=0;j<my_nfa->max_fan_in;j++) reverse_table[i][j]=-1;
+		}
 
-	reverse_table = my_nfa->reverse_table = (int **)malloc((sizeof(int*))*num_states);
-    for (int i=0;i<num_states;i++){
-      reverse_table[i]=(int *)malloc(sizeof (int)*my_nfa->max_fan_in);
-      for (int j=0;j<my_nfa->max_fan_in;j++) reverse_table[i][j]=-1;
-    }
+		for (i=0;i<num_states;i++) rev_edge_count[i]=0;
 
-  for (i=0;i<num_states;i++) rev_edge_count[i]=0;
+		for(int i = 0; i < num_states; i++){
+		  for(int j = 0; j < max_edges; j++){
+			if(edge_table[i][j] == -1){
+			  break;
+			}else {
+			  reverse_table[edge_table[i][j]][rev_edge_count[edge_table[i][j]]++] = i;
+			}
+		  }
+		}
+}
+
+int reverse_edge_table (nfa *my_nfa,int subgraph) {
+	int i;
+	int num_states;
+	int max_edges = my_nfa->max_edges;
+	int **edge_table;
+	int **reverse_table;
+	int *rev_edge_count;
   
-    for(int i = 0; i < num_states; i++){
-      for(int j = 0; j < max_edges; j++){
-        if(edge_table[i][j] == -1){
-          break;
-        }else {
-          reverse_table[edge_table[i][j]][rev_edge_count[edge_table[i][j]]++] = i;
-        }
-      }
-    }
+	if (!subgraph) {
+		num_states = my_nfa->num_states;
+		edge_table = my_nfa->edge_table;
+		reverse_table = my_nfa->reverse_table;
+		rev_edge_count=(int *)malloc(num_states*sizeof(int));
+  
+		reverse_edges_core(num_states,max_edges,edge_table,reverse_table,rev_edge_count);
+		free(rev_edge_count);
+	} else {
+		my_nfa->reverse_tables = (int ***)malloc(my_nfa->distinct_subgraphs*sizeof(int **));
+		
+		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
+			num_states = my_nfa->subgraph_size[i];
+			
+			edge_table = my_nfa->edge_tables[i];
+			my_nfa->reverse_tables[i] = (int **)malloc(my_nfa->subgraph_size[i]*sizeof(int *));
+			for (j=0;j<max_edges = my_nfa->subgraph_size[i];j++)
+				my_nfa->reverse_tables[i][j] = (int *)malloc(my_nfa->max_edges*sizeof(int));
+			reverse_table = my_nfa->reverse_tables[i];
+			
+			rev_edge_count=(int *)malloc(num_states*sizeof(int));
+			
+			reverse_edges_core(num_states,max_edges,edge_table,reverse_table,rev_edge_count);
+			free(rev_edge_count);
+		}
+	}
 }
 
 int extract_number (const char *str) {
@@ -168,7 +205,7 @@ int count_states (nfa *my_nfa) {
 
 int fill_in_table (nfa *my_nfa) {
 	xmlNode *bnode;
-	xmlNode *anode;
+	xmlNode *anode = my_nfa->root;
 	xmlAttr *attr;
 	pcre *re;
 	int state_id,
@@ -232,7 +269,7 @@ int fill_in_table (nfa *my_nfa) {
 				}
 			}
 			
-			my_nfa->edge_table[current_state][edge_num++]=-1; // maybe don't need to do this...
+			if (edge_num < max_edges) my_nfa->edge_table[current_state][edge_num]=-1;
 			current_state++;
 		}
 	}

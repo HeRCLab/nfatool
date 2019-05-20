@@ -66,7 +66,12 @@ typedef struct {
 	vector<int>				*sccs;
 	map <int,vector<int> >	component_list;
 	int						*components;
-	
+	int						distinct_subgraphs;
+	int						***edge_tables;
+	int						***orig_edge_tables;
+	int						***reverse_tables;
+	int						*subgraph;
+	int						*subgraph_size;
 } nfa;
 
 #include "partition.h"
