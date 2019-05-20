@@ -53,7 +53,7 @@ int map_states_with_sat_solver_core(int num_states,
 		sprintf(cnf_filename,"%s_%d.cnf",filename,subgraph_num);
 	
 	// convert the graph and placement constraints into SAT
-	int perform_cnf_translation (num_states,max_edges,edge_table,max_fanout,cnf_filename) {
+	perform_cnf_translation (num_states,max_edges,edge_table,max_fanout,cnf_filename);
 	
 	// issue command to initiate SAT solver
 	sprintf(sat_output_filename,"%s.out",cnf_filename);
