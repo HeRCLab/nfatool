@@ -37,12 +37,14 @@ int map_states_with_sat_solver_core(int num_states,
 										
 	char cnf_filename[1024],str[2048];
 	int i,violations,ret;
+	pid_t pid;
 	char *line,*tok;
 	int nchars,literal,state,se;
 	vector<int> sat_solution;
 	char cmd[2048];
 	char sat_output_filename[1024];
 	FILE *myFile;
+	struct timeval t1,t2;
 	
 	// auto-generate CNF filename
 	if (subgraph_num==-1)
@@ -55,16 +57,45 @@ int map_states_with_sat_solver_core(int num_states,
 	
 	// issue command to initiate SAT solver
 	sprintf(sat_output_filename,"%s.out",cnf_filename);
-	sprintf(cmd,"cat %s | %s > %s",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
+	sprintf(cmd,"-c 'cat %s | %s > %s'",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
 	ret=system(cmd);
 	if (ret==-1) {
 		fprintf (stderr,"ERROR:  could not invoke the SAT solver using command \"%s\"\n",SAT_SOLVER_COMMAND);
 		return 0;
 	}
-
 	
-	wait();
+	// spawn SAT solver
+	pid=fork();
+	if (!pid) {
+		ret=execl("/bin/bash",cmd);
+		if (ret==-1) {
+			perror("Could not spawn SAT solver");
+			exit(0);
+		}
+	}
 	
+	// wait for it with timeout
+	gettimeofday(&t2,0);
+	do {
+		// send a signal zero to the child process
+		ret=kill(pid,0);
+		// if the kill fails, then the child process must have exited
+		if (ret==-1) break;
+		// otherwise, sleep for 100 us
+		usleep(100);
+		t1=t2;
+		gettimeofday(&t2,0);
+	} while (t2.tv_sec - t1.tv_sec < timeout);
+	
+	// check final status
+	ret=kill(pid,0);
+	if (ret!=-1) {
+		fprintf(stderr,"ERROR:  SAT solver timeout for subgraph %d\n",subgraph_num);
+		kill(pid,9);
+		return 0;
+	}
+	
+	// open the output file of the SAT solver
 	myFile=fopen(sat_output_filename,"r+");
 	if (!myFile) {
 		sprintf (str,"ERROR:  cannot open SAT solver output file \"%s\" for reading.\n",sat_output_filename);
@@ -72,6 +103,7 @@ int map_states_with_sat_solver_core(int num_states,
 		return 0;
 	}
 
+	// read the results
 	while (getline(&line,(size_t *)&nchars,myFile) > 3) {
 		if (line[0]=='s' && strncmp(line+2,"SATISFIABLE",11)) {
 			fprintf (stderr,"ERROR:  SAT solver failed to find valid mapping.\n");
@@ -113,6 +145,13 @@ int map_states_with_sat_solver_core(int num_states,
 	return 1;
 }
 
+/**
+ * \brief	Wrapper for SAT solver mapper
+ * \param[in]	filename	ANML filename
+ * \param[in]	my_nfa		NFA data structure
+ * \param[in]	subgraph	flag that specifies if the users wishes to map the file ANML file or the individual distinct subgraphs
+ * \returns		1 on success, 0 on failure
+ */
 int map_states_with_sat_solver (char *filename,nfa *my_nfa,int subgraph) {
 	int i,ret;
 	
