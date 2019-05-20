@@ -74,6 +74,7 @@ typedef struct {
 	int						***edge_tables;
 	int						***orig_edge_tables;
 	int						***reverse_tables;
+	int						**movement_maps;
 	int						*subgraph;
 	int						*subgraph_size;
 } nfa;

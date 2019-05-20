@@ -155,9 +155,6 @@ int map_states_with_sat_solver_core(int num_states,
 int map_states_with_sat_solver (char *filename,nfa *my_nfa,int subgraph) {
 	int i,ret;
 	
-	// allocate momory for movement_map for each subgraph
-	if (subgraph_num!=-1) my_nfa->movement_maps = (int **)malloc(my_nfa->distinct_subgraphs * sizeof(int *));
-	
 	if (!subgraph) {
 		return map_states_with_sat_solver_core(my_nfa->num_states,
 											   my_nfa->max_edges,
@@ -167,6 +164,8 @@ int map_states_with_sat_solver (char *filename,nfa *my_nfa,int subgraph) {
 											   my_nfa->movement_map,
 											   filename,-1);
 	} else {
+		// allocate momory for movement_map for each subgraph
+		my_nfa->movement_maps = (int **)malloc(my_nfa->distinct_subgraphs * sizeof(int *));
 		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
 			ret=map_states_with_sat_solver_core(my_nfa->subgraph_size[i],
 												my_nfa->max_edges,
@@ -558,7 +557,7 @@ int score(nfa *my_nfa,int a, int b) {
 }
 
 // new code
-int reverse_movement_map (nfa *my_nfa,int n) {
+int reverse_movement_map (int *movement_map,int n) {
 	int i;
 	
 	int *movement_map = my_nfa->movement_map;
@@ -592,8 +591,8 @@ void check_graphs (int num_states,
 				a=orig_edge_table[movement_map[i]][j];
 				b=movement_map[edge_table[i][j]];
 			} else {
-				a=orig_edge_table[reverse_movement_map(my_nfa,i)][j];
-				b=reverse_movement_map(my_nfa,edge_table[i][j]);
+				a=orig_edge_table[reverse_movement_map(movement_map,i)][j];
+				b=reverse_movement_map(movement_map,edge_table[i][j]);
 			}
 			if (a != b) {
 				fprintf (stderr,"error: new edge %d->%d should map to original edge %d->%d\n",i,edge_table[i][j],movement_map[i],orig_edge_table[movement_map[i]][j]);
@@ -607,8 +606,8 @@ void check_graphs (int num_states,
 		for (j=0;j<max_edges;j++) {
 			if (orig_edge_table[i][j]==-1) break;
 			if (!rev) {
-				a=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
-				b=edge_table[reverse_movement_map(my_nfa,i)][j];
+				a=reverse_movement_map(movement_map,orig_edge_table[i][j]);
+				b=edge_table[reverse_movement_map(movement_map,i)][j];
 			} else {
 				a=movement_map[orig_edge_table[i][j]];
 				b=edge_table[movement_map[i]][j];
