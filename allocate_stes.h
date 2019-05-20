@@ -23,11 +23,16 @@ int state_to_se_literal (int state,int se,int num_states);
 void literal_to_mapping (int literal,int *state, int *se,int num_states);
 
 // generate CNF logic file to describe mapping problem
-int perform_cnf_translation (int **clauses,nfa *my_nfa,char *filename);
+int perform_cnf_translation (int num_states,int max_edges,int **edge_table,int max_fanout,char *filename);
 
 // checks for mapping violations and does one pass of corrections if needed
 // returns number of violations after first pass
-int validate_interconnection(nfa *my_nfa);
+int validate_interconnection(int **edge_table,
+							 int num_states,
+							 int max_edges,
+							 int *movement_map,
+							 int **orig_edge_table,
+							 int max_fanout);
 
 // move a state in the array
 void move_ste (nfa *my_nfa,int from, int to);

@@ -6,6 +6,10 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <signal.h>
 #include <libxml/xmlmemory.h>
 #include <pcre.h>
 #include <errno.h>
