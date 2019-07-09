@@ -240,7 +240,7 @@ int map_states_with_sat_solver (char *filename,
 											   filename,
 											   -1,
 											   timeout);
-	} else {		
+	} else {
 		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
 			ret=map_states_with_sat_solver_core(my_nfa->subgraph_size[i],
 												my_nfa->max_edges,
@@ -645,13 +645,11 @@ int score(int max_edges,int **edge_table,int **reverse_table,int a, int b) {
   return sum;
 }
 
-// new code
 int reverse_movement_map (int num_states,int *movement_map,int n) {
 	int i;
 	
 	for (i=0;i<num_states;i++)
 		if (movement_map[i]==n) return i;
-	
 	return -1;
 }
 
