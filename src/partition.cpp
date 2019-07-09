@@ -98,6 +98,9 @@ void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,ve
 
 void find_subgraphs (nfa *my_nfa) {
 	int i,j,k,subgraph=0,state;
+	int *state_offsets;
+	
+	state_offsets = (int *)malloc(sizeof(int)*my_nfa->num_states);
 	
 	// allocate and initialize memory
 	my_nfa->visited = (char *)malloc(my_nfa->num_states*sizeof(char));
@@ -112,7 +115,7 @@ void find_subgraphs (nfa *my_nfa) {
 		}
 	}
 	my_nfa->distinct_subgraphs = subgraph;
-	printf ("%d distinct subgraphs found\n",subgraph);
+	printf ("INFO: %d distinct subgraphs found\n",subgraph);
 	
 	// allocate array to record size of each subgraph
 	my_nfa->subgraph_size=(int *)malloc(subgraph*sizeof(int));
@@ -127,22 +130,49 @@ void find_subgraphs (nfa *my_nfa) {
 	// dimension 1:  subgraph number
 	my_nfa->edge_tables=(int ***)malloc(subgraph * sizeof(int **));
 	my_nfa->orig_edge_tables=(int ***)malloc(subgraph * sizeof(int **));
-	// dimension 2:  states in each subgraph
+	my_nfa->movement_maps=(int **)malloc(subgraph * sizeof(int *));
+	
+	// for each subgraph
 	for (i=0;i<subgraph;i++) {
+		// allocate the states
 		my_nfa->edge_tables[i]=(int **)malloc(my_nfa->subgraph_size[i] * sizeof(int *));
 		my_nfa->orig_edge_tables[i]=(int **)malloc(my_nfa->subgraph_size[i] * sizeof(int *));
-		// dimension 3:  edges in each subgraph
+		my_nfa->movement_maps[i]=(int *)malloc(my_nfa->subgraph_size[i] * sizeof(int));
+		
+		// allocate the edges
 		for (j=0;j<my_nfa->subgraph_size[i];j++) {
-			my_nfa->edge_tables[i][j]=(int *)malloc(my_nfa->max_edges * sizeof(int *));
-			my_nfa->orig_edge_tables[i][j]=(int *)malloc(my_nfa->max_edges * sizeof(int *));
+			my_nfa->edge_tables[i][j]=(int *)malloc(my_nfa->max_edges * sizeof(int));
+			my_nfa->orig_edge_tables[i][j]=(int *)malloc(my_nfa->max_edges * sizeof(int));
 		}
 		
-		// copy states
+		// compute state offsets for re-labling states for subgraph decomposition
+		// state_offsets[n] == the number of states having index < n that do not belong to the
+		// same subgraph as the state having original number n.  this way, state n can now be
+		// relabled as n - state_offsets[n] when placed in its own subgraph
+		int not_in_subgraph=0;
+		for (j=0;j<my_nfa->num_states;j++) {
+			if (my_nfa->subgraph[j] != i) {
+				not_in_subgraph++;
+			} else {
+				// record offset
+				state_offsets[j]=not_in_subgraph;
+			}
+		}
+		
+		// copy edges
+		int n=0;
 		for (j=0;j<my_nfa->num_states;j++) {
 			if (my_nfa->subgraph[j] == i) {
-				state=0;
-				for (k=0;k<my_nfa->max_edges;k++) my_nfa->edge_tables[i][state][k] = my_nfa->edge_table[j][k];
-				state++;
+				for (k=0;k<my_nfa->max_edges;k++) {
+					if (my_nfa->edge_table[j][k] != -1) {
+						my_nfa->edge_tables[i][n][k] = my_nfa->edge_table[j][k] - state_offsets[my_nfa->edge_table[j][k]];
+						my_nfa->orig_edge_tables[i][n][k] = my_nfa->edge_table[j][k] - state_offsets[my_nfa->edge_table[j][k]];
+					} else {
+						my_nfa->edge_tables[i][n][k] = -1;
+						my_nfa->orig_edge_tables[i][n][k] = -1;
+					}
+				}
+				n++;
 			}
 		}
 	}

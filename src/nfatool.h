@@ -16,6 +16,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <map>
 #include <iostream>
 #include <cassert>
@@ -26,12 +27,15 @@
 
 using namespace std;
 
+#define	SAT_TIMEOUT		30
+
 #define OVECCOUNT       30
 #define STATEMAP_SIZE   150000
 #define MAX_COLORS      10000
 #define MAX_PART_SIZE   1024
 
-#define	SAT_SOLVER_COMMAND	"/usr/bin/docker run --rm -i msoos/cryptominisat"
+//#define	SAT_SOLVER_COMMAND	"/usr/bin/docker run --rm -i msoos/cryptominisat"
+#define	SAT_SOLVER_COMMAND	"/usr/local/bin/cryptominisat5"
 #define ANML_NAME(ste_num)  node_table[ste_num]->properties->children->content
 
 // NFA graph
@@ -50,6 +54,7 @@ typedef struct {
 	int						max_fan_in;
 	int						max_edges;
 	int						*movement_map;
+	int						**movement_maps;
 	xmlNode					*root;
 	xmlDoc					*document;
 	int						edge_num;

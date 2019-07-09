@@ -1,5 +1,11 @@
 #include "nfatool.h"
 
+#ifdef DEBUG
+	const char *mode = "DEBUG";
+#else
+	const char *mode = "RELEASE";
+#endif
+
 /*
  * global variabless
  */
@@ -116,15 +122,15 @@ void print_help (char **argv) {
 	printf(" |_| |_|_| \\__,_|\\__\\___/ \\___/|_|\n\n");
                                               
 	printf("nfatool:  map NFAs onto an FPGA-based automata overlay\n");
-	printf("Designed for NAPOLOY (Nondeterministic Automata Processor OverLay)\n");
-	printf("Build:  %s %s (debug)\n\n",__DATE__,__TIME__);
+	printf("Designed for NAPOLY (Nondeterministic Automata Processor OverLay)\n");
+	printf("Build:  %s %s (%s)\n\n",__DATE__,__TIME__,mode);
 
 	printf("Usage:  %s -i <ANML input file> [options]\n\n",argv[0]);
 	printf("Options:\n");
 	printf("%14s\tPrint this help and exit\n","-h");
 	printf("%14s\tUse partitioning to limit maximum SEs to <num>\n","-m <num>");
 	printf("%14s\tSet maximum fan-out to <num>\n","-f <num>");
-	printf("%14s\tPerform mapping with MINICRYPTOSAT solver\n","-c");
+	printf("%14s\tPerform mapping with MINICRYPTOSAT solver\n","-c <timeout in seconds>");
 	printf("%14s\tPerform NFA graph analysis\n","-g");
 	printf("%14s\tGenerate NAPOLY configuration files\n","-n");
 	printf("%14s\tPrint state-to-SE and SE-to-state mapping\n","-p");
@@ -150,8 +156,9 @@ int main(int argc, char **argv){
 	// OPTIONS
     char filename[1024];
 	int max_fanout=0;
+	int timeout;
 
-    while ((c=getopt(argc,argv,"hi:m:f:cgs"))!=-1)
+    while ((c=getopt(argc,argv,"hi:m:f:c:gs"))!=-1)
       switch (c) {
 		case 'h':
 			print_help(argv);
@@ -159,50 +166,52 @@ int main(int argc, char **argv){
 			break;
 		case 'i':
 			strcpy(filename,optarg);
-			printf ("Setting input file to \"%s\"\n",filename);
+			printf ("INFO: Setting input file to \"%s\"\n",filename);
 			file_spec=1;
 			break;
         case 'm':
 			max_stes=atoi(optarg);
-			printf ("setting max STEs per file to %d\n",max_stes);
+			printf ("INFO: Setting max STEs per file to %d\n",max_stes);
+			break;
+		case 'c':
+			timeout=atoi(optarg);
+			printf("INFO: Using SAT solver with timeout of %d s\n",timeout);
+			use_sat_solver=1;
 			break;
         case 'f':
 			max_fanout=atoi(optarg);
-			printf("setting max fanout to %d\n",max_fanout);
-			break;
-		case 'c':
-			use_sat_solver=1;
+			printf("INFO: Setting max fanout to %d\n",max_fanout);
 			break;
 		case 'g':
 			graph_analysis=1;
-			printf("performing graph analysis\n");
+			printf("INFO: Performing graph analysis\n");
 			break;
 		case 'n':
 			gen_config=1;
-			printf("generating NAPOLY configuration file\n");
+			printf("INFO: Generating NAPOLY configuration file\n");
 			break;
 		case 'p':
 			do_print_mapping=1;
-			printf("printing mapping result\n");
+			printf("INFO: Printing mapping result\n");
 			break;
 		case 's':
 			subgraphs=1;
-			printf("finding distinct subgraphs\n");
+			printf("INFO: Finding distinct subgraphs\n");
 			break;
         case '?':
 			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c'))
-				fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+				fprintf (stderr, "ERROR: Option -%c requires an argument.\n", optopt);
             else if (isprint (optopt))
-                fprintf (stderr,"Unknown option `-%c'.\n", optopt);
+                fprintf (stderr,"ERROR: Unknown option `-%c'.\n", optopt);
             else {
-                fprintf (stderr,"Unknown option character `\\x%x'.\n",optopt);
-				return 1;
+                fprintf (stderr,"ERROR: Unknown option character `\\x%x'.\n",optopt);
 			}
+			return 0;
         }
 
 	// make sure input file is specified
     if (!file_spec) {
-      fprintf(stderr, "ERROR:  -i parameter is required (needed to specify input file\n");
+      fprintf(stderr, "ERROR: -i parameter is required (needed to specify input file\n");
 	  print_help(argv);
       return 0;
     }
@@ -211,7 +220,7 @@ int main(int argc, char **argv){
 	
 	// TODO:  add all necessary arguments to fill in NFA data structure
 	if (!read_anml_file (filename,my_nfa)) {
-		fprintf(stderr,"Error parsing input file.\n");
+		fprintf(stderr,"ERROR: Error parsing input file.\n");
 		return 0;
 	}
 	
@@ -253,7 +262,10 @@ int main(int argc, char **argv){
 			fprintf(stderr,"ERROR:  cannot generate CNF files without a specified maximum fanout.\n");
 			return 0;
 		}
-		if (map_states_with_sat_solver(filename,my_nfa,subgraphs)==0) return 0;
+		if (map_states_with_sat_solver(filename,
+									   my_nfa,
+									   subgraphs,
+									   timeout)==0) return 0;
 	}
 
 	if (do_print_mapping) print_mapping(my_nfa);

@@ -17,6 +17,7 @@ char *anml_name (nfa *my_nfa,int se) {
  * \param[in]	num_states		number of SEs
  * \param[in]	max_edges		maximum number of edges stored in the sparse graph representation
  * \param[in]	edge_table		sparse graph representation
+ * \param[in]	reverse_table	reverse edge table (incoming edges instead of outgoing edges
  * \param[out]	orig_edge_table	a backup copy of the original edge table
  * \param[in]	max_fanout		the placement constraint
  * \param[out]	movement_map	a map that relates an physcial SE to a logical one
@@ -27,7 +28,9 @@ char *anml_name (nfa *my_nfa,int se) {
  **/
 int map_states_with_sat_solver_core(int num_states,
 									int max_edges,
+									int max_fan_in,
 									int **edge_table,
+									int **reverse_table,
 									int **orig_edge_table,
 									int max_fanout,
 									int *movement_map,
@@ -57,56 +60,96 @@ int map_states_with_sat_solver_core(int num_states,
 	
 	// issue command to initiate SAT solver
 	sprintf(sat_output_filename,"%s.out",cnf_filename);
-	sprintf(cmd,"-c 'cat %s | %s > %s'",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
+	sprintf(cmd,"-c \"cat %s | %s > %s\"",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
+	/*
 	ret=system(cmd);
 	if (ret==-1) {
 		fprintf (stderr,"ERROR:  could not invoke the SAT solver using command \"%s\"\n",SAT_SOLVER_COMMAND);
 		return 0;
 	}
-	
+	*/
 	// spawn SAT solver
+	/*
+	sprintf(cmd,"-c \"cat %s | %s > %s\"",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
 	pid=fork();
 	if (!pid) {
-		ret=execl("/bin/bash",cmd);
+		ret=execl("/bin/bash","bash",cmd,(char *)NULL);
 		if (ret==-1) {
 			perror("Could not spawn SAT solver");
 			exit(0);
 		}
 	}
+	*/
+	
+	pid=fork();
+	
+	// CHILD BEGIN
+	if (!pid) {
+		struct timeval t1,t2;
+		
+		gettimeofday(&t1,0);
+		
+		FILE *my_cmd = popen("/bin/bash","w");
+		if (!my_cmd) {
+			perror("ERROR: could not open shell");
+			exit(0);
+		}
+		fprintf(my_cmd,"cat %s | %s > %s",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
+		pclose(my_cmd);
+		
+		gettimeofday(&t2,0);
+		
+		printf ("INFO: SAT solver time elapsed = %d s (%d states)\n",
+					(int)((long)(long)t2.tv_sec -
+					      (long)(long)t1.tv_sec),
+						  num_states);
+		
+		exit(2);
+	}
+	// CHILD END
 	
 	// wait for it with timeout
-	gettimeofday(&t2,0);
+	int secs=0,status;
 	do {
-		// send a signal zero to the child process
-		ret=kill(pid,0);
-		// if the kill fails, then the child process must have exited
-		if (ret==-1) break;
-		// otherwise, sleep for 100 us
-		usleep(100);
-		t1=t2;
-		gettimeofday(&t2,0);
-	} while (t2.tv_sec - t1.tv_sec < timeout);
+		ret=waitpid(pid,&status,WNOHANG);
+		if (ret == -1) {
+			perror("ERROR: waitpid() returned error");
+			exit(0);
+		} else if (ret != 0) {
+			if (WIFEXITED(status)) break;
+		}
+		
+		// otherwise, sleep for one second
+		sleep(1);
+		secs++;
+	} while (secs < timeout);
 	
-	// check final status
-	ret=kill(pid,0);
-	if (ret!=-1) {
-		fprintf(stderr,"ERROR:  SAT solver timeout for subgraph %d\n",subgraph_num);
-		kill(pid,9);
+	// check final status	
+	if ((ret==0) || !WIFEXITED(status)) {
+		if (subgraph_num==-1)
+			fprintf(stderr,"ERROR: SAT solver timeout\n");
+		else
+			fprintf(stderr,"ERROR: SAT solver timeout for subgraph %d\n",subgraph_num);
+		sprintf(cmd,"killall %s",SAT_SOLVER_COMMAND);
+		ret=system(cmd);
+		if (ret==-1) fprintf (stderr,"ERROR: system() failed\n");
 		return 0;
 	}
 	
 	// open the output file of the SAT solver
 	myFile=fopen(sat_output_filename,"r+");
 	if (!myFile) {
-		sprintf (str,"ERROR:  cannot open SAT solver output file \"%s\" for reading.\n",sat_output_filename);
+		sprintf (str,"ERROR: Cannot open SAT solver output file \"%s\" for reading",sat_output_filename);
 		perror(str);
 		return 0;
 	}
 
 	// read the results
+	line=0;
+	nchars=0;
 	while (getline(&line,(size_t *)&nchars,myFile) > 3) {
 		if (line[0]=='s' && strncmp(line+2,"SATISFIABLE",11)) {
-			fprintf (stderr,"ERROR:  SAT solver failed to find valid mapping.\n");
+			fprintf (stderr,"ERROR: SAT solver failed to find valid mapping.\n");
 			return 0;
 		}
 		
@@ -118,28 +161,54 @@ int map_states_with_sat_solver_core(int num_states,
 				tok=strtok(0," ");
 			}
 		}
+		free(line);
+		line=0;
+		nchars=0;
 	}
+	free(line);
+	fclose(myFile);
 	
-	printf ("INFO:  Mapping solution found with SAT solver.\n");
+	if (subgraph_num==-1)
+		printf ("INFO: Mapping solution found with SAT solver.\n");
+	else
+		printf ("INFO: Mapping solution for subgraph %d found with SAT solver.\n",subgraph_num);
 	
 	for (i=0;i<sat_solution.size();i++) {
 		literal = sat_solution[i];
-		literal_to_mapping(literal,&state,&se,my_nfa->num_states);
+		literal_to_mapping(literal,&state,&se,num_states);
 		movement_map[se]=state;
 	}
 			
 	// apply the new mapping to the NFA
-	apply_movement_map(edge_table,orig_edge_table,num_states,max_edges,movement_map);
+	apply_movement_map (edge_table,
+						orig_edge_table,
+						num_states,
+						max_edges,
+						movement_map);
 	
 	// validate that the new mapping is consistant with the original NFA graph
 	check_graphs (num_states,max_edges,edge_table,movement_map,orig_edge_table,0);
 	
 	// validate that no fanout violations exist
-	validate_interconnection(edge_table,num_states,max_edges,movement_map,orig_edge_table,max_fanout);
+	violations=validate_interconnection(edge_table,reverse_table,num_states,max_edges,max_fan_in,movement_map,orig_edge_table,max_fanout);
 								 
 	if (violations) {
 		fprintf(stderr,"ERROR:  SAT solver produced mapping solutions with fanout violations!\n");
 		return 0;
+	}
+	
+	// delete the old intermediate files
+	ret = unlink(cnf_filename);
+	if (ret) {
+		sprintf(str,"ERROR: cannot delete CNF file \"%s\"",cnf_filename);
+		perror(str);
+		exit(0);
+	}
+	ret = unlink(sat_output_filename);
+	if (ret) {
+		sprintf(str,"ERROR: cannot delete SAT solver output file \"%s\"",sat_output_filename);
+		perror(str);
+		exit(0);
 	}
 	
 	return 1;
@@ -150,31 +219,40 @@ int map_states_with_sat_solver_core(int num_states,
  * \param[in]	filename	ANML filename
  * \param[in]	my_nfa		NFA data structure
  * \param[in]	subgraph	flag that specifies if the users wishes to map the file ANML file or the individual distinct subgraphs
+ * \param[in]	timeout		timeout for SAT solver solutions
  * \returns		1 on success, 0 on failure
  */
-int map_states_with_sat_solver (char *filename,nfa *my_nfa,int subgraph) {
+int map_states_with_sat_solver (char *filename,
+								nfa *my_nfa,
+								int subgraph,
+								int timeout) {
 	int i,ret;
-	
-	// allocate momory for movement_map for each subgraph
-	if (subgraph_num!=-1) my_nfa->movement_maps = (int **)malloc(my_nfa->distinct_subgraphs * sizeof(int *));
 	
 	if (!subgraph) {
 		return map_states_with_sat_solver_core(my_nfa->num_states,
 											   my_nfa->max_edges,
+											   my_nfa->max_fan_in,
 											   my_nfa->edge_table,
+											   my_nfa->reverse_table,
 											   my_nfa->orig_edge_table,
 											   my_nfa->max_fanout,
 											   my_nfa->movement_map,
-											   filename,-1);
-	} else {
+											   filename,
+											   -1,
+											   timeout);
+	} else {		
 		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
 			ret=map_states_with_sat_solver_core(my_nfa->subgraph_size[i],
 												my_nfa->max_edges,
+												my_nfa->max_fan_in,
 												my_nfa->edge_tables[i],
+											    my_nfa->reverse_tables[i],
 												my_nfa->orig_edge_tables[i],
 												my_nfa->max_fanout,
 												my_nfa->movement_maps[i],
-												filename,-1);
+												filename,
+												i,
+												timeout);
 			if (ret==0) return 0;
 		}
 	}
@@ -185,8 +263,7 @@ void apply_movement_map (int **edge_table,
 						 int **orig_edge_table,
 						 int num_states,
 						 int max_edges,
-						 int *movement_map) {
-							 
+						 int *movement_map) {				 
 	int i,j;
 	int new_state;
 	
@@ -200,14 +277,14 @@ void apply_movement_map (int **edge_table,
 	// re-write edge_table according to movement_map
 	// movement_map[i] will hold the original state now in SE i
 	for (i=0;i<num_states;i++) {
-		new_state = reverse_movement_map(my_nfa,i);
+		new_state = reverse_movement_map(num_states,movement_map,i);
 		if (new_state==-1) {
 			fprintf(stderr,"ERROR: reverse_movement_map() returned error code\n");
 			exit(0);
 		}
 		for (j=0;j<max_edges;j++) {
 			if (orig_edge_table[i][j]!=-1)
-				edge_table[new_state][j]=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
+				edge_table[new_state][j]=reverse_movement_map(num_states,movement_map,orig_edge_table[i][j]);
 			else
 				edge_table[new_state][j]=-1;
 		}
@@ -235,7 +312,7 @@ void print_mapping (nfa *my_nfa) {
 	
 	printf ("\n%10s%10s\n","state","SE");
 	for (i=0;i<my_nfa->num_states;i++) {
-		printf ("%10d%10d\n",i,reverse_movement_map(my_nfa,i));
+		printf ("%10d%10d\n",i,reverse_movement_map(my_nfa->num_states,my_nfa->movement_map,i));
 	}
 }
 
@@ -367,8 +444,10 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 	
 	
 	violations=validate_interconnection(my_nfa->edge_table,
+							 my_nfa->reverse_table,
 							 my_nfa->num_states,
 							 my_nfa->max_edges,
+							 my_nfa->max_fan_in,
 							 my_nfa->movement_map,
 							 my_nfa->orig_edge_table,
 							 my_nfa->max_fanout);
@@ -397,8 +476,10 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 		if (cycles_without_forward_progress > 20) mix_it_up(my_nfa,10000);
 		
 		violations=validate_interconnection(my_nfa->edge_table,
+							 my_nfa->reverse_table,
 							 my_nfa->num_states,
 							 my_nfa->max_edges,
+							 my_nfa->max_fan_in,
 							 my_nfa->movement_map,
 							 my_nfa->orig_edge_table,
 							 my_nfa->max_fanout);
@@ -415,20 +496,29 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 void mix_it_up (nfa *my_nfa,int n) {
   int i;
 
-  for (i=0;i<n;i++) move_ste(my_nfa,
-							 rand()%my_nfa->num_states,
-							 rand()%my_nfa->num_states);
+  for (i=0;i<n;i++) move_ste (my_nfa->num_states,
+							  my_nfa->max_edges,
+							  my_nfa->max_fan_in,
+							  my_nfa->edge_table,
+							  my_nfa->reverse_table,
+							  my_nfa->movement_map,
+							  rand()%my_nfa->num_states,
+							  rand()%my_nfa->num_states);
 }
 
-void move_ste (nfa *my_nfa,int from, int to) {
-	int temp[my_nfa->max_edges],i,j,k,rev,forward,temp3;
-	int rev_edge_count[my_nfa->num_states];
-	int num_states = my_nfa->num_states;
-	int max_edges = my_nfa->max_edges;
-	int **edge_table = my_nfa->edge_table;
-	int *movement_map = my_nfa->movement_map;
-	int **reverse_table = my_nfa->reverse_table;
-	int max_fan_in = my_nfa->max_fan_in;
+void move_ste (int num_states,
+			   int max_edges,
+			   int max_fan_in,
+			   int **edge_table,
+			   int **reverse_table,
+			   int *movement_map,
+			   int from,
+			   int to) {
+	
+	int temp[max_edges],i,j,k,rev,forward,temp3;
+	int *rev_edge_count;
+
+	rev_edge_count = (int *)malloc(sizeof(int)*num_states);
 
   if (from<to) {
   
@@ -515,14 +605,12 @@ void move_ste (nfa *my_nfa,int from, int to) {
 		assert(0);
 	}
   }
+  free (rev_edge_count);
 }
 
-int score(nfa *my_nfa,int a, int b) {
+int score(int max_edges,int **edge_table,int **reverse_table,int a, int b) {
 
   int temp,sum = 0, diff;
-  int **edge_table = my_nfa->edge_table;
-  int **reverse_table = my_nfa->reverse_table;
-  int max_edges = my_nfa->max_edges;
 
   if(a > b) {
 	temp=a;
@@ -558,12 +646,10 @@ int score(nfa *my_nfa,int a, int b) {
 }
 
 // new code
-int reverse_movement_map (nfa *my_nfa,int n) {
+int reverse_movement_map (int num_states,int *movement_map,int n) {
 	int i;
 	
-	int *movement_map = my_nfa->movement_map;
-	
-	for (i=0;i<my_nfa->num_states;i++)
+	for (i=0;i<num_states;i++)
 		if (movement_map[i]==n) return i;
 	
 	return -1;
@@ -592,8 +678,8 @@ void check_graphs (int num_states,
 				a=orig_edge_table[movement_map[i]][j];
 				b=movement_map[edge_table[i][j]];
 			} else {
-				a=orig_edge_table[reverse_movement_map(my_nfa,i)][j];
-				b=reverse_movement_map(my_nfa,edge_table[i][j]);
+				a=orig_edge_table[reverse_movement_map(num_states,movement_map,i)][j];
+				b=reverse_movement_map(num_states,movement_map,edge_table[i][j]);
 			}
 			if (a != b) {
 				fprintf (stderr,"error: new edge %d->%d should map to original edge %d->%d\n",i,edge_table[i][j],movement_map[i],orig_edge_table[movement_map[i]][j]);
@@ -607,14 +693,18 @@ void check_graphs (int num_states,
 		for (j=0;j<max_edges;j++) {
 			if (orig_edge_table[i][j]==-1) break;
 			if (!rev) {
-				a=reverse_movement_map(my_nfa,orig_edge_table[i][j]);
-				b=edge_table[reverse_movement_map(my_nfa,i)][j];
+				a=reverse_movement_map(num_states,movement_map,orig_edge_table[i][j]);
+				b=edge_table[reverse_movement_map(num_states,movement_map,i)][j];
 			} else {
 				a=movement_map[orig_edge_table[i][j]];
 				b=edge_table[movement_map[i]][j];
 			}
 			if (a != b) {
-				fprintf (stderr,"error: original edge %d->%d should map to new edge %d->%d\n",i,orig_edge_table[i][j],reverse_movement_map(my_nfa,i),edge_table[reverse_movement_map(my_nfa,i)][j]);
+				fprintf (stderr,"error: original edge %d->%d should map to new edge %d->%d\n",
+												i,
+												orig_edge_table[i][j],
+												reverse_movement_map(num_states,movement_map,i),
+												edge_table[reverse_movement_map(num_states,movement_map,i)][j]);
 				assert(0);
 			}
 		}
@@ -640,8 +730,10 @@ int dump_edges () {
 }
 
 int validate_interconnection(int **edge_table,
+							 int **reverse_table,
 							 int num_states,
 							 int max_edges,
+							 int max_fan_in,
 							 int *movement_map,
 							 int **orig_edge_table,
 							 int max_fanout) {
@@ -674,13 +766,13 @@ int validate_interconnection(int **edge_table,
           to = edge_table[i][j] - max_fanout/2 + k;
           if ((to >= 0) && (to < num_states -1)){
 	  
-            differential_score = score(my_nfa,from,to);
+            differential_score = score(max_edges,edge_table,reverse_table,from,to);
             // make the move
-            move_ste(my_nfa,from,to);
+			move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 			//check_graphs();
-            differential_score -= score(my_nfa,from,to);
+            differential_score -= score(max_edges,edge_table,reverse_table,from,to);
             // undo the move
-            move_ste(my_nfa,to,from);
+            move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 			//check_graphs();
             if (differential_score > max_differential_score) {
               max_differential_score=differential_score;
@@ -698,13 +790,13 @@ int validate_interconnection(int **edge_table,
           to = i - (max_fanout-1)/2 + k;
           if ((to >= 0) && (to < num_states -1)) {
 
-            differential_score = score(my_nfa,from,to);
+            differential_score = score(max_edges,edge_table,reverse_table,from,to);
             // make the move
-            move_ste(my_nfa,from,to);
+            move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 			//check_graphs();
-            differential_score -= score(my_nfa,from,to);
+            differential_score -= score(max_edges,edge_table,reverse_table,from,to);
             // undo the move
-            move_ste(my_nfa,to,from);
+            move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 			//check_graphs();
             if (differential_score > max_differential_score) {
               max_differential_score=differential_score;
@@ -726,7 +818,7 @@ int validate_interconnection(int **edge_table,
 							anml_name(my_nfa,orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
 							max_differential_score); */
 
-			move_ste(my_nfa,best_from,best_to);
+			move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 			
 			//printf("----------moving %d to %d\n",best_from,best_to);
 		//}
@@ -736,7 +828,8 @@ int validate_interconnection(int **edge_table,
 	}
   }
   
-  check_graphs(my_nfa,0);
+  check_graphs (num_states,max_edges,edge_table,movement_map,orig_edge_table,0);
+  
   return violations;
 }
 
