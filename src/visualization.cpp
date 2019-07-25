@@ -15,7 +15,7 @@ int perform_graph_analysis (xmlNode *root) {
 	/* 
 	 * Find the strongly connected components and optionally dump to file
 	 */ 
-	find_sccs();
+	//find_sccs();
   
     printf ("largest component is %d (size=%d)\n",largest_component,largest_component_size);
 	for (k=0;k<largest_component_size;k++) printf("%d (%s) ",component_list[largest_component][k],
@@ -31,11 +31,11 @@ int perform_graph_analysis (xmlNode *root) {
 
 	for (int i=0;i<component_list[largest_component].size();i++) {
 		for (int j=i;j<component_list[largest_component].size();j++) {
-			if (!find_loop_path(i,j,path,0)) {
-				component_ok=0;
-				fprintf(stderr,"error:  component %d has unreachable path %d (\"%s\") -> %d (\"%s\")\n",
-																largest_component,i,ANML_NAME(i),j,ANML_NAME(j));
-			}
+//			if (!find_loop_path(i,j,path,0)) {
+//				component_ok=0;
+//				fprintf(stderr,"error:  component %d has unreachable path %d (\"%s\") -> %d (\"%s\")\n",
+//																largest_component,i,ANML_NAME(i),j,ANML_NAME(j));
+//			}
 		}
 	}
 
@@ -49,7 +49,7 @@ int perform_graph_analysis (xmlNode *root) {
 		vector<int> max_loop_path;
 		int ste = 0;
 		for (int i=0;i<num_states;i++) visited[i]=0;
-		find_loop_path(max_loop_constituent,max_loop_constituent,max_loop_path,1);
+		//find_loop_path(max_loop_constituent,max_loop_constituent,max_loop_path,1);
 		dump_dot_file((char *)"max_loop",root,max_loop_path,0);
 	}
 
@@ -68,7 +68,7 @@ int perform_graph_analysis (xmlNode *root) {
 	/*
 	 * Partition the graph
 	 */
-	if (max_stes) partition(max_stes);
+	//if (max_stes) partition(max_stes);
   
 	return 1;
 }

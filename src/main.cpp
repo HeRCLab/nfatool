@@ -135,7 +135,7 @@ void print_help (char **argv) {
 	printf("%14s\tGenerate NAPOLY configuration files\n","-n");
 	printf("%14s\tPrint state-to-SE and SE-to-state mapping\n","-p");
 	printf("%14s\tFind distinct subgraphs\n","-s");
-}
+}   printf("%14s\tFor subgraphs that don't map, decompose into subgraphs with maximum logical fanout of <n> (requires -s and -c)","-d <n>");
 
 int main(int argc, char **argv){
     char c;
@@ -157,8 +157,9 @@ int main(int argc, char **argv){
     char filename[1024];
 	int max_fanout=0;
 	int timeout;
+	int decompose_fanout=-1;
 
-    while ((c=getopt(argc,argv,"hi:m:f:c:gs"))!=-1)
+    while ((c=getopt(argc,argv,"hi:m:f:c:gsd:"))!=-1)
       switch (c) {
 		case 'h':
 			print_help(argv);
@@ -182,6 +183,9 @@ int main(int argc, char **argv){
 			max_fanout=atoi(optarg);
 			printf("INFO: Setting max fanout to %d\n",max_fanout);
 			break;
+		case 'd':
+			decompose_fanout=atoi(optarg);
+			printf("INFO: Will decompose to logical fanout %d on mapping failure\n",decompose_fanout);
 		case 'g':
 			graph_analysis=1;
 			printf("INFO: Performing graph analysis\n");
@@ -199,7 +203,7 @@ int main(int argc, char **argv){
 			printf("INFO: Finding distinct subgraphs\n");
 			break;
         case '?':
-			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c'))
+			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c' || optopt == 'd'))
 				fprintf (stderr, "ERROR: Option -%c requires an argument.\n", optopt);
             else if (isprint (optopt))
                 fprintf (stderr,"ERROR: Unknown option `-%c'.\n", optopt);
@@ -265,7 +269,8 @@ int main(int argc, char **argv){
 		if (map_states_with_sat_solver(filename,
 									   my_nfa,
 									   subgraphs,
-									   timeout)==0) return 0;
+									   timeout,
+									   decompose_fanout)==0) return 0;
 	}
 
 	if (do_print_mapping) print_mapping(my_nfa);

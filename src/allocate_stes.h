@@ -6,7 +6,7 @@
  */
  
 // perform SAT-based state-mapping
-int map_states_with_sat_solver (char *filename,nfa *my_nfa,int subgraph,int timeout);
+int map_states_with_sat_solver (char *filename,nfa *my_nfa,int subgraph,int timeout,int decompose_fanout);
 
 // mapping heuristic described in Karakchi et. al, ReConFig 2017
 int perform_state_mapping (char *filename,nfa *my_nfa);

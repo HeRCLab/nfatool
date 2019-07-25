@@ -1,7 +1,7 @@
 #include "nfatool.h"
 
 /**
- * \brief	Given an SE ID, return SE name as defined by the ANML file
+ * \brief		Given an SE ID, return SE name as defined by the ANML file
  * \param[in]	my_nfa	NFA data structure
  * \param[in]	se		SE number (pre-mapping)
  * \return				pointer to the string containing the ANML name
@@ -13,7 +13,7 @@ char *anml_name (nfa *my_nfa,int se) {
 }
 
 /**
- * \brief	Re-map SEs to satisfy placement contraints using a SAT solver
+ * \brief		Re-map SEs to satisfy placement contraints using a SAT solver
  * \param[in]	num_states		number of SEs
  * \param[in]	max_edges		maximum number of edges stored in the sparse graph representation
  * \param[in]	edge_table		sparse graph representation
@@ -36,7 +36,8 @@ int map_states_with_sat_solver_core(int num_states,
 									int *movement_map,
 									char *filename,
 									int subgraph_num,
-									int timeout) {
+									int timeout,
+									int decompose_fanout) {
 										
 	char cnf_filename[1024],str[2048];
 	int i,violations,ret;
@@ -124,7 +125,7 @@ int map_states_with_sat_solver_core(int num_states,
 		secs++;
 	} while (secs < timeout);
 	
-	// check final status	
+	// check final status
 	if ((ret==0) || !WIFEXITED(status)) {
 		if (subgraph_num==-1)
 			fprintf(stderr,"ERROR: SAT solver timeout\n");
@@ -133,7 +134,8 @@ int map_states_with_sat_solver_core(int num_states,
 		sprintf(cmd,"killall %s",SAT_SOLVER_COMMAND);
 		ret=system(cmd);
 		if (ret==-1) fprintf (stderr,"ERROR: system() failed\n");
-		return 0;
+		if (decompose_fanout == -1) return 0; else return 2;
+		
 	}
 	
 	// open the output file of the SAT solver
@@ -225,7 +227,8 @@ int map_states_with_sat_solver_core(int num_states,
 int map_states_with_sat_solver (char *filename,
 								nfa *my_nfa,
 								int subgraph,
-								int timeout) {
+								int timeout,
+								int decompsose_fanout) {
 	int i,ret;
 	
 	if (!subgraph) {
@@ -239,7 +242,8 @@ int map_states_with_sat_solver (char *filename,
 											   my_nfa->movement_map,
 											   filename,
 											   -1,
-											   timeout);
+											   timeout,
+											   decompose_fanout);
 	} else {
 		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
 			ret=map_states_with_sat_solver_core(my_nfa->subgraph_size[i],
@@ -252,8 +256,14 @@ int map_states_with_sat_solver (char *filename,
 												my_nfa->movement_maps[i],
 												filename,
 												i,
-												timeout);
+												timeout,
+												decompose_fanout);
 			if (ret==0) return 0;
+			else if (ret==2) {
+				// decompose graph and try to map again
+				// TODO: fill this in
+				partition_graph(my_nfa,i,decompose_fanout);	
+			}
 		}
 	}
 	
