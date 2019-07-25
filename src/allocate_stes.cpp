@@ -228,7 +228,7 @@ int map_states_with_sat_solver (char *filename,
 								nfa *my_nfa,
 								int subgraph,
 								int timeout,
-								int decompsose_fanout) {
+								int decompose_fanout) {
 	int i,ret;
 	
 	if (!subgraph) {
@@ -262,7 +262,7 @@ int map_states_with_sat_solver (char *filename,
 			else if (ret==2) {
 				// decompose graph and try to map again
 				// TODO: fill this in
-				partition_graph(my_nfa,i,decompose_fanout);	
+				partition_graph(my_nfa,i,max_fanout,decompose_fanout);	
 			}
 		}
 	}

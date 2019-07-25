@@ -22,5 +22,5 @@ void reverse_replace_color (int ste, int orginal_color, int new_color_start, int
 // miscellaneous functions for bounding the partition size
 void find_critical_path ();
 void dfs_critical (int ste,int &depth,int &deepest,vector <int> &deepest_path,vector <int> &path);
-
+void partition_graph (nfa *my_nfa,int subgraph,int max_fanout, int decompose_fanout);
 #endif
