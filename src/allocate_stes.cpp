@@ -225,10 +225,10 @@ int map_states_with_sat_solver_core(int num_states,
  * \returns		1 on success, 0 on failure
  */
 int map_states_with_sat_solver (char *filename,
-								nfa *my_nfa,
-								int subgraph,
-								int timeout,
-								int decompose_fanout) {
+		nfa *my_nfa,
+		int subgraph,
+		int timeout,
+		int decompose_fanout) {
 		
 	int i,ret;
 	int replications,total_replications=0;
@@ -269,7 +269,7 @@ int map_states_with_sat_solver (char *filename,
 				// decompose graph and try to map again
 				replications=partition_graph(my_nfa,i,decompose_fanout);
 				total_replications+=repications;
-	
+
 				printf("INFO: Decomposed subgraph %d into %d partitions with logical fan-out %d\nat the cost of %d replications",i,my_nfa->num_partitions[i],decompose_fanout,replications);
 
 				for (int j=0;j<my_nfa->num_partitions[i];j++) {
@@ -277,28 +277,27 @@ int map_states_with_sat_solver (char *filename,
 
 					// generate reverse tables for each partition
 					reverse_edges_core(my_nfa->partition_size[i][j],
-									   my_nfa->max_edges,
-									   my_nfa->partitioned_edge_tables[i][j],
-									   my_nfa->partitioned_reverse_tables[i][j]); 
-	
+							my_nfa->max_edges,
+							my_nfa->partitioned_edge_tables[i][j],
+							my_nfa->partitioned_reverse_tables[i][j]); 
+
 					ret=map_states_with_sat_solver_core(my_nfa->partition_size[i][j],
-														my_nfa->max_edges,
-														my_nfa->max_fan_in,
-														my_nfa->partitioned_edge_tables[i][j],
-														my_nfa->partitioned_reverse_tables[i],
-														my_nfa->partitioned_orig_edge_tables[i][j],
-														my_nfa->max_fanout,
-														my_nfa->partitioned_movement_maps[i][j],
-														filename,
-														i,
-														timeout,
-														decompose_fanout);
-			if (ret==0) return 0;
+							my_nfa->max_edges,
+							my_nfa->max_fan_in,
+							my_nfa->partitioned_edge_tables[i][j],
+							my_nfa->partitioned_reverse_tables[i],
+							my_nfa->partitioned_orig_edge_tables[i][j],
+							my_nfa->max_fanout,
+							my_nfa->partitioned_movement_maps[i][j],
+							filename,
+							i,
+							timeout,
+							decompose_fanout);
+					if (ret==0) return 0;
 				}
 			}
 		}
 	}
-
 }
 
 void apply_movement_map (int **edge_table,

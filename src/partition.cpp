@@ -171,6 +171,11 @@ int color_states (nfa *my_nfa,
 		vector <int> &color_size,
 		vector <vector<int> > &color_membership) {
 
+/**
+ * \brief		Partition a graph into a form having a maximum logical fanin and fanout of max_fanout (exclusing SCCs)
+ * \param[in]	
+ */
+void partition_graph (nfa *my_nfa,int subgraph,int max_fanout, int decompose_fanout) {
 	int **edge_table = my_nfa->edge_tables[subgraph],
 	**reverse_table = my_nfa->reverse_tables[subgraph],
 	num_states = my_nfa->subgraph_size[subgraph],
