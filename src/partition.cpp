@@ -47,9 +47,9 @@ void find_subgraphs (nfa *my_nfa) {
 	my_nfa->distinct_subgraphs = subgraph;
 	printf ("INFO: %d distinct subgraphs found\n",subgraph);
 
-    // allocate memory for partitioning
-    my_nfa->num_partitions = (int *)malloc(sizeof(int)*subgraph);
-    my_nfa->partition_sizes = (int **)malloc(sizeof(int *)*subgraph);
+	// allocate memory for partitioning
+	my_nfa->num_partitions = (int *)malloc(sizeof(int)*subgraph);
+	my_nfa->partition_size = (int **)malloc(sizeof(int *)*subgraph);
 
 	// allocate array to record size of each subgraph
 	my_nfa->subgraph_size=(int *)malloc(subgraph*sizeof(int));
@@ -65,10 +65,10 @@ void find_subgraphs (nfa *my_nfa) {
 	my_nfa->edge_tables=(int ***)malloc(subgraph * sizeof(int **));
 	my_nfa->orig_edge_tables=(int ***)malloc(subgraph * sizeof(int **));
 	my_nfa->movement_maps=(int **)malloc(subgraph * sizeof(int *));
-    // also need this for partitioned subgraphs
+	// also need this for partitioned subgraphs
 	my_nfa->partitioned_movement_maps=(int ***)malloc(sizeof(int **)*subgraph);
-	
-    // this array supports subgraph partitioning
+
+	// this array supports subgraph partitioning
 	int distinct_subgraphs = my_nfa->distinct_subgraphs;
 	my_nfa->partitioned_edge_tables=
 		(int ****)malloc((distinct_subgraphs)*sizeof(int ***));
@@ -131,27 +131,27 @@ int vector_contains (vector<int> &myvec,int value) {
 } 
 
 void copy_colors (vector<int> &to,
-                 vector<int> &from,
-                 vector<int> &color_size,
-                 vector <vector<int> > &color_membership,
-                 vector <vector<int> > &colors) {
-    // for each color in the state
+		vector<int> &from,
+		vector<int> &color_size,
+		vector <vector<int> > &color_membership,
+		vector <vector<int> > &colors) {
+	// for each color in the state
 	for (vector<int>::iterator it=from.begin();
 			it != from.end();
 			it++) {
 
-        // don't copy a color that is already present in the destination state
+		// don't copy a color that is already present in the destination state
 		if (!vector_contains(to,*it)) {
 			to.push_back(*it);
 			// increment membership count
 			color_size[*it]++;
 
-            // for each of the states having this color
-            for (int i=0;i<colors.size();i++) {
-                // add the color to the state
-                if (vector_contains(colors[i],*it) && !vector_contains(color_membership[*it],i))
-                    color_membership[*it].push_back(i);
-            }
+			// for each of the states having this color
+			for (int i=0;i<colors.size();i++) {
+				// add the color to the state
+				if (vector_contains(colors[i],*it) && !vector_contains(color_membership[*it],i))
+					color_membership[*it].push_back(i);
+			}
 		}
 	}
 }
@@ -171,11 +171,6 @@ int color_states (nfa *my_nfa,
 		vector <int> &color_size,
 		vector <vector<int> > &color_membership) {
 
-/**
- * \brief		Partition a graph into a form having a maximum logical fanin and fanout of max_fanout (exclusing SCCs)
- * \param[in]	
- */
-void partition_graph (nfa *my_nfa,int subgraph,int max_fanout, int decompose_fanout) {
 	int **edge_table = my_nfa->edge_tables[subgraph],
 	**reverse_table = my_nfa->reverse_tables[subgraph],
 	num_states = my_nfa->subgraph_size[subgraph],
@@ -212,12 +207,12 @@ void partition_graph (nfa *my_nfa,int subgraph,int max_fanout, int decompose_fan
 	vector<int> dfs_down_stack,
 		back_trace;
 
-    // allocate an entry for color 0 and set its state count to 1
+	// allocate an entry for color 0 and set its state count to 1
 	color_size.push_back(1);
 
-    // add a new entry to color_membership for color 0 and add the root state
-    vector<int> temp;
-    temp.push_back(root);
+	// add a new entry to color_membership for color 0 and add the root state
+	vector<int> temp;
+	temp.push_back(root);
 	color_membership.push_back(temp);
 
 	dfs_down_stack.push_back(root);
@@ -260,20 +255,20 @@ void partition_graph (nfa *my_nfa,int subgraph,int max_fanout, int decompose_fan
 					color++;
 					color_size.push_back(0);
 
-                    vector<int> temp;
-                    temp.push_back(child);
+					vector<int> temp;
+					temp.push_back(child);
 					color_membership.push_back(temp);
 
 					// delete the split color
 					int last_color_added = colors[child].back();
 					color_size[last_color_added]--;
 					for (vector<int>::iterator it=color_membership[last_color_added].begin();
-                                    it!=color_membership[last_color_added].end();
-                                    it++)
+							it!=color_membership[last_color_added].end();
+							it++)
 						if (*it==child) {
-                            color_membership[last_color_added].erase(it);
-                            break;
-                        }
+							color_membership[last_color_added].erase(it);
+							break;
+						}
 					colors[child].pop_back();
 
 					// add color to child
@@ -321,12 +316,12 @@ int partition_graph (nfa *my_nfa,int subgraph,int max_fanout) {
 			color_size,
 			color_membership);
 
-    // record number of partitions for this subgraph
-    my_nfa->num_partitions[subgraph]=num_colors;
-    
+	// record number of partitions for this subgraph
+	my_nfa->num_partitions[subgraph]=num_colors;
+
 	// create an array that keeps track of individual partition sizes
 	my_nfa->partition_size[subgraph]=(int *)malloc(num_colors * sizeof(int));
-    for (int i=0;i<num_colors;i++) my_nfa->partition_size[subgraph][i]=color_size[i];
+	for (int i=0;i<num_colors;i++) my_nfa->partition_size[subgraph][i]=color_size[i];
 
 	// create an aray to keep track of state index offsets for each partition
 	// this allows us to convert the subgraph state number into a partition state number
@@ -343,15 +338,15 @@ int partition_graph (nfa *my_nfa,int subgraph,int max_fanout) {
 	my_nfa->partitioned_edge_tables[subgraph]=
 		(int ***)malloc((num_colors)*sizeof(int **));
 
-    // also allocate a duplicate for cross-checking after mapping
-	my_nfa->partitioned_orig_edge_tables=
-        (int ***)malloc((num_colors)*sizeof(int **));
+	// also allocate a duplicate for cross-checking after mapping
+	my_nfa->partitioned_orig_edge_tables[subgraph]=
+		(int ***)malloc((num_colors)*sizeof(int **));
 
-    int total_states=0;
+	int total_states=0;
 	// size of each partition (number of states) is the corresponding membership count
 	for (int i=0;i<num_colors;i++) {
-        // sum up number of states
-        total_states += color_size[i];
+		// sum up number of states
+		total_states += color_size[i];
 
 		my_nfa->partitioned_edge_tables[subgraph][i]=
 			(int **)malloc(color_size[i]*sizeof(int *));
@@ -368,32 +363,33 @@ int partition_graph (nfa *my_nfa,int subgraph,int max_fanout) {
 		}
 
 		// for each of the states in the subgraph, copy to its corresponding partition
-        int state=0;
+		int state=0;
 		for (int j=0;j<num_states;j++) {
-            if (vector_contains(color_membership[i],j)) {
-                for (int k=0;k<max_edges;k++)
-                    my_nfa->partitioned_edge_tables[subgraph][i][state][k]=
-                    my_nfa->partitioned_orig_edge_tables[subgraph][i][state][k]= 
-                         my_nfa->edge_tables[subgraph][j][k]-state_offsets[i][j];
-                state++;
-            }
+			if (vector_contains(color_membership[i],j)) {
+				for (int k=0;k<max_edges;k++)
+					my_nfa->partitioned_edge_tables[subgraph][i][state][k]=
+						my_nfa->partitioned_orig_edge_tables[subgraph][i][state][k]= 
+						my_nfa->edge_tables[subgraph][j][k]-state_offsets[i][j];
+				state++;
+			}
 		} // for each state in the subgraph
 
 	} // for each color
 
-    // output the number of replicated states
-    printf ("INFO: Partitioning successful!  Subgraph %d size increased from %d to %d (%d replications)\n",
-                            subgraph,
-                            num_states,
-                            total_states,
-                            total_states-num_states);
+	// output the number of replicated states
+	printf ("INFO: Partitioning successful!  Subgraph %d size increased from %d to %d (%d replications)\n",
+			subgraph,
+			num_states,
+			total_states,
+			total_states-num_states);
 
-    // allocate movement maps for each partitioned edge table
-    for (int i=0;i<my_nfa->distinct_subgraphs;i++)
-         my_nfa->partitioned_movement_maps[i]=(int **)malloc(color_size[i] * sizeof(int *));
-        for (int j=0;j<color_size[i];j++)
-             my_nfa->partitioned_movement_maps[i][j]=(int *)malloc(max_edges * sizeof(int)); 
+	// allocate movement maps for each partitioned edge table
+	for (int i=0;i<my_nfa->distinct_subgraphs;i++) {
+		my_nfa->partitioned_movement_maps[i]=(int **)malloc(color_size[i] * sizeof(int *));
+		for (int j=0;j<color_size[i];j++)
+			my_nfa->partitioned_movement_maps[i][j]=(int *)malloc(max_edges * sizeof(int)); 
+	}
 
-    return total_states - num_states;
+	return total_states - num_states;
 }
 

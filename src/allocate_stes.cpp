@@ -268,7 +268,7 @@ int map_states_with_sat_solver (char *filename,
 
 				// decompose graph and try to map again
 				replications=partition_graph(my_nfa,i,decompose_fanout);
-				total_replications+=repications;
+				total_replications+=replications;
 
 				printf("INFO: Decomposed subgraph %d into %d partitions with logical fan-out %d\nat the cost of %d replications",i,my_nfa->num_partitions[i],decompose_fanout,replications);
 
@@ -279,13 +279,13 @@ int map_states_with_sat_solver (char *filename,
 					reverse_edges_core(my_nfa->partition_size[i][j],
 							my_nfa->max_edges,
 							my_nfa->partitioned_edge_tables[i][j],
-							my_nfa->partitioned_reverse_tables[i][j]); 
+							&my_nfa->partitioned_reverse_tables[i][j]); 
 
 					ret=map_states_with_sat_solver_core(my_nfa->partition_size[i][j],
 							my_nfa->max_edges,
 							my_nfa->max_fan_in,
 							my_nfa->partitioned_edge_tables[i][j],
-							my_nfa->partitioned_reverse_tables[i],
+							my_nfa->partitioned_reverse_tables[i][j],
 							my_nfa->partitioned_orig_edge_tables[i][j],
 							my_nfa->max_fanout,
 							my_nfa->partitioned_movement_maps[i][j],

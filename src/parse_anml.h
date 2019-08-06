@@ -4,10 +4,10 @@
 int read_anml_file (char *filename,
 					nfa *my_nfa);
 
-void reverse_edges_core (int num_states,
+int reverse_edges_core (int num_states,
 						 int max_edges,
 						 int **edge_table,
-						 int **reverse_table);
+						 int ***reverse_table);
 			
 int count_states (nfa *my_nfa);
 				  
