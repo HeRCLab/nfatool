@@ -42,13 +42,13 @@ using namespace std;
 typedef struct {
 	// edge table of original ANML file (will likely contain distinct subgraphs)
 	int						**edge_table;
-	
+
 	// original edge table given in input file, in case we perform optimizations
 	int						**orig_edge_table;
-	
+
 	// edge table with edges reversed
 	int						**reverse_table;
-	
+
 	char					**symbol_table;
 	int						*report_table;
 	unsigned char			*start_state;
@@ -81,21 +81,25 @@ typedef struct {
 	vector<int>				*sccs;
 	map <int,vector<int> >	component_list;
 	int						*components;
-	
+
 	// number of distinct subgraphs
 	int						distinct_subgraphs;
-	
+
 	// edge tables, original versions from ANML file, and reversed version for each of the distinct subgraphs
 	int						***edge_tables;
 	int						***orig_edge_tables;
 	int						***reverse_tables;
-	
+
 	int						*subgraph;
 	int						*subgraph_size;
-	
+
 	// partitioned subgraphs
 	int						****partitioned_edge_tables;
-	
+	int						****partitioned_reverse_tables;
+	int						****partitioned_orig_edge_tables;
+	int						***partitioned_movement_maps;
+	int						*num_partitions;
+	int						**partition_size;
 } nfa;
 
 #include "partition.h"
@@ -107,14 +111,14 @@ typedef struct {
 #include "list.h"
 #include "v2.h"
 #include "gen_cnf.h"
- 
+
 #include "do_next.h" 
 #include "do_gates.h"
 
 /*
  * global variabless
  */
- 
+
 /*
  * NFA data (used in multiple places)
  */

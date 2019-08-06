@@ -112,6 +112,14 @@ int						Change_of_start = 0;
 /*< counter for state-transition-element that holds a start state */
 int						starts = 0;
 
+// TODO: add options to turn off debig printing and deleting of CNF output files
+
+int isnumber(char *str) {
+	for (int i=0;i<strlen(str);i++)
+		if (!isdigit(str[i])) return 0;
+	return 1;
+}
+
 void print_help (char **argv) {
 	
 	printf("         __      _              _\n");
@@ -130,12 +138,12 @@ void print_help (char **argv) {
 	printf("%14s\tPrint this help and exit\n","-h");
 	printf("%14s\tUse partitioning to limit maximum SEs to <num>\n","-m <num>");
 	printf("%14s\tSet maximum fan-out to <num>\n","-f <num>");
-	printf("%14s\tPerform mapping with MINICRYPTOSAT solver\n","-c <timeout in seconds>");
-	printf("%14s\tPerform NFA graph analysis\n","-g");
+	printf("%14s\tPerform mapping with MINICRYPTOSAT solver with <t> seconds\n","-c <t>");
 	printf("%14s\tGenerate NAPOLY configuration files\n","-n");
 	printf("%14s\tPrint state-to-SE and SE-to-state mapping\n","-p");
 	printf("%14s\tFind distinct subgraphs\n","-s");
-}   printf("%14s\tFor subgraphs that don't map, decompose into subgraphs with maximum logical fanout of <n> (requires -s and -c)","-d <n>");
+	printf("%14s\tFor subgraphs that don't map, decompose into subgraphs with maximum logical fanout of <n> (requires -s and -c)","-d <n>");
+}
 
 int main(int argc, char **argv){
     char c;
@@ -146,7 +154,6 @@ int main(int argc, char **argv){
 	nfa *my_nfa;
 	
 	// FLAGS
-	int graph_analysis=0;
 	int use_sat_solver=0;
     int file_spec=0;
 	int gen_config=0;
@@ -159,7 +166,7 @@ int main(int argc, char **argv){
 	int timeout;
 	int decompose_fanout=-1;
 
-    while ((c=getopt(argc,argv,"hi:m:f:c:gsd:"))!=-1)
+    while ((c=getopt(argc,argv,"hi:m:f:c:sd:"))!=-1)
       switch (c) {
 		case 'h':
 			print_help(argv);
@@ -171,24 +178,37 @@ int main(int argc, char **argv){
 			file_spec=1;
 			break;
         case 'm':
+			if (!isnumber(optarg)) {
+				fprintf(stderr,"ERROR: max STEs per file should be numeric\n");
+				exit(0);
+			}
 			max_stes=atoi(optarg);
 			printf ("INFO: Setting max STEs per file to %d\n",max_stes);
 			break;
 		case 'c':
+			if (!isnumber(optarg)) {
+				fprintf(stderr,"ERROR: timeout out should be numeric\n");
+				exit(0);
+			}
 			timeout=atoi(optarg);
 			printf("INFO: Using SAT solver with timeout of %d s\n",timeout);
 			use_sat_solver=1;
 			break;
         case 'f':
+			if (!isnumber(optarg)) {
+				fprintf(stderr,"ERROR: max fanout should be numeric\n");
+				exit(0);
+			}
 			max_fanout=atoi(optarg);
 			printf("INFO: Setting max fanout to %d\n",max_fanout);
 			break;
 		case 'd':
+			if (!isnumber(optarg)) {
+				fprintf(stderr,"ERROR: decompos fanout should be numeric\n");
+				exit(0);
+			}
 			decompose_fanout=atoi(optarg);
 			printf("INFO: Will decompose to logical fanout %d on mapping failure\n",decompose_fanout);
-		case 'g':
-			graph_analysis=1;
-			printf("INFO: Performing graph analysis\n");
 			break;
 		case 'n':
 			gen_config=1;
@@ -238,11 +258,6 @@ int main(int argc, char **argv){
 		reverse_edge_table(my_nfa,1);
 	}
 	
-	// graph analysis (not working)
-	if (graph_analysis) {
-		perform_graph_analysis(my_nfa->root);
-	}
-
 	if (max_fanout) {
 		my_nfa->max_fanout = max_fanout;
 	}

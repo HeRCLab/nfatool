@@ -2,6 +2,6 @@
 #define VISUALIZATION_H
 
 int perform_graph_analysis (xmlNode *root);
-void dump_dot_file (char *filename, xmlNode *aNode, vector<int> subset, int colors);
+void dump_dot_file (char *filename, int **edge_table, int num_states, int max_edges);
 
 #endif
