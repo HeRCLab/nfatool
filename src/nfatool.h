@@ -111,6 +111,7 @@ typedef struct {
 #include "list.h"
 #include "v2.h"
 #include "gen_cnf.h"
+#include "edge.h"
 
 #include "do_next.h" 
 #include "do_gates.h"

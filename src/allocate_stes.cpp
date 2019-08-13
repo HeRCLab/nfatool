@@ -151,7 +151,7 @@ int map_states_with_sat_solver_core(int num_states,
 	nchars=0;
 	while (getline(&line,(size_t *)&nchars,myFile) > 3) {
 		if (line[0]=='s' && strncmp(line+2,"SATISFIABLE",11)) {
-			fprintf (stderr,"WARNING: SAT solver failed to find valid mapping.\n");
+			fprintf (stderr,"WARNING: SAT solver failed to find valid mapping due to UNSATISFIABILITY\n");
 			if (decompose_fanout == -1) return 0; else return 2;
 		}
 
@@ -270,7 +270,7 @@ int map_states_with_sat_solver (char *filename,
 				replications=partition_graph(my_nfa,i,decompose_fanout);
 				total_replications+=replications;
 
-				printf("INFO: Decomposed subgraph %d into %d partitions with logical fan-out %d\nat the cost of %d replications",i,my_nfa->num_partitions[i],decompose_fanout,replications);
+				printf("INFO: Decomposed subgraph %d into %d partitions with logical fan-out %d at the cost of %d replications\n",i,my_nfa->num_partitions[i],decompose_fanout,replications);
 
 				for (int j=0;j<my_nfa->num_partitions[i];j++) {
 					printf("INFO: Mapping subgraph %d, partition %d...\n",i,j);
@@ -293,7 +293,10 @@ int map_states_with_sat_solver (char *filename,
 							i,
 							timeout,
 							decompose_fanout);
-					if (ret==0) return 0;
+					if (ret==2) {
+						fprintf(stderr,"ERROR: could not map partition and cannot recover.\n");
+						return 0;
+					}
 				}
 			}
 		}
