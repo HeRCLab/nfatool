@@ -247,7 +247,7 @@ int map_states_with_sat_solver (char *filename,
 				timeout,
 				decompose_fanout);
 	} else {
-		for (i=2118;i<my_nfa->distinct_subgraphs;i++) {
+		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
 			ret=map_states_with_sat_solver_core(my_nfa->subgraph_size[i],
 					my_nfa->max_edges,
 					my_nfa->max_fan_in,

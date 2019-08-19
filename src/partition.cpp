@@ -179,14 +179,18 @@ void traverse_up(int **reverse_table,
 				 int max_fanin,
 				 int state,
 				 int color,
-				 map<edge,vector<int> > &mycolors) {
+				 map<edge,vector<int> > &mycolors,
+				 int *visited) {
 
 	for (int j=0;j<max_fanin;j++) {
 		int state_up=reverse_table[state][j];
 		if (state_up==-1) break;
+		if (state_up==state) break;
+		if (visited[state_up]) break;
+		visited[state_up]=1;
 		edge temp(state_up,state);
 		mycolors[temp].push_back(color);
-		traverse_up(reverse_table,max_fanin,state_up,color,mycolors);
+		traverse_up(reverse_table,max_fanin,state_up,color,mycolors,visited);
 	}
 }
 
@@ -203,11 +207,17 @@ void find_colors(int **edge_table,
 	for (int j=0;j<max_edges;j++) {
 		int succ = edge_table[in_edge.succ][j];
 		if (succ==-1) break;
+		if (in_edge.succ == succ) break;
 		edge out_edge(in_edge.succ,succ);
 		
 		if (j!=0 && j%max_fanout==0) {
 			color++;
-			traverse_up(reverse_table,max_fanin,succ,color,mycolors);
+
+			// use visited array to prevent loops in upward traversal
+			int *visited=(int *)malloc(sizeof(int)*num_states);
+			for (int i=0;i<num_states;i++) visited[i]=0;
+
+			traverse_up(reverse_table,max_fanin,succ,color,mycolors,visited);
 		} else
 			mycolors[out_edge].push_back(color);
 		
