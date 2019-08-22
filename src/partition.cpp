@@ -212,14 +212,16 @@ void find_colors(int **edge_table,
 		
 		if (j!=0 && j%max_fanout==0) {
 			color++;
-
+			printf ("INFO: splitting edge %d->%d\n",in_edge.succ,succ);
 			// use visited array to prevent loops in upward traversal
 			int *visited=(int *)malloc(sizeof(int)*num_states);
 			for (int i=0;i<num_states;i++) visited[i]=0;
 
 			traverse_up(reverse_table,max_fanin,succ,color,mycolors,visited);
-		} else
+		} else {
+			printf ("INFO: not splitting edge %d->%d\n",in_edge.succ,succ);
 			mycolors[out_edge].push_back(color);
+		}
 		
 		find_colors(edge_table,
 					reverse_table,
