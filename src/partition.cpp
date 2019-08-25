@@ -4,6 +4,8 @@
 #define	OVECCOUNT  30
 #define STATEMAP_SIZE 150000
 
+//int num_states = my_nfa->num_states; 
+
 // this function finds distinct subgraphs within the original datafile
 void traverse(nfa *my_nfa,int state,int subgraph) {
 	int i;
@@ -624,3 +626,143 @@ int partition_graph (nfa *my_nfa,int subgraph,int max_fanout) {
 	return total_states - num_states;
 }
 
+
+
+// traverse graph to find total number of paths
+// by Rasha
+
+int num_path=0; 
+
+int num_paths(nfa *my_nfa, int node){
+
+	bool *visited_path2; 
+	int num_path=0;  
+
+        visited_path2 =(bool *)malloc((sizeof(bool*))*my_nfa->num_states);
+
+        for(int i=0; i<my_nfa->num_states;i++) visited_path2[i]=0;
+
+	find_all_paths(my_nfa, node, visited_path2, num_path);
+	
+	return num_path;
+} 
+
+ 
+void find_all_paths(nfa *my_nfa, int src, bool visited_path2[], int &num_path) {
+	
+	visited_path2[src]=true;
+
+	       for(int k=0; k<my_nfa->max_edges;k++) {
+	       
+			if(my_nfa->edge_table[src][k] ==-1) break ;
+					
+	       		if(my_nfa->report_table[my_nfa->edge_table[src][k]]) {
+			
+				num_path++;
+//				printf("Total num of path in each ANML partition = %d\n", num_path);          
+				
+               		}
+ 
+               		else  {
+				if(!visited_path2[my_nfa->edge_table[src][k]]){
+	      				find_all_paths(my_nfa,my_nfa->edge_table[src][k], visited_path2, num_path); 
+	         		}	
+			}
+	     }
+	visited_path2[src]=false; 
+}
+
+
+// Find num of loops in ANML file 
+// by Rasha 
+
+int num_loops(nfa *my_nfa, int node){
+
+        bool *visited_path2;
+        int num_loops=0;
+	int loop_size= 1; 
+	int num_self_loops=0; 
+
+        visited_path2 =(bool *)malloc((sizeof(bool*))*my_nfa->num_states);
+
+        for(int i=0; i<my_nfa->num_states;i++) visited_path2[i]=0;
+
+        find_loops(my_nfa, node, visited_path2,loop_size, num_loops, num_self_loops);
+
+        return num_loops;
+}
+
+void find_loops(nfa *my_nfa, int src, bool visited_path2[], int &loop_size, int &num_loops, int &num_self_loops) {
+
+        visited_path2[src]=true;
+	
+		
+
+               for(int k=0; k<my_nfa->max_edges;k++) {
+
+                        if(my_nfa->edge_table[src][k] ==-1) break ;
+
+                        if(my_nfa->edge_table[src][k]==src) {
+
+                                num_loops++;
+				if (loop_size=1) num_self_loops++; 
+//                              	printf("Total num ofpath in each ANML partition = %d\n", loop_path);
+
+                        }
+
+                        else  {
+                                if(!visited_path2[my_nfa->edge_table[src][k]]){
+                                        find_loops(my_nfa,my_nfa->edge_table[src][k], visited_path2, loop_size, num_loops, num_self_loops);
+					loop_size++;
+                                }
+                        }
+             }
+        visited_path2[src]=false;
+}
+
+// Find critical path 
+// by Rasha 
+
+/*
+int critical_path(nfa *my_nfa, int node){
+
+        bool *visited_path2; 
+        int max_path=1;
+        int path_length=0; 
+	int path_compare=0;  
+
+        visited_path2 =(bool *)malloc((sizeof(bool*))*my_nfa->num_states);
+
+        for(int i=0; i<my_nfa->num_states;i++) visited_path2[i]=0;
+
+        find_critical_path(my_nfa, node, visited_path2, max_path, path_length, path_compare);
+
+        return max_path;
+}
+
+
+void find_critical_path(nfa *my_nfa, int node, int visited_path2[], int &max_path, int &path_length, int &path_compare)
+{
+        if (visited_path2[node] == 1)
+        {
+                return;
+        }
+
+        max_path++;
+
+        for (int i = 0; i < max_edges; i++)
+        {
+                if(report_table[node] == 1)
+                {
+                        visited[node] = 1;
+
+                        if (path_length > path_compare)
+                        {
+                                path_compare = max_path;
+                                max_path = 1;
+                        }
+                }
+                critical_path(mynfa, edge_table[node][i], visited_path2, max_path, path_length, path_compare);
+        }
+}
+*/

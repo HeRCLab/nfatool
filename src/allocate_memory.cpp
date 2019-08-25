@@ -6,10 +6,20 @@ void allocate_memory(nfa *my_nfa) {
 	int max_stes = my_nfa->max_stes;
 	char *visited = my_nfa->visited;
 	int	*dfs_visited = my_nfa->dfs_visited;
+	int *visited_path=my_nfa->visited_path; 
 	vector<int> *state_colors = my_nfa->state_colors;
 	int *root_node = my_nfa->root_node;
 	vector<int> *sccs = my_nfa->sccs;
 	int *components = my_nfa->components;
+
+// 	int *visited_path;
+        visited_path =(int *)malloc((sizeof(int*))*num_states);
+
+        for(int i=0; i<num_states;i++) visited_path[i]=0;
+
+        int *path;
+        path = (int*)malloc((sizeof(int*))*num_states);
+
 	
 	// node table:  maps state numbers back to its original XML node
 	my_nfa->node_table = (xmlNode **)malloc(sizeof (xmlNode *)*num_states);
@@ -46,8 +56,13 @@ void allocate_memory(nfa *my_nfa) {
 
 	// report table
 	my_nfa->report_table = (int *)malloc((sizeof(int))*num_states);
-    for (int i=0;i<num_states;i++)
+    	for (int i=0;i<num_states;i++)
 		my_nfa->report_table[i]=0;
+
+	//start_table
+ 	my_nfa->start_table = (int *)malloc((sizeof(int))*num_states);
+    	for (int i=0;i<num_states;i++)
+                my_nfa->start_table[i]=0;
 
 	// edge table
 	my_nfa->edge_table = (int **)malloc((sizeof(int *))*num_states);
@@ -75,6 +90,8 @@ void allocate_memory(nfa *my_nfa) {
 	//////////////////////////////////////////////////////////////
 	visited = (char *)malloc((sizeof(char))*num_states);
 	dfs_visited = (int *)malloc((sizeof(int))*num_states);
+	visited_path=(int *)malloc((sizeof(int*))*num_states); for(int i=0; i<num_states; i++) visited_path=0; 
+
     state_colors = new vector<int>[num_states];
 	root_node = (int *)malloc((sizeof(int))*num_states);
 	for (int i=0;i<num_states;i++) root_node[i]=0;

@@ -220,7 +220,7 @@ int fill_in_table (nfa *my_nfa) {
       report,
       fan,
       **my_table,
-      num_stes_since_last_start,current_state=0;
+      num_stes_since_last_start,current_state=0, start_node=0;
 	const char *error;
 	char str[1024];
 	int erroffset=0,rc=0,ovector[OVECCOUNT];
@@ -228,6 +228,7 @@ int fill_in_table (nfa *my_nfa) {
 	// drill down (up to one level) to get to the "automata-network" tag,
 	// which is sometimes inside of an "anml" tag, but other times not (why?)
   	if (my_nfa->root->type==XML_ELEMENT_NODE && strcmp((const char *)my_nfa->root->name,"automata-network"))
+	//	my_nfa->start_table[start_node++]=anode; 
 		for (anode = my_nfa->root->children; anode; anode = anode->next)
 			if (anode->type==XML_ELEMENT_NODE && !strcmp((const char *)anode->name,"automata-network")) break;
 	
@@ -254,6 +255,7 @@ int fill_in_table (nfa *my_nfa) {
 					pcre_free(re);
 				} else if (!strcmp((const char *)attr->name,"start")) {
 					my_nfa->start_state[current_state]=start;
+					my_nfa->start_table[current_state]=1;
 				}
 			}
 			

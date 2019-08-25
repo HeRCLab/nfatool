@@ -18,6 +18,7 @@ int						**orig_edge_table;
 int						**reverse_table;
 char					**symbol_table;
 unsigned char			*report_table;
+int				*start_table; 
 unsigned char			*start_state;
 unsigned char			*symbol_set;
 map <std::string,int>	state_map;
@@ -289,6 +290,24 @@ int main(int argc, char **argv){
 	}
 
 	if (do_print_mapping) print_mapping(my_nfa);
+
+// graph features 
+// by Rasha 
+
+	int num_starts=0;
+	int num_reports=0; 
+	 
+	for(int i=0; i<my_nfa->num_states; i++) {
+		 if(my_nfa->start_table[i]) num_starts++; 
+		 if(my_nfa->report_table[i]) num_reports++; 
+	}
+
+	printf("In ANML file:\n\t\t Total starts= %d\n\t\t Total reports= %d\n\t\t Total paths per partition= %d\n\t\t Total num of loops= %d\n",
+					num_starts,
+					num_reports,
+					num_paths(my_nfa,0),
+					num_loops(my_nfa,0));
+ 
 
   return 0;
 }

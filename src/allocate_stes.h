@@ -57,6 +57,7 @@ int score(int max_edges,int **edge_table,int **reverse_table,int a, int b);
 int reverse_movement_map (int num_states,int *movement_map,int n);
 int dump_edges ();
 void critical_path(int node);
+//void traverse_path(nfa *my_nfa, int node); 
 void mix_it_up(nfa *my_nfa,int n);
 char *anml_name (nfa *my_nfa,int se);
 

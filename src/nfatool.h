@@ -51,6 +51,7 @@ typedef struct {
 
 	char					**symbol_table;
 	int						*report_table;
+	int						*start_table;
 	unsigned char			*start_state;
 	unsigned char			*symbol_set;
 	map <string,int>		state_map;
@@ -75,6 +76,7 @@ typedef struct {
 	xmlNode					**start_stes; // formerly [STATEMAP_SIZE]
 	char					*visited;
 	int						*dfs_visited;
+	int 					*visited_path; 
 	vector<int>				*state_colors;
 	int						*color_count;
 	int						*root_node;
