@@ -279,9 +279,14 @@ int color_edges(nfa *my_nfa,
 	int color=0;
 	int temp=0; 
 
+
 	for (int i=0;i<max_edges;i++) {
 
 		if (edge_table[root][i]==-1) break;
+
+// this condition is to check if the root has any self loop, if so we don't give this edge a color
+// and we start first color in the next edge 
+// by Rasha 
 		
 		else if(edge_table[root][i] == root) temp = 0; 
 
