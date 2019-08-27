@@ -261,29 +261,43 @@ int color_edges(nfa *my_nfa,
 
 	// find a root node
 	for (i=0;i<num_states;i++) {
-		if (reverse_table[i][0]==-1) {
+		if(reverse_table[0][0] == i && reverse_table[0][1] == -1) {
+			root=i; 
+			break; 
+
+		} else if (reverse_table[i][0]==-1) {
 			root = i;
 			break;
 		}
-	}
 
-	if (i==num_states) {
-		fprintf (stderr,"ERROR: partition_graph(): could not identify a root node\n");
-		exit(0);
+			if (i==num_states) {
+				fprintf (stderr,"ERROR: partition_graph(): could not identify a root node\n");
+				exit(0);
+			}
 	}
 
 	int color=0;
+	int temp=0; 
 
 	for (int i=0;i<max_edges;i++) {
-		int state=edge_table[root][i];
-		if (state==-1) break;
-		edge myedge(root,state);
 
-		if (i!=0 && i%max_fanout==0) color++;
+		if (edge_table[root][i]==-1) break;
+		
+		else if(edge_table[root][i] == root) temp = 0; 
 
-		mycolors[myedge].push_back(color);
+		else {
+			if(edge_table[root][i] !=root ) temp = 0;
 
-		find_colors(edge_table,
+			if(edge_table[root][i] != root && (i!=0 && i!=1)) temp = i;  
+ 			 
+			int state=edge_table[root][i];
+			edge myedge(root,state);
+				
+			if (temp!=0 && i%max_fanout==0) color++;
+		
+			mycolors[myedge].push_back(color);
+
+			find_colors(edge_table,	
 					reverse_table,
 					num_states,
 					max_edges,
@@ -292,6 +306,7 @@ int color_edges(nfa *my_nfa,
 					color,
 					myedge,
 					mycolors);
+		}		
 	}
 
 	return color+1;
@@ -325,7 +340,11 @@ int color_states (nfa *my_nfa,
 
 	// find a root node
 	for (i=0;i<num_states;i++) {
-		if (reverse_table[i][0]==-1) {
+		if(reverse_table[0][0] == i && reverse_table[1][0] == -1) { 
+			root = 0; 
+			break; 
+		}
+		else if (reverse_table[i][0]==-1) {
 			root = i;
 			break;
 		}
