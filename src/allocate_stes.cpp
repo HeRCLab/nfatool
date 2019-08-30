@@ -48,8 +48,17 @@ int map_states_with_sat_solver_core(int num_states,
 	char cmd[2048];
 	char sat_output_filename[1024];
 	FILE *myFile;
-	struct timeval t1,t2;
+	 
 
+	
+	// Profile time for performance 
+	// by Rasha 
+
+	struct timeval v1,v2; 
+		
+	gettimeofday(&v1,0);
+
+	
 	// auto-generate CNF filename
 	if (subgraph_num==-1)
 		sprintf(cnf_filename,"%s.cnf",filename);
@@ -62,31 +71,25 @@ int map_states_with_sat_solver_core(int num_states,
 	// issue command to initiate SAT solver
 	sprintf(sat_output_filename,"%s.out",cnf_filename);
 	sprintf(cmd,"-c \"cat %s | %s > %s\"",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
-	/*
-	   ret=system(cmd);
-	   if (ret==-1) {
-	   fprintf (stderr,"ERROR:  could not invoke the SAT solver using command \"%s\"\n",SAT_SOLVER_COMMAND);
-	   return 0;
-	   }
-	 */
-	// spawn SAT solver
-	/*
-	   sprintf(cmd,"-c \"cat %s | %s > %s\"",cnf_filename,SAT_SOLVER_COMMAND,sat_output_filename);
-	   pid=fork();
-	   if (!pid) {
-	   ret=execl("/bin/bash","bash",cmd,(char *)NULL);
-	   if (ret==-1) {
-	   perror("Could not spawn SAT solver");
-	   exit(0);
-	   }
-	   }
-	 */
+	
+	gettimeofday(&v2,0); 
+
+  	printf ("INFO: Elapsed to generate and store CNF files = %d s \n",
+                                (int)((long)(long)v2.tv_sec) -
+                                        (long)(long)v1.tv_sec);
+ 
+
+	
+
+	struct timeval t1,t2;
+ 	struct timeval f1,f2;
+
+ 	gettimeofday(&f1,0);
 
 	pid=fork();
 
 	// CHILD BEGIN
 	if (!pid) {
-		struct timeval t1,t2;
 
 		gettimeofday(&t1,0);
 
@@ -109,6 +112,16 @@ int map_states_with_sat_solver_core(int num_states,
 	}
 	// CHILD END
 
+	 gettimeofday(&f2,0);
+
+         printf ("INFO: Elapsed time for fork = %d s\n",
+                                (int)((long)(long)f2.tv_sec -
+                                (long)(long)f1.tv_sec) -
+			  	(int)((long)(long)t2.tv_sec -
+	                        (long)(long)t1.tv_sec) 
+				);
+
+
 	// wait for it with timeout
 	int secs=0,status;
 	do {
@@ -125,6 +138,11 @@ int map_states_with_sat_solver_core(int num_states,
 		secs++;
 	} while (secs < timeout);
 
+
+
+	
+	
+
 	// check final status
 	if ((ret==0) || !WIFEXITED(status)) {
 		if (subgraph_num==-1)
@@ -137,6 +155,7 @@ int map_states_with_sat_solver_core(int num_states,
 		if (decompose_fanout == -1) return 0; else return 2;
 
 	}
+
 
 	// open the output file of the SAT solver
 	myFile=fopen(sat_output_filename,"r+");
