@@ -41,6 +41,8 @@ int read_anml_file (char *filename,
   return 1;
 }
 
+ 
+
 int reverse_edges_core (int num_states,
 						 int max_edges,
 						 int **edge_table,
@@ -63,6 +65,7 @@ int reverse_edges_core (int num_states,
 			if(edge_table[i][j] == -1) {
 				break;
 			} else {
+//			  printf("%d\n", edge_table[i][j]); 
 			  rev_edge_count[edge_table[i][j]]++;
 			  if (rev_edge_count[edge_table[i][j]] > max_fan_in) max_fan_in = rev_edge_count[edge_table[i][j]];
 			}
@@ -253,10 +256,10 @@ int fill_in_table (nfa *my_nfa) {
 						}
 					}
 					pcre_free(re);
-				} else if (!strcmp((const char *)attr->name,"start")) {
+					} else if (!strcmp((const char *)attr->name,"start")) {
 					my_nfa->start_state[current_state]=start;
-					my_nfa->start_table[current_state]=1;
-				}
+    				my_nfa->start_table[current_state]=1;
+					}
 			}
 			
 			// get the state's predecessors and reports among the children of the state tage
@@ -280,4 +283,38 @@ int fill_in_table (nfa *my_nfa) {
 			current_state++;
 		}
 	}
+}
+
+
+
+void graph_features(nfa *my_nfa, int node) 
+{
+
+ int num_starts=0,
+  num_reports=0,
+  num_edges=0; 
+         
+ // print number of starts and reports 
+// for(int i=0; i<my_nfa->num_states; i++) 
+//                 printf("%d\n", my_nfa->start_state[i]);
+
+ for(int i=0; i<my_nfa->num_states; i++) {
+                 if(my_nfa->report_table[i]) num_reports++; 
+  }
+
+ // print number of edges 
+ for (int i=0; i<my_nfa->num_states; i++) 
+                for (int j=0; j<my_nfa->max_edges; j++) 
+                        if(my_nfa->edge_table[i][j]==-1) break; 
+                        else 
+                       num_edges++; 
+        
+        printf("In ANML file:\n\t\t Total reports= %d\n\t\t Total paths per partition= %d\n\t\t Total self-loops= %d\n\t\t Cycles= %d\n\t\t Total num of edges= %d\n\t\t",
+                                        num_reports,
+                                        num_paths(my_nfa,0),
+                                     	num_self_loops(my_nfa,0),
+					iscycles(my_nfa,0),
+                                        num_edges);
+
+
 }

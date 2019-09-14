@@ -623,10 +623,10 @@ int partition_graph (nfa *my_nfa,int subgraph,int max_fanout) {
 			}
 
 			// terminate the outgoing edges
-			if (edge_num < max_edges)
-				my_nfa->partitioned_edge_tables[subgraph][i][state][edge_num]=
-					my_nfa->partitioned_orig_edge_tables[subgraph][i][state][edge_num]=
-						-1;
+//			if (edge_num < max_edges)
+//				my_nfa->partitioned_edge_tables[subgraph][i][state][edge_num]=
+//					my_nfa->partitioned_orig_edge_tables[subgraph][i][state][edge_num]=
+//						-1;
 			
 			// increment state number if the state is a member of the partition
 			if (vector_contains(color_membership[i],pred)) state++;
@@ -700,7 +700,7 @@ void find_all_paths(nfa *my_nfa, int src, bool visited_path2[], int &num_path) {
 // Find num of loops in ANML file 
 // by Rasha 
 
-int num_loops(nfa *my_nfa, int node){
+int num_self_loops(nfa *my_nfa, int node){
 
         bool *visited_path2;
         int num_loops=0;
@@ -713,36 +713,68 @@ int num_loops(nfa *my_nfa, int node){
 
         find_loops(my_nfa, node, visited_path2,loop_size, num_loops, num_self_loops);
 
-        return num_loops;
+        return num_self_loops;
 }
 
 void find_loops(nfa *my_nfa, int src, bool visited_path2[], int &loop_size, int &num_loops, int &num_self_loops) {
 
         visited_path2[src]=true;
-	
-		
-
-               for(int k=0; k<my_nfa->max_edges;k++) {
-
-                        if(my_nfa->edge_table[src][k] ==-1) break ;
-
-                        if(my_nfa->edge_table[src][k]==src) {
-
+        for(int k=0; k<my_nfa->max_edges;k++) {
+             if(my_nfa->edge_table[src][k] ==-1) break ;
+             if(my_nfa->edge_table[src][k]==src) {
                                 num_loops++;
 				if (loop_size=1) num_self_loops++; 
-//                              	printf("Total num ofpath in each ANML partition = %d\n", loop_path);
 
+             }else  {
+                       if(!visited_path2[my_nfa->edge_table[src][k]]){
+                            find_loops(my_nfa,my_nfa->edge_table[src][k], visited_path2, loop_size, num_loops, num_self_loops);
+			loop_size++;
                         }
-
-                        else  {
-                                if(!visited_path2[my_nfa->edge_table[src][k]]){
-                                        find_loops(my_nfa,my_nfa->edge_table[src][k], visited_path2, loop_size, num_loops, num_self_loops);
-					loop_size++;
-                                }
-                        }
-             }
-        visited_path2[src]=false;
+            }
+             } visited_path2[src]=false;
 }
+
+
+int iscycles(nfa *my_nfa, int node){
+
+        bool *visited_path2;
+	bool *cycle_stack; 
+        int num_cycles=0;
+     	bool cycles = false; 
+
+        visited_path2 =(bool *)malloc((sizeof(bool*))*my_nfa->num_states);
+	cycle_stack = (bool *)malloc((sizeof(bool*))*my_nfa->num_states); 
+
+        for(int i=0; i<my_nfa->num_states;i++) visited_path2[i]=false; 
+	for(int i=0; i<my_nfa->num_states;i++) cycle_stack[i]=false; 
+	
+        cycles = find_cycles(my_nfa, node, visited_path2,cycle_stack,num_cycles); 
+	return num_cycles; 
+}
+
+bool find_cycles(nfa *my_nfa, int src, bool visited_path2[], bool cycle_stack[], int &num_cycles) {
+
+        visited_path2[src]=true;
+	cycle_stack[src]=true; 
+
+        for(int k=0; k<my_nfa->max_edges;k++) {
+             if(my_nfa->edge_table[src][k] ==-1) break ;
+	     if(my_nfa->edge_table[src][k]==src) break; 
+ 
+             if((!visited_path2[my_nfa->edge_table[src][k]]) && (find_cycles(my_nfa, my_nfa->edge_table[src][k], visited_path2, cycle_stack, num_cycles))){
+			num_cycles++; 
+			return true; 
+	    }else if(cycle_stack[my_nfa->edge_table[src][k]]){
+//			num_cycles++; 
+			return true; 
+		}
+	} 
+              
+       visited_path2[src]=false;
+       cycle_stack[src] = false;
+     return false; 
+}
+
 
 // Find critical path 
 // by Rasha 

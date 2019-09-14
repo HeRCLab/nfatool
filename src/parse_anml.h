@@ -16,5 +16,5 @@ int extract_number (const char *str);
 int Hash(const char *key);
 int extract_string (char *str);
 int fill_in_table (nfa *my_nfa);
-
+void graph_features(nfa *my_nfa, int node); 
 #endif

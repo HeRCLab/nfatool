@@ -10,7 +10,10 @@
 int partition_graph (nfa *my_nfa,int subgraph,int max_fanout);
 void find_subgraphs (nfa *my_nfa);
 int num_paths(nfa *my_nfa, int node);
-int num_loops(nfa *my_nfa, int node);
+int num_self_loops(nfa *my_nfa, int node);
 void find_all_paths(nfa *my_nfa, int src,bool visited_path2[], int &num_path); 
 void find_loops(nfa *my_nfa, int src,bool visited_path2[], int &loop_size, int &num_loops, int &num_self_loops); 
+int iscycles(nfa *my_nfa, int node); 
+bool find_cycles(nfa *my_nfa, int src, bool visited_path2[], bool cycle_stack[], int &num_cycles);
+
 #endif

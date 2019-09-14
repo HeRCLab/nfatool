@@ -142,6 +142,7 @@ void print_help (char **argv) {
 	printf("%14s\tPerform mapping with MINICRYPTOSAT solver with <t> seconds\n","-c <t>");
 	printf("%14s\tGenerate NAPOLY configuration files\n","-n");
 	printf("%14s\tPrint state-to-SE and SE-to-state mapping\n","-p");
+	printf("%14s\tPrint NFA graph features\n", "-r"); 
 	printf("%14s\tFind distinct subgraphs\n","-s");
 	printf("%14s\tFor subgraphs that don't map, decompose into subgraphs with maximum logical fanout of <n> (requires -s and -c)","-d <n>");
 }
@@ -156,18 +157,19 @@ int main(int argc, char **argv){
 	
 	// FLAGS
 	int use_sat_solver=0;
-    int file_spec=0;
+    	int file_spec=0;
 	int gen_config=0;
 	int do_print_mapping=0;
 	int subgraphs=0;
-	
+	int gfeature =0; 
+
 	// OPTIONS
     char filename[1024];
 	int max_fanout=0;
 	int timeout;
 	int decompose_fanout=-1;
 
-    while ((c=getopt(argc,argv,"hi:m:f:c:sd:"))!=-1)
+    while ((c=getopt(argc,argv,"hi:m:f:c:rsd:"))!=-1)
       switch (c) {
 		case 'h':
 			print_help(argv);
@@ -219,12 +221,17 @@ int main(int argc, char **argv){
 			do_print_mapping=1;
 			printf("INFO: Printing mapping result\n");
 			break;
+		case 'r':
+                        gfeature=1;
+                        printf("INFO: Printing NFA graph features\n");
+                        break;
+
 		case 's':
 			subgraphs=1;
 			printf("INFO: Finding distinct subgraphs\n");
 			break;
         case '?':
-			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c' || optopt == 'd'))
+			if ((optopt == 'i' || optopt == 'm' || optopt == 'f' || optopt == 'c' || optopt == 'd' || optopt == 'r'))
 				fprintf (stderr, "ERROR: Option -%c requires an argument.\n", optopt);
             else if (isprint (optopt))
                 fprintf (stderr,"ERROR: Unknown option `-%c'.\n", optopt);
@@ -291,23 +298,7 @@ int main(int argc, char **argv){
 
 	if (do_print_mapping) print_mapping(my_nfa);
 
-// graph features 
-// by Rasha 
-
-	int num_starts=0;
-	int num_reports=0; 
-	 
-	for(int i=0; i<my_nfa->num_states; i++) {
-		 if(my_nfa->start_table[i]) num_starts++; 
-		 if(my_nfa->report_table[i]) num_reports++; 
-	}
-
-	printf("In ANML file:\n\t\t Total starts= %d\n\t\t Total reports= %d\n\t\t Total paths per partition= %d\n\t\t Total num of loops= %d\n",
-					num_starts,
-					num_reports,
-					num_paths(my_nfa,0),
-					num_loops(my_nfa,0));
- 
+ 	if(gfeature) graph_features(my_nfa,0); 
 
   return 0;
 }
