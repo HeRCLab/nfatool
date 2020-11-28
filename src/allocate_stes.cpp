@@ -549,10 +549,15 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 	}
 
 	// print solution as a logic expression
-	printf ("mapping solution: ");
+	printf ("mapping solution (SAT form):");
 	for (i=0;i<my_nfa->num_states;i++) {
 		printf ("%d ",state_to_se_literal(my_nfa->movement_map[i],i,my_nfa->num_states));
 	}
+	printf ("\nmapping solution (positional form):");
+	for (i=0;i<my_nfa->num_states;i++) {
+		printf ("%d ",(my_nfa->movement_map[i]));
+	}
+
 	printf ("\n");
 }
 
@@ -857,7 +862,7 @@ int validate_interconnection(int **edge_table,
 						//check_graphs();
 						differential_score -= score(max_edges,edge_table,reverse_table,from,to);
 						// undo the move
-						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
+						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,to,from);
 						//check_graphs();
 						if (differential_score > max_differential_score) {
 							max_differential_score=differential_score;
@@ -870,14 +875,14 @@ int validate_interconnection(int **edge_table,
 
 				//if (max_differential_score>0) {
 
-				/*  			printf ("moving STE in position %d to position %d due to bad edge %d (\"%s\")-> %d (\"%s\"), best score = %d\n",
+				  			printf ("moving STE in position %d to position %d due to bad edge %d->%d, best score = %d\n",
 							best_from,
 							best_to,
 							i,
-							anml_name(my_nfa,movement_map[i]),  //ANML_NAME(i),
+							//anml_name(movement_map[i]),  //ANML_NAME(i),
 							edge_table[i][j],
-							anml_name(my_nfa,orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
-							max_differential_score); */
+							//anml_name(orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
+							max_differential_score);
 
 				move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,best_from,best_to);
 

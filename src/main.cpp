@@ -144,7 +144,7 @@ void print_help (char **argv) {
 	printf("%14s\tPrint state-to-SE and SE-to-state mapping\n","-p");
 	printf("%14s\tPrint NFA graph features\n", "-r"); 
 	printf("%14s\tFind distinct subgraphs\n","-s");
-	printf("%14s\tFor subgraphs that don't map, decompose into subgraphs with maximum logical fanout of <n> (requires -s and -c)","-d <n>");
+	printf("%14s\tFor subgraphs that don't map, decompose into subgraphs with maximum logical fanout of <n> (requires -s and -c)\n","-d <n>");
 }
 
 int main(int argc, char **argv){
