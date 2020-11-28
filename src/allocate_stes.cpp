@@ -114,12 +114,11 @@ int map_states_with_sat_solver_core(int num_states,
 
 	 gettimeofday(&f2,0);
 
-         printf ("INFO: Elapsed time for fork = %d s\n",
-                                (int)((long)(long)f2.tv_sec -
-                                (long)(long)f1.tv_sec) -
-			  	(int)((long)(long)t2.tv_sec -
-	                        (long)(long)t1.tv_sec) 
-				);
+         printf ("INFO: Total elapsed time for fork = %lld us\n",
+                                (long long)f2.tv_sec*1000000 +
+                                (long long)f2.tv_usec -
+                                (long long)f1.tv_sec*1000000 -
+                                (long long)f1.tv_usec);
 
 
 	// wait for it with timeout
@@ -253,7 +252,7 @@ int map_states_with_sat_solver (char *filename,
 	int replications,total_replications=0;
 
 	if (!subgraph) {
-		return map_states_with_sat_solver_core(my_nfa->num_states,
+		ret = map_states_with_sat_solver_core(my_nfa->num_states,
 				my_nfa->max_edges,
 				my_nfa->max_fan_in,
 				my_nfa->edge_table,
@@ -265,6 +264,19 @@ int map_states_with_sat_solver (char *filename,
 				-1,
 				timeout,
 				decompose_fanout);
+
+		printf ("mapping solution (SAT form):");
+		for (i=0;i<my_nfa->num_states;i++) {
+			printf ("%d ",state_to_se_literal(my_nfa->movement_map[i],i,my_nfa->num_states));
+		}
+		printf ("\nmapping solution (positional form):");
+		for (i=0;i<my_nfa->num_states;i++) {
+			printf ("%d ",(my_nfa->movement_map[i]));
+		}
+		printf ("\n");
+
+		return ret;
+
 	} else {
 		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
 			ret=map_states_with_sat_solver_core(my_nfa->subgraph_size[i],
@@ -280,7 +292,19 @@ int map_states_with_sat_solver (char *filename,
 					timeout,
 					decompose_fanout);
 			if (ret==0) return 0;
-			else if (ret==2) {
+
+
+			printf ("mapping solution (SAT form):");
+			for (i=0;i<my_nfa->num_states;i++) {
+				printf ("%d ",state_to_se_literal(my_nfa->movement_map[i],i,my_nfa->num_states));
+			}
+			printf ("\nmapping solution (positional form):");
+			for (i=0;i<my_nfa->num_states;i++) {
+				printf ("%d ",(my_nfa->movement_map[i]));
+			}
+
+
+			if (ret==2) {
 				dump_dot_file("subgraph.dot",my_nfa->edge_tables[i],
 						my_nfa->subgraph_size[i],
 						my_nfa->max_edges);
@@ -557,7 +581,6 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 	for (i=0;i<my_nfa->num_states;i++) {
 		printf ("%d ",(my_nfa->movement_map[i]));
 	}
-
 	printf ("\n");
 }
 
