@@ -620,9 +620,9 @@ void move_ste (int num_states,
 		temp3=movement_map[from];
 
 		for (i=from;i<to;i++) {
-			for (j=0;j<max_fan_in;j++) {
+			/*for (j=0;j<max_fan_in;j++) {
 				reverse_table[i][j]=reverse_table[i+1][j];
-			}
+			}*/
 			for (j=0;j<max_edges;j++) {
 				edge_table[i][j]=edge_table[i+1][j];
 			}
@@ -637,9 +637,9 @@ void move_ste (int num_states,
 		temp3=movement_map[from];
 
 		for (i=from;i>to;i--) {
-			for (j=0;j<max_fan_in;j++) {
+			/*for (j=0;j<max_fan_in;j++) {
 				reverse_table[i][j]=reverse_table[i-1][j];
-			}
+			}*/
 			for (j=0;j<max_edges;j++) {
 				edge_table[i][j]=edge_table[i-1][j];
 			}
@@ -833,7 +833,7 @@ int validate_interconnection(int **edge_table,
 						//check_graphs();
 						differential_score -= score(max_edges,edge_table,reverse_table,from,to);
 						// undo the move
-						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
+						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,to,from);
 						//check_graphs();
 						if (differential_score > max_differential_score) {
 							max_differential_score=differential_score;
@@ -879,7 +879,7 @@ int validate_interconnection(int **edge_table,
 							anml_name(my_nfa,orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
 							max_differential_score); */
 
-				move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
+				move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,best_from,best_to);
 
 				//printf("----------moving %d to %d\n",best_from,best_to);
 				//}
