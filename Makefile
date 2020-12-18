@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -I/usr/include/libxml2 -fopenmp
+CFLAGS = -I/usr/include/libxml2 -fopenmp -fPIC
 LIBS = -lxml2 -lpcre
 OBJS = obj/allocate_memory.o obj/edge.o obj/scc.o obj/visualization.o obj/allocate_stes.o obj/parse_anml.o obj/partition.o obj/list.o obj/do_next.o obj/do_gates.o
 DEBUG_OBJS = $(shell echo "$(OBJS)" | tr ' ' '\n' | sed 's/^obj/obj\/dbg/g' | tr '\n' ' ')
@@ -22,4 +22,4 @@ obj/rel/%.o: src/%.cpp src/%.h src/nfatool.h
 	$(CC) -O3 $(CFLAGS) -c $(LIBS) $< -o $@
 
 clean:
-	-rm obj/dbg*.o obj/rel/*.o nfatool
+	-rm obj/dbg/*.o obj/rel/*.o nfatool
