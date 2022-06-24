@@ -66,7 +66,7 @@ int map_states_with_sat_solver_core(int num_states,
 		sprintf(cnf_filename,"%s_%d.cnf",filename,subgraph_num);
 
 	// convert the graph and placement constraints into SAT
-	perform_cnf_translation (num_states,max_edges,edge_table,max_fanout,cnf_filename);
+	perform_f_translation (num_states,max_edges,edge_table,max_fanout,cnf_filename);
 
 	// issue command to initiate SAT solver
 	sprintf(sat_output_filename,"%s.out",cnf_filename);
@@ -114,11 +114,12 @@ int map_states_with_sat_solver_core(int num_states,
 
 	 gettimeofday(&f2,0);
 
-         printf ("INFO: Total elapsed time for fork = %lld us\n",
-                                (long long)f2.tv_sec*1000000 +
-                                (long long)f2.tv_usec -
-                                (long long)f1.tv_sec*1000000 -
-                                (long long)f1.tv_usec);
+         printf ("INFO: Elapsed time for fork = %d s\n",
+                                (int)((long)(long)f2.tv_sec -
+                                (long)(long)f1.tv_sec) -
+			  	(int)((long)(long)t2.tv_sec -
+	                        (long)(long)t1.tv_sec) 
+				);
 
 
 	// wait for it with timeout
@@ -252,7 +253,7 @@ int map_states_with_sat_solver (char *filename,
 	int replications,total_replications=0;
 
 	if (!subgraph) {
-		ret = map_states_with_sat_solver_core(my_nfa->num_states,
+		return map_states_with_sat_solver_core(my_nfa->num_states,
 				my_nfa->max_edges,
 				my_nfa->max_fan_in,
 				my_nfa->edge_table,
@@ -264,19 +265,6 @@ int map_states_with_sat_solver (char *filename,
 				-1,
 				timeout,
 				decompose_fanout);
-
-		printf ("mapping solution (SAT form):");
-		for (i=0;i<my_nfa->num_states;i++) {
-			printf ("%d ",state_to_se_literal(my_nfa->movement_map[i],i,my_nfa->num_states));
-		}
-		printf ("\nmapping solution (positional form):");
-		for (i=0;i<my_nfa->num_states;i++) {
-			printf ("%d ",(my_nfa->movement_map[i]));
-		}
-		printf ("\n");
-
-		return ret;
-
 	} else {
 		for (i=0;i<my_nfa->distinct_subgraphs;i++) {
 			ret=map_states_with_sat_solver_core(my_nfa->subgraph_size[i],
@@ -292,19 +280,7 @@ int map_states_with_sat_solver (char *filename,
 					timeout,
 					decompose_fanout);
 			if (ret==0) return 0;
-
-
-			printf ("mapping solution (SAT form):");
-			for (i=0;i<my_nfa->num_states;i++) {
-				printf ("%d ",state_to_se_literal(my_nfa->movement_map[i],i,my_nfa->num_states));
-			}
-			printf ("\nmapping solution (positional form):");
-			for (i=0;i<my_nfa->num_states;i++) {
-				printf ("%d ",(my_nfa->movement_map[i]));
-			}
-
-
-			if (ret==2) {
+			else if (ret==2) {
 				dump_dot_file("subgraph.dot",my_nfa->edge_tables[i],
 						my_nfa->subgraph_size[i],
 						my_nfa->max_edges);
@@ -409,7 +385,7 @@ int perform_cnf_translation (int num_states,int max_edges,int **edge_table,int m
 	FILE *mycnf;
 	char str[1024];
 
-	// NOTE:  this function generates 2*num_states^2 + num_states CNF clauses
+	// NOTE:  this function generates 2*num_states^2 + num_states CNF clausesclauses
 	// maximum clause width = num_states
 
 	if (filename) {
@@ -573,13 +549,9 @@ int perform_state_mapping (char *filename,nfa *my_nfa) {
 	}
 
 	// print solution as a logic expression
-	printf ("mapping solution (SAT form):");
+	printf ("mapping solution: ");
 	for (i=0;i<my_nfa->num_states;i++) {
 		printf ("%d ",state_to_se_literal(my_nfa->movement_map[i],i,my_nfa->num_states));
-	}
-	printf ("\nmapping solution (positional form):");
-	for (i=0;i<my_nfa->num_states;i++) {
-		printf ("%d ",(my_nfa->movement_map[i]));
 	}
 	printf ("\n");
 }
@@ -648,9 +620,9 @@ void move_ste (int num_states,
 		temp3=movement_map[from];
 
 		for (i=from;i<to;i++) {
-			/*for (j=0;j<max_fan_in;j++) {
+			for (j=0;j<max_fan_in;j++) {
 				reverse_table[i][j]=reverse_table[i+1][j];
-			}*/
+			}
 			for (j=0;j<max_edges;j++) {
 				edge_table[i][j]=edge_table[i+1][j];
 			}
@@ -665,9 +637,9 @@ void move_ste (int num_states,
 		temp3=movement_map[from];
 
 		for (i=from;i>to;i--) {
-			/*for (j=0;j<max_fan_in;j++) {
+			for (j=0;j<max_fan_in;j++) {
 				reverse_table[i][j]=reverse_table[i-1][j];
-			}*/
+			}
 			for (j=0;j<max_edges;j++) {
 				edge_table[i][j]=edge_table[i-1][j];
 			}
@@ -861,7 +833,7 @@ int validate_interconnection(int **edge_table,
 						//check_graphs();
 						differential_score -= score(max_edges,edge_table,reverse_table,from,to);
 						// undo the move
-						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,to,from);
+						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 						//check_graphs();
 						if (differential_score > max_differential_score) {
 							max_differential_score=differential_score;
@@ -885,7 +857,7 @@ int validate_interconnection(int **edge_table,
 						//check_graphs();
 						differential_score -= score(max_edges,edge_table,reverse_table,from,to);
 						// undo the move
-						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,to,from);
+						move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 						//check_graphs();
 						if (differential_score > max_differential_score) {
 							max_differential_score=differential_score;
@@ -898,16 +870,16 @@ int validate_interconnection(int **edge_table,
 
 				//if (max_differential_score>0) {
 
-				  			printf ("moving STE in position %d to position %d due to bad edge %d->%d, best score = %d\n",
+				/*  			printf ("moving STE in position %d to position %d due to bad edge %d (\"%s\")-> %d (\"%s\"), best score = %d\n",
 							best_from,
 							best_to,
 							i,
-							//anml_name(movement_map[i]),  //ANML_NAME(i),
+							anml_name(my_nfa,movement_map[i]),  //ANML_NAME(i),
 							edge_table[i][j],
-							//anml_name(orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
-							max_differential_score);
+							anml_name(my_nfa,orig_edge_table[movement_map[i]][j]), //(edge_table[orig_edge_table[movement_map[i]][j]][j]), // ANML_NAME(edge_table[i][j]), //orig_edge_table[movement_map[edge_table[i][j]][j]]),
+							max_differential_score); */
 
-				move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,best_from,best_to);
+				move_ste (num_states,max_edges,max_fan_in,edge_table,reverse_table,movement_map,from,to);
 
 				//printf("----------moving %d to %d\n",best_from,best_to);
 				//}
